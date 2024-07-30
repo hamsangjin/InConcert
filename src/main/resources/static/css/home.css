@@ -7,6 +7,11 @@ html {
     flex-shrink: 0;
 }
 
+p{
+    margin: 5px;
+    padding: 0;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -22,7 +27,7 @@ body {
 
 header {
     display: flex;
-    min-width: calc(100%);
+    min-width: calc(100% - 20px);
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -130,4 +135,142 @@ header {
 
 .footer p {
     margin: 3px 0;
+}
+
+.popular-info-container{
+    background-color: #6f6f6f;
+    min-height: 500px;
+    opacity: 0.5;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.popular-info-container div h1{
+    color: white;
+    padding: 0;
+    margin: 0 0 50px;
+}
+
+.popular-info-img-container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.popular-info{
+    /*align-items: center;*/
+    text-align: center;
+}
+
+.popular-info-img-container img{
+    height: 300px;
+    width: 150px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.popular-info-img-container a{
+    text-decoration: none;
+    color: white;
+    border: white 1px solid;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+.write-btn{
+    text-align: right;
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+.write-btn a{
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px;
+}
+
+/**/
+
+.board-container{
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.board-container > div{
+    min-width: 700px;
+}
+
+.board-header{
+    display: flex;
+    justify-content: space-between;
+    color: #00A885;
+    align-items: center;
+    margin-top: 0px;
+    margin-bottom: 3px;
+    padding: 0;
+}
+
+.board-header h1{
+    padding: 0;
+    margin: 0;
+}
+
+.board-header a{
+    text-decoration: none;
+    color: #00A885;
+    padding: 0;
+    margin: 0;
+}
+
+.post-list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #6f6f6f;
+}
+
+.post-left{
+    display: flex;
+    align-items: center;
+}
+
+.post-left a{
+    text-decoration: none;
+    color: black;
+    padding: 0;
+}
+
+.comment-count{
+    color: red;
+    padding: 0;
+}
+
+.post-left div{
+    border: none;
+    border-radius: 50%;
+    background-color: red;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new{
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-weight: bolder;
+}
+
+.post-right{
+    color: #6f6f6f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
