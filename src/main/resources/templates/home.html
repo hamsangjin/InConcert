@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 화면</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

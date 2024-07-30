@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html class="jua-regular" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragment Header</title>
+</head>
+<body>
+<div th:fragment="header">
+    <header>
+        <div class="left">
+            <a class="logo" th:href="@{/vlog}">
+                <img class="logo-img" src="/images/logo.png" alt="No Posts"/>
+                <h2 class="logo-text"> In Concert </h2>
+            </a>
+            <div class="category">
+                <a th:href="@{/info}">
+                    <span> 공연 정보 </span>
+                </a>
+                <a th:href="@{/match}">
+                    <span> 동행 </span>
+                </a>
+                <a th:href="@{/review}">
+                    <span> 양도 </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="search">
+                <a th:href="@{/where}" style="align-items: center">
+                    <img class="logo-img" src="/images/search.png" alt="No Posts"/>
+                </a>
+                <input placeholder="게시판 검색">
+            </div>
+
+            <div class="user-header">
+                <div th:if="${user != null}">
+                    <a th:href="@{/loginform}">로그인</a>
+                    <a th:href="@{/registerform}">회원가입</a>
+                </div>
+                <div th:if="${user == null}">
+                    <a th:href="@{/chat/{userId}}">
+                        <img class="chat-img" src="/images/chat.png" alt="No Posts"/>
+                    </a>
+                    <a th:href="@{/notification}">
+                        <img class="notification-img" src="/images/notification.png" alt="No Posts"/>
+                    </a>
+                    <a th:href="@{/notification}">
+                        <img class="profile-img" src="/images/profile.png" alt="No Posts"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+</body>
+</html>
