@@ -8,6 +8,135 @@
 <body>
 <div class="container">
     <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="popular-info-container">
+        <div>
+            <h1> 실시간 인기 공연</h1>
+        </div>
+        <div class="popular-info-img-container">
+            <div th:each="post : ${popularPostDto}">
+                <div class="popular-info">
+                    <img class="popular-info-img" src="/images/logo.png" alt="No Posts"/>
+                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                        <span> 자세히 보기 </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="write-btn">
+        <a th:href="@{/writeform}">
+            <span> 글쓰기 </span>
+        </a>
+    </div>
+
+    <div class="board-container">
+        <div style="margin-right: 65px">
+            <div class="board-header">
+                <h1> 공연 소식 </h1>
+                <a th:href="@{/info}">
+                    <p> + 더보기</p>
+                </a>
+            </div>
+            <div class="post-list" th:each="post : ${postDto}">
+                <div class="post-left">
+                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                        <p th:text="${post.title}">Post Title</p>
+                    </a>
+                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <div th:if="${post.isNew}">
+                        <p class="new"> N </p>
+                    </div>
+                </div>
+
+                <div class="post-right">
+                    <p><span th:text="${post.username}"></span></p>
+                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
+                    <p><span th:text="${post.viewSize}"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="board-header">
+                <h1> 공연 후기 </h1>
+                <a th:href="@{/review}">
+                    <p> + 더보기</p>
+                </a>
+            </div>
+            <div class="post-list" th:each="post : ${postDto}">
+                <div class="post-left">
+                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                        <p th:text="${post.title}">Post Title</p>
+                    </a>
+                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <div th:if="${post.isNew}">
+                        <p class="new"> N </p>
+                    </div>
+                </div>
+
+                <div class="post-right">
+                    <p><span th:text="${post.username}"></span></p>
+                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
+                    <p><span th:text="${post.viewSize}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="board-container">
+        <div style="margin-right: 65px">
+            <div class="board-header">
+                <h1> 동행 모집 </h1>
+                <a th:href="@{/match}">
+                    <p> + 더보기</p>
+                </a>
+            </div>
+            <div class="post-list" th:each="post : ${postDto}">
+                <div class="post-left">
+                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                        <p th:text="${post.title}">Post Title</p>
+                    </a>
+                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <div th:if="${post.isNew}">
+                        <p class="new"> N </p>
+                    </div>
+                </div>
+
+                <div class="post-right">
+                    <p><span th:text="${post.username}"></span></p>
+                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
+                    <p><span th:text="${post.viewSize}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div style="min-width: 700px;">
+            <div class="board-header">
+                <h1> 양도 모집 </h1>
+                <a th:href="@{/transfer}">
+                    <p> + 더보기</p>
+                </a>
+            </div>
+            <div class="post-list" th:each="post : ${postDto}">
+                <div class="post-left">
+                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                        <p th:text="${post.title}">Post Title</p>
+                    </a>
+                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <div th:if="${post.isNew}">
+                        <p class="new"> N </p>
+                    </div>
+                </div>
+
+                <div class="post-right">
+                    <p><span th:text="${post.username}"></span></p>
+                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
+                    <p><span th:text="${post.viewSize}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id='wrapper'></div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
