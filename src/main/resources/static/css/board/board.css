@@ -1,0 +1,268 @@
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 300px);
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    min-width: calc(100% - 20px);
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px 0px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+}
+
+.logo-img{
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+}
+
+.category{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.category a{
+    color: #6f6f6f;
+    text-decoration: none;
+    margin-top: 2px;
+}
+
+.category a:hover{
+    color: #00A885;
+    cursor: pointer;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    gap: 30px;
+}
+
+.right a{
+    color: #6f6f6f;
+    text-decoration: none;
+}
+
+.search{
+    display: flex;
+    align-items: center;
+    border: #6f6f6f 1px solid;
+    border-radius: 10px;
+}
+
+.search img{
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.search input{
+    border: none;
+    min-width: 240px;
+    min-height: 30px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.user-header a{
+    margin-left: 15px;
+}
+
+.profile-img{
+    border-radius: 50%;
+}
+
+.profile-img, .notification-img, .chat-img{
+    width: 30px;
+    height: 30px;
+}
+
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    color: #00A885;
+    cursor: pointer;
+}
+
+.write-btn{
+    text-align: right;
+    margin-bottom: 20px;
+    margin-top: 40px;
+}
+
+.write-btn a{
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px;
+}
+
+.board-container{
+    display: flex;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.board-container > div{
+    min-width: 700px;
+}
+
+.board-header{
+    display: flex;
+    justify-content: space-between;
+    color: #00A885;
+    align-items: center;
+    margin-top: 0px;
+    margin-bottom: 3px;
+    padding: 0;
+}
+
+.board-header h1{
+    padding: 0;
+    margin: 0;
+}
+
+.board-header a{
+    text-decoration: none;
+    color: #00A885;
+    padding: 0;
+    margin: 0;
+}
+
+.post-list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #6f6f6f;
+}
+
+.post-left{
+    display: flex;
+    align-items: center;
+}
+
+.post-left a{
+    text-decoration: none;
+    color: black;
+    padding: 0;
+}
+
+.post-left a:hover{
+    text-decoration: underline;
+}
+
+.comment-count{
+    color: red;
+    padding: 0;
+}
+
+.post-left div{
+    border: none;
+    border-radius: 50%;
+    background-color: red;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.new{
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-weight: bolder;
+}
+
+.post-right{
+    color: #6f6f6f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
