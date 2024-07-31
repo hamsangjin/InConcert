@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+<body>
+<h1>회원가입</h1>
+<form th:action="@{/register}" th:object="${user}" method="post">
+    <div>
+        <label for="username">아이디:</label>
+        <input type="text" id="username" th:field="*{username}" required>
+    </div>
+    <div>
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" th:field="*{password}" required>
+    </div>
+    <div>
+        <label for="email">이메일:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+    </div>
+    <div>
+        <label for="name">이름:</label>
+        <input type="text" id="name" th:field="*{name}" required>
+    </div>
+    <div>
+        <label for="nickname">닉네임:</label>
+        <input type="text" id="nickname" th:field="*{nickname}" required>
+    </div>
+    <div>
+        <label for="phoneNumber">전화번호:</label>
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required>
+    </div>
+    <div>
+        <label for="birth">생일:</label>
+        <input type="date" id="birth" th:field="*{birth}" required>
+    </div>
+    <div>
+        <label for="gender">성별:</label>
+        <input type="text" id="gender" th:field="*{gender}" required>
+    </div>
+    <div>
+        <label for="mbti">MBTI:</label>
+        <input type="text" id="mbti" th:field="*{mbti}" required>
+    </div>
+    <button type="submit">회원가입</button>
+</form>
+</body>
+</html>
