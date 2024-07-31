@@ -15,15 +15,15 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
-    @GetMapping("/{post_id}")
-    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("post_id") Long postId) {
+    @GetMapping("/{postId}")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("postId") Long postId) {
         List<CommentDto> byPostId = commentService.findByPostId(postId);
         return ResponseEntity.ok(byPostId);
     }
 
-    @GetMapping("/{comment_id}")
-    public ResponseEntity<CommentDto> getComment(@PathVariable("comment_id") Long id) {
-        CommentDto commentDto = commentService.findComment(id);
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommentDto> getComment(@PathVariable("commentId") Long commentId) {
+        CommentDto commentDto = commentService.findComment(commentId);
         return ResponseEntity.ok(commentDto);
     }
 }

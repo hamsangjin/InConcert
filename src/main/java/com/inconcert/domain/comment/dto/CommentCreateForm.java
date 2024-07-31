@@ -9,8 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,8 +19,6 @@ public class CommentCreateForm {
     private User user;
     private Post post;
     private boolean isSecret;
-    private LocalDateTime createdAt = LocalDateTime.now().withNano(0);
-    private LocalDateTime updateAt = LocalDateTime.now().withNano(0);
 
     @NotEmpty(message = "내용은 필수항목입니다.")
     private String content;
@@ -33,8 +29,6 @@ public class CommentCreateForm {
                 .user(getUser())
                 .post(getPost())
                 .content(getContent())
-                .createdAt(LocalDateTime.now().withNano(0))
-                .updatedAt(LocalDateTime.now().withNano(0))
                 .isSecret(isSecret())
                 .build();
         return comment;

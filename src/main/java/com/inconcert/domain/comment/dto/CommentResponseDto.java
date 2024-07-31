@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +16,6 @@ public class CommentResponseDto {
     private String nickname;
     private Long postId;
     private String content;
-    private LocalDateTime updatedAt = LocalDateTime.now().withNano(0);
     private boolean isSecret;
 
     public CommentResponseDto(Comment comment) {
@@ -26,7 +23,6 @@ public class CommentResponseDto {
         this.nickname = comment.getUser().getUsername();
         this.postId = comment.getPost().getId();
         this.content = comment.getContent();
-        this.updatedAt = comment.getUpdatedAt();
         this.isSecret = comment.getIsSecret();
     }
 }

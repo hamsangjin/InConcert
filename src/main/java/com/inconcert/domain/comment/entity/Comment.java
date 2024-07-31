@@ -5,10 +5,6 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -34,12 +30,6 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
     @Column
     private Boolean isSecret = false;
 
@@ -54,7 +44,6 @@ public class Comment {
     public void update(String content, Boolean isSecret) {
         this.content = content;
         this.isSecret = isSecret;
-        updatedAt = LocalDateTime.now().withNano(0);
     }
 
     public void confirmPost(Post post) {
@@ -77,8 +66,6 @@ public class Comment {
                 .user(user)
                 .post(post)
                 .content(content)
-                .createdAt(createdAt)
-                .updatedAt(updatedAt)
                 .isSecret(isSecret)
                 .replies(replies)
                 .build();

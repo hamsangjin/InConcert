@@ -3,6 +3,7 @@ package com.inconcert.domain.comment.service;
 import com.inconcert.domain.comment.dto.CommentDto;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
+import com.inconcert.global.exception.CommentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +29,13 @@ public class CommentService {
 
     @Transactional
     public CommentDto findComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
         return comment.toCommentDto();
     }
 
     @Transactional
     public void delete(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
         commentRepository.delete(comment);
     }
 }
