@@ -30,7 +30,7 @@ header {
     min-width: calc(100% - 20px);
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 10px 0px;
 }
 
 .left {
@@ -72,6 +72,7 @@ header {
 
 .category a:hover{
     color: #00A885;
+    cursor: pointer;
 }
 
 .right {
@@ -141,44 +142,29 @@ header {
     margin: 3px 0;
 }
 
-.popular-info-container{
-    background-color: #6f6f6f;
-    min-height: 500px;
-    opacity: 0.5;
-    margin-bottom: 20px;
-    padding: 20px;
-}
-
-.popular-info-container div h1{
-    color: white;
-    padding: 0;
-    margin: 0 0 50px;
-}
-
-.popular-info-img-container{
+.tabs {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.popular-info{
-    /*align-items: center;*/
-    text-align: center;
-}
-
-.popular-info-img-container img{
-    height: 300px;
-    width: 150px;
-    display: block;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 20px;
     margin-bottom: 20px;
+    border-radius: 30px;
 }
 
-.popular-info-img-container a{
-    text-decoration: none;
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
     color: white;
-    border: white 1px solid;
-    border-radius: 20px;
-    padding: 5px;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    color: #00A885;
+    cursor: pointer;
 }
 
 .write-btn{
@@ -244,6 +230,10 @@ header {
     text-decoration: none;
     color: black;
     padding: 0;
+}
+
+.post-left a:hover{
+    text-decoration: underline;
 }
 
 .comment-count{
