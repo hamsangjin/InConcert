@@ -36,7 +36,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String nickname;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, name = "phone_Number")
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -61,9 +61,6 @@ public class User {
 
     @Column
     private Integer point = 10;
-
-    @Column(nullable = false)
-    private Long postId;
 
     // ----------------------------
 
