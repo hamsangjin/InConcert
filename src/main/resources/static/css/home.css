@@ -70,6 +70,9 @@ header {
     margin-top: 2px;
 }
 
+.category a:hover{
+    color: #00A885;
+}
 
 .right {
     display: flex;
@@ -103,6 +106,7 @@ header {
     min-width: 240px;
     min-height: 30px;
     margin-right: 10px;
+    outline: none;
 }
 
 .user-header a{
@@ -191,8 +195,6 @@ header {
     border-radius: 15px;
     padding: 5px;
 }
-
-/**/
 
 .board-container{
     display: flex;
