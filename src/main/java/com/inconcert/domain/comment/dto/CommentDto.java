@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -20,8 +19,6 @@ public class CommentDto {
     private User user;
     private Post post;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean isSecret;
     private Comment parent;
     private Set<Comment> replies;
