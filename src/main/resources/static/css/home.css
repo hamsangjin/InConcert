@@ -1,3 +1,4 @@
+/* 공통 설정 */
 html {
     font-family: Arial, sans-serif;
     height: 100%;
@@ -25,6 +26,7 @@ body {
     margin: 0 auto;
 }
 
+/* 헤더 설정 */
 header {
     display: flex;
     min-width: calc(100% - 20px);
@@ -109,8 +111,23 @@ header {
     outline: none;
 }
 
+.user-header > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .user-header a{
     margin-left: 15px;
+}
+
+.write-btn {
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px 10px;
 }
 
 .profile-img{
@@ -122,6 +139,7 @@ header {
     height: 30px;
 }
 
+/* footer 설정 */
 #wrapper {
     padding-bottom: 70px;
 }
@@ -140,6 +158,8 @@ header {
 .footer p {
     margin: 3px 0;
 }
+
+/* home 설정 */
 
 .popular-info-container{
     background-color: #6f6f6f;
@@ -162,7 +182,6 @@ header {
 }
 
 .popular-info{
-    /*align-items: center;*/
     text-align: center;
 }
 
@@ -181,25 +200,11 @@ header {
     padding: 5px;
 }
 
-.write-btn{
-    text-align: right;
-    margin-bottom: 20px;
-    margin-top: 40px;
-}
-
-.write-btn a{
-    background-color: #00A885;
-    color: white;
-    text-decoration: none;
-    border: 1px #6f6f6f solid;
-    border-radius: 15px;
-    padding: 5px;
-}
-
 .board-container{
     display: flex;
     align-items: center;
     margin-bottom: 50px;
+    margin-top: 50px;
 }
 
 .board-container > div{
@@ -211,7 +216,7 @@ header {
     justify-content: space-between;
     color: #00A885;
     align-items: center;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 3px;
     padding: 0;
 }

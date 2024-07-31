@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 화면</title>
+    <link rel="stylesheet" href="/css/board/writeform.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="tabs">
+        <button class="tab-button active">뮤지컬</button>
+        <button class="tab-button">콘서트</button>
+        <button class="tab-button">연극</button>
+        <button class="tab-button">기타</button>
+    </div>
+
+    <div class="write-container">
+        <div class="dropdowns">
+            <select id="board" name="board">
+                <option disabled selected value="default">게시판 선택</option>
+                <option value="info">공연 정보</option>
+                <option value="review">공연 후기</option>
+                <option value="match">동행</option>
+                <option value="transfer">양도</option>
+            </select>
+
+            <select id="category" name="category">
+                <option disabled selected value="default">말머리 선택</option>
+                <option value="musical">뮤지컬</option>
+                <option value="concert">콘서트</option>
+                <option value="theater">연극</option>
+                <option value="etc">기타</option>
+            </select>
+        </div>
+
+        <div class="dropdowns">
+            <select id="people" name="people">
+                <option disabled selected value="default">모집인원 선택</option>
+                <option value="one">1</option>
+                <option value="two">2</option>
+                <option value="three">3</option>
+                <option value="four">4</option>
+            </select>
+            <div class="date-container">
+                <label for="post-date">종료 날짜 지정</label>
+                <input type="date" id="post-date" name="post-date">
+            </div>
+        </div>
+
+        <input type="text" placeholder="제목을 입력해주세요." class="title-input">
+        <div id="editor"></div>
+        <div style="text-align: right">
+            <button class="submit-btn">글쓰기</button>
+        </div>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    var quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+</script>
+</body>
+</html>
