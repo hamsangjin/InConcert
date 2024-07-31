@@ -1,0 +1,258 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 300px);
+    margin: 0 auto;
+}
+
+/* 헤더 설정 */
+header {
+    display: flex;
+    min-width: calc(100% - 20px);
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+}
+
+.logo-img{
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+}
+
+.category{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.category a{
+    color: #6f6f6f;
+    text-decoration: none;
+    margin-top: 2px;
+}
+
+.category a:hover{
+    color: #00A885;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    gap: 30px;
+}
+
+.right a{
+    color: #6f6f6f;
+    text-decoration: none;
+}
+
+.search{
+    display: flex;
+    align-items: center;
+    border: #6f6f6f 1px solid;
+    border-radius: 10px;
+}
+
+.search img{
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.search input{
+    border: none;
+    min-width: 240px;
+    min-height: 30px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.user-header > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-header a{
+    margin-left: 15px;
+}
+
+.write-btn {
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px 10px;
+}
+
+.profile-img{
+    border-radius: 50%;
+}
+
+.profile-img, .notification-img, .chat-img{
+    width: 30px;
+    height: 30px;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* 카테고리 tab 설정*/
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    color: #00A885;
+    cursor: pointer;
+}
+
+/* 게시글 작성 설정 */
+.write-container{
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #9f9f9f;
+    border-radius: 5px;
+    width: calc(100% - 42px);
+}
+
+.dropdowns{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: calc(100%);
+}
+
+select{
+    border: 1px solid #6f6f6f;
+    font-size: 18px;
+    padding: 10px;
+    min-width: calc(46% - 10px);
+    margin: 10px 0;
+}
+
+option {
+    font-size: 18px;
+    height: 30px;
+}
+
+.date-container{
+    border: 1px solid #6f6f6f;
+    background-color: white;
+    font-size: 18px;
+    padding: 10px;
+    min-width: calc(46% - 32px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.title-input{
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: 1px solid #6f6f6f;
+    font-size: 18px;
+    width: calc(100% - 22px);
+    color: black;
+    /*border-radius: 5px;*/
+    display: block;
+}
+
+#editor{
+    height: 500px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.submit-btn {
+    background-color: #00A885;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #77b9a6;
+}
