@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="jua-regular" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" class="jua-regular" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Fragment Header</title>
@@ -42,6 +42,9 @@
                     <a th:href="@{/registerform}">회원가입</a>
                 </div>
                 <div th:if="${user == null}">
+                    <a th:href="@{/writeform}">
+                        <span class="write-btn"> 글쓰기 </span>
+                    </a>
                     <a th:href="@{/chat/{userId}}">
                         <img class="chat-img" src="/images/chat.png" alt="No Posts"/>
                     </a>

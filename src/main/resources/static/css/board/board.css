@@ -1,3 +1,4 @@
+/* 공통 설정 */
 html {
     font-family: Arial, sans-serif;
     height: 100%;
@@ -25,12 +26,13 @@ body {
     margin: 0 auto;
 }
 
+/* 헤더 설정 */
 header {
     display: flex;
     min-width: calc(100% - 20px);
     justify-content: space-between;
     align-items: center;
-    padding: 10px 10px 0px;
+    padding: 10px;
 }
 
 .left {
@@ -72,7 +74,6 @@ header {
 
 .category a:hover{
     color: #00A885;
-    cursor: pointer;
 }
 
 .right {
@@ -110,8 +111,23 @@ header {
     outline: none;
 }
 
+.user-header > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .user-header a{
     margin-left: 15px;
+}
+
+.write-btn {
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px 10px;
 }
 
 .profile-img{
@@ -123,6 +139,7 @@ header {
     height: 30px;
 }
 
+/* footer 설정 */
 #wrapper {
     padding-bottom: 70px;
 }
@@ -142,6 +159,7 @@ header {
     margin: 3px 0;
 }
 
+/* board 설정 */
 .tabs {
     display: flex;
     justify-content: space-between;
@@ -197,7 +215,7 @@ header {
     justify-content: space-between;
     color: #00A885;
     align-items: center;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 3px;
     padding: 0;
 }
