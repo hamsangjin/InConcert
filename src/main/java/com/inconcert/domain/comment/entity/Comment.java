@@ -3,8 +3,11 @@ package com.inconcert.domain.comment.entity;
 import com.inconcert.domain.comment.dto.CommentDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
+import com.inconcert.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Comment {
+public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,12 +36,12 @@ public class Comment {
     @Column
     private Boolean isSecret = false;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> replies;
+    private Set<Comment> replies = new HashSet<>();
 
     // 댓글 수정
     public void update(String content, Boolean isSecret) {

@@ -1,5 +1,6 @@
 package com.inconcert.domain.comment.service;
 
+import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.comment.dto.CommentDto;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
@@ -31,6 +32,14 @@ public class CommentService {
     public CommentDto findComment(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
         return comment.toCommentDto();
+    }
+
+    @Transactional
+    public Long CommentUpdate(Long id, CommentCreateForm dto) {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
+        comment.update(dto.getContent(), dto.isSecret());
+        commentRepository.save(comment);
+        return comment.getId();
     }
 
     @Transactional
