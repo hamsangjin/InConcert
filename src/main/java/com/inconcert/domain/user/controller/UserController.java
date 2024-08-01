@@ -3,12 +3,13 @@ package com.inconcert.domain.user.controller;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class UserController {
@@ -36,5 +37,12 @@ public class UserController {
     public String register(@ModelAttribute("user") User user) {
         userService.joinUser(user);
         return "redirect:/home";
+    }
+
+    // Test
+    @ResponseBody
+    @GetMapping("/protected")
+    public ResponseEntity<String> protectedEndpoint() {
+        return ResponseEntity.ok("Access granted!");
     }
 }

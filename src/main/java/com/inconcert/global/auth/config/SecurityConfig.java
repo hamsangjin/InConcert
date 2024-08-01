@@ -2,6 +2,7 @@ package com.inconcert.global.auth.config;
 
 import com.inconcert.global.auth.filter.JwtAuthenticationFilter;
 import com.inconcert.global.auth.CustomUserDetailsService;
+import com.inconcert.global.auth.jwt.util.JwtTokenizer;
 import com.inconcert.global.handler.CustomAuthenticationFailureHandler;
 import com.inconcert.global.handler.CustomAuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -44,18 +45,17 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
-//                .cors(cors -> cors.configurationSource(configurationSource()))
+                .cors(cors -> cors.configurationSource(configurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(form -> form
                         .loginPage("/loginform")
+                        .loginProcessingUrl("/login")
                         .successHandler(customAuthenticationSuccessHandler)
                         .failureHandler(customAuthenticationFailureHandler)
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
-                .httpBasic(httpBasic -> httpBasic.disable())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/home")
@@ -63,7 +63,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "accessToken")
                         .permitAll()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }
@@ -86,16 +86,15 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    public CorsConfigurationSource configurationSource() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.addAllowedOrigin("*");
-//        config.addAllowedHeader("*");
-//        config.addAllowedMethod("*");
-//        config.setAllowCredentials(true); // 자격 증명 허용
-//        config.addExposedHeader("Set-Cookie");
-//        config.setAllowedMethods(List.of("GET", "POST", "DELETE"));
-//        source.registerCorsConfiguration("/**", config);
-//        return source;
-//    }
+    public CorsConfigurationSource configurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
+        config.addExposedHeader("Authorization");
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }

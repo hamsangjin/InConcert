@@ -1,21 +1,38 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+<form id="loginForm">
+    <input type="text" name="username" id="username" required>
+    <input type="password" name="password" id="password" required>
+    <button type="submit">Login</button>
+</form>
 
-<div class="login-container">
-    <form class="login-form" th:action="@{/login}" method="post">
-        <h2>로그인</h2>
-        <label for="username">아이디를 입력해주세요.</label>
-        <input type="text" id="username" name="username" required>
-
-        <label for="password">암호를 입력해주세요.</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit" class="login-button">로그인</button>
-    </form>
-</div>
+<script>
+    $(document).ready(function() {
+        $("#loginForm").submit(function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: {
+                    username: $("#username").val(),
+                    password: $("#password").val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '/home';
+                    }
+                },
+                error: function() {
+                    alert('Login failed');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

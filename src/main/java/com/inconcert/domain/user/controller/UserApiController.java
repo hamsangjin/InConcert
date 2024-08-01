@@ -50,11 +50,15 @@ public class UserApiController {
             return new ResponseEntity("비밀번호가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED);
         }
 
+        // role 확인
         List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
         // 토큰 발급
         String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
         String refreshToken = jwtTokenizer.createRefreshToken(user.getId(), user.getEmail(), user.getUsername(), roles);
+
+        // 토큰 확인 로그
+        log.info("accessToken: {},\n refreshToken: {}", accessToken, refreshToken);
 
         // accessToken, refreshToken 을 DB에 저장
         Token tokenEntity = Token.builder()
@@ -65,6 +69,7 @@ public class UserApiController {
 
         tokenService.saveToken(tokenEntity);
 
+        // 응답 객체
         LoginRspDto loginRspDto = LoginRspDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -86,8 +91,8 @@ public class UserApiController {
         response.addCookie(refreshTokenCookie);
 
         // 로그 추가
-        log.info("Set-Cookie: accessToken={}", accessTokenCookie.getValue());
-        log.info("Set-Cookie: refreshToken={}", refreshTokenCookie.getValue());
+        log.info("Set-Cookie: accessToken: {}", accessTokenCookie.getValue());
+        log.info("Set-Cookie: refreshToken: {}", refreshTokenCookie.getValue());
         log.info("Response Headers: {}", response.getHeaderNames().stream()
                 .collect(Collectors.toMap(name -> name, name -> response.getHeaders(name))));
 
@@ -117,8 +122,8 @@ public class UserApiController {
         //2-2. 있을때.
         //토큰으로부터 정보를 얻어온다.
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
-
         String username = (String) claims.get("username");
+
         User user = userService.findByUsername(username);
         // orElseThrow(() -> new IllegalArgumentException("사용자를 찾지 못했습니다."));
         //예외 처리 해라

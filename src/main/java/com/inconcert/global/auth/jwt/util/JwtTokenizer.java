@@ -29,14 +29,14 @@ public class JwtTokenizer {
         this.refreshSecret = refreshSecret.getBytes(StandardCharsets.UTF_8);
         JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT = accessTokenExpireCount;
         JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT = refreshTokenExpireCount;
-        log.debug("JwtTokenizer initialized with accessSecret: {}, refreshSecret: {}, accessTokenExpireCount: {}, refreshTokenExpireCount: {}",
+        log.info("JwtTokenizer initialized with accessSecret: {}, refreshSecret: {}, accessTokenExpireCount: {}, refreshTokenExpireCount: {}",
                 accessSecret, refreshSecret, accessTokenExpireCount, refreshTokenExpireCount);
     }
 
     // JWT 생성
     private String createToken(Long id, String email, String username,
                                List<String> roles, Long expire, byte[] secretKey) {
-        log.debug("Creating token for user: {}, email: {}, username: {}", id, email, username);
+        log.info("Creating token for user: {}, email: {}, username: {}", id, email, username);
 
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("userId", id);

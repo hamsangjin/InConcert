@@ -23,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,11 +35,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // url 확인
+        log.info("request uri = {}", request.getRequestURI());
+        // header 확인
+        log.info("Request Headers: {}", Collections.list(request.getHeaderNames()).stream()
+                .collect(Collectors.toMap(h -> h, request::getHeader)));
+
         // accessToken 가져오기
-        log.debug("doFilterInternal");
+        log.info("doFilterInternal");
         String token = getToken(request);
 
-        log.debug("token: {}", token);
+        log.info("token: {}", token);
 
         // header 에 값이 있는지 확인
         if(StringUtils.hasText(token)){
@@ -70,10 +77,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void getAuthentication(String token){
-        Claims claims = jwtTokenizer.parseAccessToken(token);
+        Claims claims = jwtTokenizer.parseAccessToken(token);   // 토큰 파싱
+        log.info("Claims: {}", claims);
+
+        String email = claims.getSubject(); // 이메일 기준으로 찾기
 
         Long userId = claims.get("userId", Long.class);
-        String email = claims.getSubject();
         String username = claims.get("username", String.class);
         List<GrantedAuthority> authorities = getGrantedAuthorities(claims);
 
@@ -83,36 +92,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .collect(Collectors.toList()));
 
         Authentication authentication = new JwtAuthenticationToken(authorities, userDetails, null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);   // contextholder에 인증 설정
     }
 
     private List<GrantedAuthority> getGrantedAuthorities(Claims claims){
-        List<String> roles = (List<String>)claims.get("roles");
+        List<String> roles = (List<String>) claims.get("roles");
+
+        log.info("Roles: {}", roles);
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String role : roles){
-            authorities.add(()->role);
+            authorities.add(()->role);  // role 찾아서 권한에 추가
         }
         return authorities;
     }
 
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        log.debug("Authorization : {}", authorization);
+        log.info("Authorization : {}", authorization);
 
+        // Bearer 토큰인지 확인
         if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
-            log.debug("Bearer : {}", authorization);
+            log.info("Bearer : {}", authorization);
             return authorization.substring(7);
         }
 
+        // request의 쿠키 찾아서 accessToken 확인
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName())) {
-                    log.debug("Cookie : {}", cookie);
+                    log.info("Cookie : {}", cookie.getName());
                     return cookie.getValue();
                 }
             }
         }
+
         return null;
     }
 }
