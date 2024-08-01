@@ -36,8 +36,6 @@ public class JwtTokenizer {
     // JWT 생성
     private String createToken(Long id, String email, String username,
                                List<String> roles, Long expire, byte[] secretKey) {
-        log.info("Creating token for user: {}, email: {}, username: {}", id, email, username);
-
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("userId", id);
         claims.put("username", username);
@@ -59,13 +57,11 @@ public class JwtTokenizer {
 
     // ACCESS Token 생성
     public String createAccessToken(Long id, String email, String username, List<String> roles) {
-        log.info("Creating AccessToken for user: {}", username);
         return createToken(id, email, username, roles, ACCESS_TOKEN_EXPIRE_COUNT, accessSecret);
     }
 
     // Refresh Token 생성
     public String createRefreshToken(Long id, String email, String username, List<String> roles) {
-        log.info("refreshToken 생성");
         return createToken(id, email, username, roles, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
     }
 

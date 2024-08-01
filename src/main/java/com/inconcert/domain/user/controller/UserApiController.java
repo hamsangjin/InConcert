@@ -5,6 +5,7 @@ import com.inconcert.domain.user.dto.request.LogInReqDto;
 import com.inconcert.domain.user.dto.response.LoginRspDto;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.auth.CustomUserDetails;
 import com.inconcert.global.auth.jwt.token.entity.Token;
 import com.inconcert.global.auth.jwt.token.service.TokenService;
 import com.inconcert.global.auth.jwt.util.JwtTokenizer;
@@ -17,6 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,70 +39,66 @@ public class UserApiController {
     private final UserService userService;
     private final TokenService tokenService;
     private final JwtTokenizer jwtTokenizer;
-     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid LogInReqDto logInReqDto,
-                                BindingResult bindingResult, HttpServletResponse response) {
-        // Dto의 유효성 검사에 오류가 있는 경우
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> login(@RequestBody LogInReqDto reqDto, HttpServletResponse response) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(reqDto.getUsername(), reqDto.getPassword())
+            );
+
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            User user = userService.findByUsername(userDetails.getUsername());
+            List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+
+            String accessToken = jwtTokenizer.createAccessToken(
+                    userDetails.getId(),
+                    userDetails.getEmail(),
+                    userDetails.getUsername(),
+                    userDetails.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList())
+            );
+//            String accessToken = jwtTokenizer.createAccessToken(
+//                    userDetails.getId(), userDetails.getEmail(), userDetails.getUsername(), roles
+//            );
+
+
+            String refreshToken = jwtTokenizer.createRefreshToken(userDetails.getId(), userDetails.getEmail(), userDetails.getUsername(), roles);
+
+            Token tokenEntity = Token.builder()
+                    .accessTokenValue(accessToken)
+                    .refreshTokenValue(refreshToken)
+                    .user(user)
+                    .build();
+
+            tokenService.saveToken(tokenEntity);
+
+            LoginRspDto loginRspDto = LoginRspDto.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .username(userDetails.getUsername())
+                    .build();
+
+            // 쿠키 설정
+            Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+            accessTokenCookie.setHttpOnly(true);
+            accessTokenCookie.setPath("/");
+            accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000));
+
+            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+            refreshTokenCookie.setHttpOnly(true);
+            refreshTokenCookie.setPath("/");
+            refreshTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT / 1000));
+
+            response.addCookie(accessTokenCookie);
+            response.addCookie(refreshTokenCookie);
+
+            return ResponseEntity.ok(loginRspDto);
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
         }
-
-        User user = userService.findByUsername(logInReqDto.getUsername());
-
-        // 조회한 유저의 비밀번호와 입력한 비밀번호 일치하지 않은 경우
-        if(!passwordEncoder.matches(logInReqDto.getPassword(), user.getPassword())) {
-            return new ResponseEntity("비밀번호가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED);
-        }
-
-        // role 확인
-        List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-
-        // 토큰 발급
-        String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), user.getUsername(), roles);
-        String refreshToken = jwtTokenizer.createRefreshToken(user.getId(), user.getEmail(), user.getUsername(), roles);
-
-        // 토큰 확인 로그
-        log.info("accessToken: {},\n refreshToken: {}", accessToken, refreshToken);
-
-        // accessToken, refreshToken 을 DB에 저장
-        Token tokenEntity = Token.builder()
-                .accessTokenValue(accessToken)
-                .refreshTokenValue(refreshToken)
-                .user(user)
-                .build();
-
-        tokenService.saveToken(tokenEntity);
-
-        // 응답 객체
-        LoginRspDto loginRspDto = LoginRspDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .username(user.getUsername())
-                .build();
-
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000)); // 쿠키의 유지시간의 단위는 초, 토큰의 유지시간의 단위는 밀리초
-
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT / 1000));
-
-        // 응답 객체에 쿠키를 추가
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
-
-        // 로그 추가
-        log.info("Set-Cookie: accessToken: {}", accessTokenCookie.getValue());
-        log.info("Set-Cookie: refreshToken: {}", refreshTokenCookie.getValue());
-        log.info("Response Headers: {}", response.getHeaderNames().stream()
-                .collect(Collectors.toMap(name -> name, name -> response.getHeaders(name))));
-
-        return new ResponseEntity(loginRspDto, HttpStatus.OK);
     }
 
     @PostMapping("/refreshToken")

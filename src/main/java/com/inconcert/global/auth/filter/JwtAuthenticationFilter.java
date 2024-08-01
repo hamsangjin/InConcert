@@ -35,17 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // url 확인
-        log.info("request uri = {}", request.getRequestURI());
-        // header 확인
-        log.info("Request Headers: {}", Collections.list(request.getHeaderNames()).stream()
-                .collect(Collectors.toMap(h -> h, request::getHeader)));
-
         // accessToken 가져오기
-        log.info("doFilterInternal");
         String token = getToken(request);
-
-        log.info("token: {}", token);
 
         // header 에 값이 있는지 확인
         if(StringUtils.hasText(token)){
@@ -98,8 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private List<GrantedAuthority> getGrantedAuthorities(Claims claims){
         List<String> roles = (List<String>) claims.get("roles");
 
-        log.info("Roles: {}", roles);
-
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (String role : roles){
             authorities.add(()->role);  // role 찾아서 권한에 추가
@@ -109,7 +98,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        log.info("Authorization : {}", authorization);
 
         // Bearer 토큰인지 확인
         if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {

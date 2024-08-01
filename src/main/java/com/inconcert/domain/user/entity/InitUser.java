@@ -32,9 +32,6 @@ public class InitUser implements ApplicationRunner {
         LocalDate birthLocalDate = LocalDate.now();
         String hashedPassword = passwordEncoder.encode(adminPassword);
 
-        // 데이터베이스에서 Role 객체 조회
-//        Role adminRole = roleRepository.findByName("ROLE_ADMIN");
-
         // user와 admin 권한이 없으면 생성
         roleRepository.findByName("ROLE_USER").orElseGet(() -> {
             Role role = new Role("ROLE_USER");
