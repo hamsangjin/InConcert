@@ -8,7 +8,7 @@
 <div th:fragment="header">
     <header>
         <div class="left">
-            <a class="logo" th:href="@{/vlog}">
+            <a class="logo" th:href="@{/home}">
                 <img class="logo-img" src="/images/logo.png" alt="No Posts"/>
                 <h2 class="logo-text"> In Concert </h2>
             </a>
@@ -22,7 +22,7 @@
                 <a th:href="@{/match}">
                     <span> 동행 </span>
                 </a>
-                <a th:href="@{/review}">
+                <a th:href="@{/transfer}">
                     <span> 양도 </span>
                 </a>
             </div>
@@ -51,9 +51,13 @@
                     <a th:href="@{/notification}">
                         <img class="notification-img" src="/images/notification.png" alt="No Posts"/>
                     </a>
-                    <a th:href="@{/notification}">
+                    <div class="dropdown">
                         <img class="profile-img" src="/images/profile.png" alt="No Posts"/>
-                    </a>
+                        <div class="dropdown-content">
+                            <a th:href="@{/mypage}">마이페이지</a>
+                            <a th:href="@{/logout}">로그아웃</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
