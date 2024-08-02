@@ -24,9 +24,9 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${postDto}">
+            <div class="post-list" th:each="post : ${Musicalposts}">
                 <div class="post-left">
-                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <p th:text="${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
@@ -50,9 +50,9 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${postDto}">
+            <div class="post-list" th:each="post : ${Concertposts}">
                 <div class="post-left">
-                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <p th:text="${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
@@ -78,9 +78,9 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${postDto}">
+            <div class="post-list" th:each="post : ${Theaterposts}">
                 <div class="post-left">
-                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <p th:text="${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
@@ -103,9 +103,9 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${postDto}">
+            <div class="post-list" th:each="post : ${Etcposts}">
                 <div class="post-left">
-                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <p th:text="${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
