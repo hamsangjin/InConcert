@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 폼</title>
+</head>
+<body>
+<header>
+    <a class="logo" th:href="@{/vlog}">
+        <h2 class="logo-text"> In Concert </h2>
+    </a>
+</header>
+<div class="register-container">
+    <div>
+        <h2>회원가입</h2>
+        <form>
+            <div class="form-group">
+                <label for="id">아이디</label>
+                <input type="text" id="id" name="id" required>
+                <button type="button">중복 확인</button>
+            </div>
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="password-confirm">비밀번호 확인</label>
+                <input type="password" id="password-confirm" name="password-confirm" required>
+            </div>
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" required>
+                <button type="button">이메일 확인</button>
+            </div>
+            <div class="form-group">
+                <label for="phone">인증번호</label>
+                <input type="text" id="phone" name="phone" required>
+                <button type="button">인증번호 확인</button>
+            </div>
+            <div class="form-group">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" required>
+            </div>
+            <div class="form-group">
+                <label for="handle">핸드폰 번호</label>
+                <input type="tel" id="handle" name="handle" required>
+            </div>
+            <div class="form-group">
+                <label for="birthdate">생년월일</label>
+                <input type="date" id="birthdate" name="birthdate" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">성별</label>
+                <select id="gender" name="gender">
+                    <option value="남성">남성</option>
+                    <option value="여성">여성</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="mbti">MBTI</label>
+                <select id="mbti" name="mbti">
+                    <option value="">선택하세요</option>
+                    <option value="INTJ">INTJ</option>
+                    <option value="INTP">INTP</option>
+                    <option value="ENTJ">ENTJ</option>
+                    <option value="ENTP">ENTP</option>
+                    <option value="INFJ">INFJ</option>
+                    <option value="INFP">INFP</option>
+                    <option value="ENFJ">ENFJ</option>
+                    <option value="ENFP">ENFP</option>
+                    <option value="ISTJ">ISTJ</option>
+                    <option value="ISFJ">ISFJ</option>
+                    <option value="ESTJ">ESTJ</option>
+                    <option value="ESFJ">ESFJ</option>
+                    <option value="ISTP">ISTP</option>
+                    <option value="ISFP">ISFP</option>
+                    <option value="ESTP">ESTP</option>
+                    <option value="ESFP">ESFP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="agree" name="agree" required>
+                <label for="agree">In Concert 가입 - 개인정보 약관에 동의합니다.</label>
+            </div>
+            <button type="submit" class="submit-btn">가입하기</button>
+        </form>
+        <div class="profile-img">
+            <img id="profile-img" src="/images/logo.png" alt="프로필 이미지">
+            <input type="file" id="profile-upload" name="profile-img" accept="image/*">
+            <label for="profile-upload">프로필 설정</label>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    document.getElementById('profile-upload').addEventListener('change', function (event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('profile-img').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+</body>
+</html>
