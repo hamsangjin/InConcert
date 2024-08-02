@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
 
   servlet:
@@ -24,3 +24,9 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+jwt:
+  secretKey: ${secretKey}
+  refreshKey: ${refreshKey}
+  access-token-expire-time: 1800000
+  refresh-token-expire-time: 604800000
