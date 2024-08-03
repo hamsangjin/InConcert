@@ -47,7 +47,7 @@ public class InitUser implements ApplicationRunner {
                 .orElseGet(() -> {
                     Set<Role> roles = new HashSet<>();
                     roles.add(admin);
-
+                  
                     User userAdmin = User.builder()
                             .birth(birthLocalDate)
                             .username("admin")

@@ -7,12 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 public class UserController {
-    @GetMapping("/home")
-    public String home() {
-        return "/home";
-    }
-
-
     @GetMapping("/loginform")
     public String loginform() {
         return "/loginform";
