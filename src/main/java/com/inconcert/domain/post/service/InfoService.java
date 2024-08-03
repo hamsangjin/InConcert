@@ -10,6 +10,7 @@ import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
+import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +68,7 @@ public class InfoService {
                 .category(category)
                 .build();
 
-        postDto.setUser(userRepository.findByUsername("admin"));
+        postDto.setUser(userRepository.findByUsername("admin").orElseThrow(()->new UserNotFoundException("user를 찾을수 없습니다.")));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);

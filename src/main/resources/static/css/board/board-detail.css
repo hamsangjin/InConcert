@@ -22,10 +22,10 @@ body {
 
 header {
     display: flex;
-    min-width: calc(100%- 20px);
+    min-width: calc(100% - 20px);
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 10px 0px;
 }
 
 .left {
@@ -59,10 +59,15 @@ header {
     gap: 30px;
 }
 
-.category a {
+.category a{
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
+    cursor: pointer;
+}
+
+.category a:hover{
+    color: #00A885;
 }
 
 .right {
@@ -92,12 +97,12 @@ header {
     margin-left: 5px;
 }
 
-.search input {
+.search input{
     border: none;
     min-width: 240px;
     min-height: 30px;
     margin-right: 10px;
-    border-radius: 15px;
+    outline: none;
 }
 
 .user-header a {
@@ -123,6 +128,7 @@ header {
     background-color: #9f9f9f;
     padding: 10px 20px;
     margin-bottom: 20px;
+    border-radius: 30px;
 }
 
 .tab-button {
@@ -131,7 +137,6 @@ header {
     margin: 0 10px;
     border: none;
     background-color: transparent;
-    cursor: pointer;
     text-align: center;
     color: white;
     font-size: 16px;
@@ -139,6 +144,7 @@ header {
 
 .tab-button:hover {
     color: #00A885;
+    cursor: pointer;
 }
 
 .filters-container {
