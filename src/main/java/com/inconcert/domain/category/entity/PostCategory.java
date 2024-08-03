@@ -27,6 +27,11 @@ public class PostCategory {
     private List<Post> posts;
 
     @ManyToOne
-    @JoinColumn(name = "post_categories_id", nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public PostCategory(String title, Category category) {
+        this.title = title;
+        this.category = category;
+    }
 }

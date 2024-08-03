@@ -23,16 +23,29 @@ body {
 .container {
     flex: 1;
     min-width: calc(100% - 300px);
+    max-width: calc(100% - 300px);
     margin: 0 auto;
 }
 
+
 /* 헤더 설정 */
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
+}
+
 header {
     display: flex;
-    min-width: calc(100% - 20px);
+    min-width: 1280px;
+    max-width: 1280px;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    margin: 0 auto;
 }
 
 .left {
@@ -197,14 +210,14 @@ header {
     margin: 3px 0;
 }
 
-/* home 설정 */
-
 .popular-info-container{
     background-color: #6f6f6f;
     min-height: 500px;
     opacity: 0.5;
-    margin-bottom: 20px;
     padding: 20px;
+    margin: 0 auto 20px;
+    min-width: 1260px;
+    max-width: 1260px;
 }
 
 .popular-info-container div h1{
@@ -241,12 +254,14 @@ header {
 .board-container{
     display: flex;
     align-items: center;
-    margin-bottom: 50px;
-    margin-top: 50px;
+    margin: 50px auto;
+    min-width: 1300px;
+    max-width: 1300px;
+
 }
 
 .board-container > div{
-    min-width: 700px;
+    min-width: calc(47%);
 }
 
 .board-header{

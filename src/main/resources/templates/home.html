@@ -26,7 +26,7 @@
     </div>
 
     <div class="board-container">
-        <div style="margin-right: 65px">
+        <div style="margin-right: 75px">
             <div class="board-header">
                 <h1> 공연 소식 </h1>
                 <a th:href="@{/info}">
@@ -35,10 +35,10 @@
             </div>
             <div class="post-list" th:each="post : ${infoPosts}">
                 <div class="post-left">
-                    <a th:href="@{'/info/' + ${post.category.title} + '/' + ${post.id}}">
-                        <p th:text="${post.title}">Post Title</p>
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
-                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
@@ -47,7 +47,7 @@
                 <div class="post-right">
                     <p><span th:text="${post.username}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewSize}"></span></p>
+                    <p><span th:text="${post.viewCount}"></span></p>
                 </div>
             </div>
         </div>
@@ -61,10 +61,10 @@
             </div>
             <div class="post-list" th:each="post : ${reviewPosts}">
                 <div class="post-left">
-                    <a th:href="@{'/review/' + ${post.category.title} + '/' + ${post.id}}">
-                        <p th:text="${post.title}">Post Title</p>
+                    <a th:href="@{'/review/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
-                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
@@ -73,14 +73,14 @@
                 <div class="post-right">
                     <p><span th:text="${post.username}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewSize}"></span></p>
+                    <p><span th:text="${post.viewCount}"></span></p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="board-container">
-        <div style="margin-right: 65px">
+        <div style="margin-right: 75px">
             <div class="board-header">
                 <h1> 동행 모집 </h1>
                 <a th:href="@{/match}">
@@ -89,10 +89,10 @@
             </div>
             <div class="post-list" th:each="post : ${matchPosts}">
                 <div class="post-left">
-                    <a th:href="@{'/match/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <p th:text="${post.title}">Post Title</p>
+                    <a th:href="@{'/match/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
-                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
@@ -101,11 +101,11 @@
                 <div class="post-right">
                     <p><span th:text="${post.username}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewSize}"></span></p>
+                    <p><span th:text="${post.viewCount}"></span></p>
                 </div>
             </div>
         </div>
-        <div style="min-width: 700px;">
+        <div>
             <div class="board-header">
                 <h1> 양도 모집 </h1>
                 <a th:href="@{/transfer}">
@@ -114,10 +114,10 @@
             </div>
             <div class="post-list" th:each="post : ${transferPosts}">
                 <div class="post-left">
-                    <a th:href="@{'/transfer/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <p th:text="${post.title}">Post Title</p>
+                    <a th:href="@{'/transfer/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
-                    <p class="comment-count">[<span th:text="${post.commentSize}"> </span>]</p>
+                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
@@ -126,7 +126,7 @@
                 <div class="post-right">
                     <p><span th:text="${post.username}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewSize}"></span></p>
+                    <p><span th:text="${post.viewCount}"></span></p>
                 </div>
             </div>
         </div>

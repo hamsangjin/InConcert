@@ -12,6 +12,6 @@ public interface ReviewRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p " +
             "JOIN FETCH p.postCategory pc " +
             "JOIN FETCH pc.category c " +
-            "WHERE c.title = 'Review'")
+            "WHERE c.title = 'review'")
     List<Post> findPostsByCategoryTitleReview();
 }

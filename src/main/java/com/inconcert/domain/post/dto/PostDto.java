@@ -1,10 +1,12 @@
 package com.inconcert.domain.post.dto;
 
 import com.inconcert.domain.category.entity.*;
+import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import lombok.*;
 import java.time.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,8 +25,11 @@ public class PostDto {
     private String content;
     private String thumbnailUrl;
     private String username;
-    private int viewSize;
-    private int commentSize;
+    private String nickname;
+    private int viewCount;
+    private int likeCount;
+    private int commentCount;
+    private Set<Comment> comments;
     private boolean isNew;
     private LocalDateTime createdAt;
     private User user;

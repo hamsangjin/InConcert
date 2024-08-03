@@ -260,141 +260,165 @@ header {
     margin-top: 40px;
 }
 
-/*board-detail 설정*/
-.filters-container {
+.button-group {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
-    margin: 0 auto 20px;
+    align-items: center;
     gap: 10px;
     min-width: 1300px;
     max-width: 1300px;
-}
-
-.filters-container > div > a{
-    color: white;
-    text-decoration: none;
-}
-
-.filters {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.filters select,
-.filters input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 15px;
-    border: 1px solid #ccc;
-}
-
-.post-header {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    font-weight: bold;
     margin: 0 auto;
-    gap: 10px;
-    min-width: 1280px;
-    max-width: 1280px;
 }
 
-.post-header span {
-    text-align: center;
-}
-
-.header-title {
-    flex: 5; /* 제목이 50% 차지 */
-}
-
-.header-author,
-.header-date,
-.header-views,
-.header-likes {
-    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
-}
-
-.post-list {
-    border-top: 1px solid #ddd;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
-}
-
-.post {
-    display: flex;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
-}
-
-.post-thumbnail {
-    flex-shrink: 0;
-    margin-right: 15px;
-}
-
-.post-thumbnail img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-}
-
-.post-content {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-}
-
-.post-title {
-    flex: 5; /* 제목이 50% 차지 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.post-title > a{
-    color: black;
-    text-decoration: none;
-}
-
-.post-title > a:hover{
-    text-decoration: underline;
-}
-
-.comment-count{
-    color: red;
-    padding: 0;
-}
-
-.post-title > div{
+.nav-button {
+    padding: 10px 20px;
     border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.post-container{
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.post-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.post-info > .profile-img {
+    width: 40px;
+    height: 40px;
+    margin-top: 3px;
     border-radius: 50%;
-    background-color: red;
-    color: white;
-    width: 18px;
-    height: 18px;
+}
+
+.author-row, .date-row {
     display: flex;
-    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-button {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 8px;
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-button:hover {
+    background-color: #ddd;
+}
+
+.date, .views {
+    font-size: 12px;
+    color: #999;
+}
+
+.post-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.post-image {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+.post-text {
+    text-align: left;
+    width: 100%;
+}
+
+.interaction {
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    background-color: #d3d3d3;
+    border-radius: 20px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.interaction .like-icon {
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.interaction span {
+    margin-right: 20px;
+    display: flex;
     align-items: center;
 }
 
-.post-meta {
+.sort-buttons {
     display: flex;
-    flex: 5;
+    justify-content: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.sort-button {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.sort-button:hover {
+    background-color: #ddd;
+}
+
+.comments {
+    margin-top: 20px;
+}
+
+.comment {
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+
+.comment-content {
+    display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-left: 80px;
 }
 
-.post-meta span {
-    flex: 1;
-    text-align: center;
-    color: #6f6f6f;
-    white-space: nowrap;
+.comment-header{
+    display: flex;
+    align-items: center;
+}
+
+.comment-header > div > .author,  .comment-header > div > .date{
+    margin: 0 0 0 5px;
+}
+
+.comment-header .author {
+    font-weight: bold;
+}
+
+.comment-header .date {
+    font-size: 12px;
+    color: #999;
+}
+
+.comment-options {
+    margin-left: auto;
+    cursor: pointer;
 }

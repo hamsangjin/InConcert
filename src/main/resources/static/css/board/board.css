@@ -23,16 +23,29 @@ body {
 .container {
     flex: 1;
     min-width: calc(100% - 300px);
+    max-width: calc(100% - 300px);
     margin: 0 auto;
 }
 
+
 /* 헤더 설정 */
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
+}
+
 header {
     display: flex;
-    min-width: calc(100% - 20px);
+    min-width: 1280px;
+    max-width: 1280px;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    margin: 0 auto;
 }
 
 .left {
@@ -73,6 +86,10 @@ header {
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -197,25 +214,37 @@ header {
     margin: 3px 0;
 }
 
-/* board 설정 */
+/* tab 설정 */
+.tabs-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
 .tabs {
     display: flex;
     justify-content: space-between;
     background-color: #9f9f9f;
-    padding: 10px 20px;
+    padding: 10px 10px;
     margin-bottom: 20px;
     border-radius: 30px;
+    min-width: 1280px;
+    max-width: 1280px;
 }
 
 .tab-button {
     flex: 1;
-    padding: 10px 0;
+    padding: 0;
     margin: 0 10px;
     border: none;
     background-color: transparent;
     text-align: center;
     color: white;
     font-size: 16px;
+    text-decoration: none;
 }
 
 .tab-button:hover {
@@ -223,29 +252,18 @@ header {
     cursor: pointer;
 }
 
-.write-btn{
-    text-align: right;
-    margin-bottom: 20px;
-    margin-top: 40px;
-}
-
-.write-btn a{
-    background-color: #00A885;
-    color: white;
-    text-decoration: none;
-    border: 1px #6f6f6f solid;
-    border-radius: 15px;
-    padding: 5px;
-}
-
+/*board 설정*/
 .board-container{
     display: flex;
-    align-items: center;
-    margin-bottom: 50px;
+    justify-content: center;
+    margin: 0 auto 50px;
+    min-width: 1300px;
+    max-width: 1300px;
 }
 
 .board-container > div{
-    min-width: 700px;
+    min-width: calc(40%);
+    max-width: calc(40%);
 }
 
 .board-header{
