@@ -67,7 +67,7 @@ public class InfoService {
                 .category(category)
                 .build();
 
-        postDto.setUser(userRepository.findByUsername("admin"));
+        postDto.setUser(userRepository.findByUsername("admin").get());
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
