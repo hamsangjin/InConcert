@@ -1,0 +1,187 @@
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 300px);
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: calc(100% - 20px); /* 변경: min-width를 width로 변경 */
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin: 0; /* 변경: header의 기본 마진 제거 */
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    color: #00A885;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.logo-text {
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+}
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin: 50px 0;
+    margin-right: 70px;
+
+}
+
+.nav-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.write-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #00A885; /* 청록색 배경 */
+    color: white;
+}
+
+.write-button:hover {
+    background-color: #00896b; /* 호버 시 색상 변경 */
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.category a {
+    color: #6f6f6f;
+    text-decoration: none;
+    margin-top: 2px;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    gap: 30px;
+}
+
+.right a {
+    color: #6f6f6f;
+    text-decoration: none;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    border: #6f6f6f 1px solid;
+    border-radius: 10px;
+}
+
+.search img {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.search input {
+    border: none;
+    min-width: 240px;
+    min-height: 30px;
+    margin-right: 10px;
+}
+
+.user-header a {
+    margin-left: 15px;
+}
+
+.profile-img {
+    border-radius: 50%;
+}
+
+.profile-img, .notification-img, .chat-img {
+    width: 30px;
+    height: 30px;
+}
+
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
