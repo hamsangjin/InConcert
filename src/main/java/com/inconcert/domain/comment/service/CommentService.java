@@ -5,10 +5,8 @@ import com.inconcert.domain.comment.dto.CommentDto;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
 import com.inconcert.domain.post.entity.Post;
-import com.inconcert.domain.post.repository.PostRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.exception.CommentNotFoundException;
-import com.inconcert.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,7 +62,8 @@ public class CommentService {
         dto.setUser(user);
         Comment comment = dto.toEntity();
 
-        comment.confirmPost(postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("ID = " + postId + " 의 해당 게시글이 존재하지 않습니다.")));
+        // 예외처리 변경 예정
+        comment.confirmPost(postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException("ID = " + postId + " 의 해당 게시글이 존재하지 않습니다.")));
 
         comment.confirmParent(commentRepository.findById(parentId).orElseThrow(() -> new CommentNotFoundException("ID = " + postId + " 의 해당 부모 댓글이 존재하지 않습니다.")));
 
