@@ -1,8 +1,8 @@
 package com.inconcert.domain.user.controller;
 
 import com.inconcert.domain.role.entity.Role;
-import com.inconcert.domain.user.dto.request.LogInReqDto;
-import com.inconcert.domain.user.dto.response.LoginRspDto;
+import com.inconcert.domain.user.dto.request.*;
+import com.inconcert.domain.user.dto.response.*;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.auth.CustomUserDetails;
@@ -24,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -147,4 +148,34 @@ public class UserApiController {
 
         return new ResponseEntity(loginRspDto, HttpStatus.OK);
     }
+
+    // 아이디 중복 확인
+    @PostMapping("/user/id-check")
+    public ResponseEntity<? super UsernameCheckRspDto> usenameCheck(@RequestBody @Valid UsernameCheckReqDto reqDto) {
+        return userService.usernameCheck(reqDto);
+    }
+
+    // 이메일 증복 확인
+    @PostMapping("/user/email-check")
+    public ResponseEntity<? super EmailCheckRspDto> emailCheck(@RequestBody @Valid EmailCheckReqDto reqDto) {
+        return userService.emailCheck(reqDto);
+    }
+
+    // 인증번호 메일 전송
+    @PostMapping("/user/email-certification")
+    public ResponseEntity<? super EmailCertificationRspDto> emailCertification(@RequestBody @Valid EmailCertificationReqDto reqDto) {
+        return userService.emailCertification(reqDto);
+    }
+
+    // 인증번호 확인
+    @PostMapping("/user/check-certification")
+    public ResponseEntity<? super CheckCertificationRspDto> checkCertification(@RequestBody @Valid CheckCertificationReqDto reqDto) {
+        return userService.checkCertification(reqDto);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@ModelAttribute RegisterReqDto reqDto) {
+        return userService.joinUser(reqDto);
+    }
+
 }

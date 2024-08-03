@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
 
   servlet:
@@ -19,11 +19,24 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
 
+  # mail send (인증번호 전송)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${gmail}
+    password: ${googlePw}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 logging:
   level:
     org:
       springframework:
-        security: DEBUG
+        security: INFO
 
 jwt:
   secretKey: ${secretKey}

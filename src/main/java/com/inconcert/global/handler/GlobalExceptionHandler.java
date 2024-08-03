@@ -2,6 +2,7 @@ package com.inconcert.global.handler;
 
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.CommentNotFoundException;
+import com.inconcert.global.exception.RoleNameNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // role을 찾을 수 없을 때
+    @ExceptionHandler(RoleNameNotFoundException.class)
+    public ResponseEntity<String> handleRoleNameNotFoundException(RoleNameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 }
