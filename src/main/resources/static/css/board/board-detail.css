@@ -1,0 +1,313 @@
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 300px);
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    min-width: calc(100% - 20px);
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px 0px;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.logo-text {
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+}
+
+.logo-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 5px;
+}
+
+.category {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.category a{
+    color: #6f6f6f;
+    text-decoration: none;
+    margin-top: 2px;
+    cursor: pointer;
+}
+
+.category a:hover{
+    color: #00A885;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+    gap: 30px;
+}
+
+.right a {
+    color: #6f6f6f;
+    text-decoration: none;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    border: #6f6f6f 1px solid;
+    border-radius: 10px;
+}
+
+.search img {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.search input{
+    border: none;
+    min-width: 240px;
+    min-height: 30px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.user-header a {
+    margin-left: 15px;
+}
+
+.profile-img {
+    border-radius: 50%;
+}
+
+.profile-img, .notification-img, .chat-img {
+    width: 30px;
+    height: 30px;
+}
+
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 30px;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+}
+
+.tab-button:hover {
+    color: #00A885;
+    cursor: pointer;
+}
+
+.filters-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filters select,
+.filters input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 15px;
+    border: 1px solid #ccc;
+}
+
+.write-btn {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.write-btn a {
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 20px;
+}
+
+.write-btn a:hover {
+    background-color: #00896b;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #ffffff; /* 흰색 배경 */
+    border-bottom: 1px solid #ddd;
+}
+
+.post-header span {
+    text-align: center;
+}
+
+.header-title {
+    flex: 5; /* 제목이 50% 차지 */
+}
+
+.header-author,
+.header-date,
+.header-views,
+.header-likes {
+    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
+}
+
+.post-list {
+    border-top: 1px solid #ddd;
+}
+
+.post {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #ffffff; /* 기본 배경 색상 흰색으로 설정 */
+    transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 추가 */
+}
+
+.post:hover {
+    background-color: #00A885; /* 마우스 오버 시 배경 색상 변경 */
+    color: white; /* 마우스 오버 시 텍스트 색상 변경 */
+}
+
+.post-thumbnail {
+    flex-shrink: 0;
+    margin-right: 15px;
+}
+
+.post-thumbnail img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.post-content {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.post-info {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post-title {
+    flex: 5; /* 제목이 50% 차지 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.comment-count {
+    color: #f97300;
+    margin-left: 10px;
+}
+
+.new-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+}
+
+.post-meta {
+    display: flex;
+    flex: 5;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 90px; /* 요소들이 더 오른쪽으로 이동하도록 설정 */
+}
+
+.post-meta span {
+    flex: 1;
+    text-align: center;
+    color: #6f6f6f;
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
