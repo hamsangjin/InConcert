@@ -14,9 +14,4 @@ public class UserController {
     public String loginform() {
         return "/loginform";
     }
-
-    @GetMapping("/loginForm")
-    public String loginForm() {
-        return "/loginform";
-    }
 }
