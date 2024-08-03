@@ -4,6 +4,7 @@ import com.inconcert.domain.role.entity.Role;
 import com.inconcert.domain.role.repository.RoleRepository;
 import com.inconcert.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +15,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.inconcert.domain.user.entity.Gender.MALE;
-import static com.inconcert.domain.user.entity.Mbti.INTJ;
-
 @Component
 @RequiredArgsConstructor
 public class InitUser implements ApplicationRunner {
@@ -24,7 +22,8 @@ public class InitUser implements ApplicationRunner {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private String adminPassword = "1234";
+    @Value("${adminPw}")
+    private String adminPassword;
 
     @Transactional
     @Override
@@ -43,22 +42,26 @@ public class InitUser implements ApplicationRunner {
             return roleRepository.save(role);
         });
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(admin);
+        // 관리자 계정이 없을 때만 생성
+        userRepository.findByUsername("admin")
+                .orElseGet(() -> {
+                    Set<Role> roles = new HashSet<>();
+                    roles.add(admin);
+                  
+                    User userAdmin = User.builder()
+                            .birth(birthLocalDate)
+                            .username("admin")
+                            .name("admin")
+                            .email("admin@inconcert.com")
+                            .gender(Gender.FEMALE)
+                            .mbti(Mbti.ISTJ)
+                            .nickname("admin")
+                            .password(hashedPassword)
+                            .phoneNumber("01012345678")
+                            .roles(roles)
+                            .build();
 
-        User userAdmin = User.builder()
-                .birth(birthLocalDate)
-                .username("admin")
-                .name("admin")
-                .email("admin@blog.com")
-                .gender(MALE)
-                .mbti(INTJ)
-                .nickname("adminNick")
-                .password(hashedPassword)
-                .phoneNumber("123-456-7890")
-                .roles(roles)
-                .build();
-
-        userRepository.save(userAdmin);
+                    return userRepository.save(userAdmin);
+                });
     }
 }

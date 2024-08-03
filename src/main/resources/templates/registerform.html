@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>회원가입 폼</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <header>
-    <a class="logo" th:href="@{/home}">
-        <h2 class="logo-text"> In Concert </h2>
+    <a class="logo" href="/home">
+        <h2 class="logo-text">In Concert</h2>
     </a>
 </header>
 <div class="register-container">
     <div>
         <h2>회원가입</h2>
-        <form>
+        <form id="registerForm" th:action="@{/register}" method="post">
             <div class="form-group">
-                <label for="id">아이디</label>
-                <input type="text" id="id" name="id" required>
-                <button type="button">중복 확인</button>
+                <label for="username">아이디</label>
+                <input type="text" id="username" name="username" required>
+                <button type="button" id="checkIdBtn">중복 확인</button>
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
@@ -30,12 +31,12 @@
             <div class="form-group">
                 <label for="email">이메일</label>
                 <input type="email" id="email" name="email" required>
-                <button type="button">이메일 확인</button>
+                <button type="button" id="checkEmailBtn">이메일 확인</button>
             </div>
             <div class="form-group">
-                <label for="phone">인증번호</label>
-                <input type="text" id="phone" name="phone" required>
-                <button type="button">인증번호 확인</button>
+                <label for="certificationNumber">인증번호</label>
+                <input type="text" id="certificationNumber" name="certificationNumber" required>
+                <button type="button" id="checkCertificationBtn">인증번호 확인</button>
             </div>
             <div class="form-group">
                 <label for="name">이름</label>
@@ -46,23 +47,23 @@
                 <input type="text" id="nickname" name="nickname" required>
             </div>
             <div class="form-group">
-                <label for="handle">핸드폰 번호</label>
-                <input type="tel" id="handle" name="handle" required>
+                <label for="phoneNumber">핸드폰 번호</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required>
             </div>
             <div class="form-group">
-                <label for="birthdate">생년월일</label>
-                <input type="date" id="birthdate" name="birthdate" required>
+                <label for="birth">생년월일</label>
+                <input type="date" id="birth" name="birth" required>
             </div>
             <div class="form-group">
                 <label for="gender">성별</label>
-                <select id="gender" name="gender">
-                    <option value="남성">남성</option>
-                    <option value="여성">여성</option>
+                <select id="gender" name="gender" required>
+                    <option value="MALE">남성</option>
+                    <option value="FEMALE">여성</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="mbti">MBTI</label>
-                <select id="mbti" name="mbti">
+                <select id="mbti" name="mbti" required>
                     <option value="">선택하세요</option>
                     <option value="INTJ">INTJ</option>
                     <option value="INTP">INTP</option>
@@ -86,26 +87,119 @@
                 <input type="checkbox" id="agree" name="agree" required>
                 <label for="agree">In Concert 가입 - 개인정보 약관에 동의합니다.</label>
             </div>
-            <button type="submit" class="submit-btn">가입하기</button>
+            <button type="button" id="registerBtn" class="submit-btn">가입하기</button>
         </form>
         <div class="profile-img">
             <img id="profile-img" src="/images/logo.png" alt="프로필 이미지">
-            <input type="file" id="profile-upload" name="profile-img" accept="image/*">
-            <label for="profile-upload">프로필 설정</label>
         </div>
     </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
-<script>
-    document.getElementById('profile-upload').addEventListener('change', function (event) {
-        var file = event.target.files[0];
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('profile-img').src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+<script th:inline="javascript">
+    document.getElementById('checkIdBtn').addEventListener('click', function () {
+        let username = document.getElementById('username').value;
+        fetch('/user/id-check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username: username }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('사용 가능한 아이디입니다.');
+                } else {
+                    alert('이미 존재하는 아이디입니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('checkEmailBtn').addEventListener('click', function () {
+        let email = document.getElementById('email').value;
+        let username = document.getElementById('username').value;
+        fetch('/user/email-check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, username: username }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('사용 가능한 이메일입니다. 인증 번호를 전송합니다.');
+                    fetch('/user/email-certification', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email: email, username: username }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.code === "SU") {
+                                alert('인증 번호가 전송되었습니다.');
+                            } else {
+                                alert('인증 번호 전송에 실패했습니다.');
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                } else {
+                    alert('이미 존재하는 이메일입니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('checkCertificationBtn').addEventListener('click', function () {
+        let certificationNumber = document.getElementById('certificationNumber').value;
+        let email = document.getElementById('email').value;
+        let username = document.getElementById('username').value;
+        fetch('/user/check-certification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email, username: username, certificationNumber: certificationNumber }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('인증되었습니다.');
+                } else {
+                    alert('인증 번호가 일치하지 않습니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('registerBtn').addEventListener('click', function () {
+        let password = document.getElementById('password').value;
+        let passwordConfirm = document.getElementById('password-confirm').value;
+        if (password !== passwordConfirm) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
         }
+
+        let form = document.getElementById('registerForm');
+        let formData = new FormData(form);
+
+        fetch('/register', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('회원가입이 완료되었습니다.');
+                    window.location.href = '/home';
+                } else {
+                    alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 </script>
 </body>
