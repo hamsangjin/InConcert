@@ -2,24 +2,29 @@ package com.inconcert.domain.category.entity;
 
 import com.inconcert.domain.post.entity.Post;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "post_categories")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PostCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @OneToMany(mappedBy = "postCategory")
+    private List<Post> posts;
 
     @ManyToOne
     @JoinColumn(name = "post_categories_id", nullable = false)

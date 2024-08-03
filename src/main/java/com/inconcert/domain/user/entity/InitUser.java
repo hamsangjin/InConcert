@@ -46,19 +46,24 @@ public class InitUser implements ApplicationRunner {
         Set<Role> roles = new HashSet<>();
         roles.add(admin);
 
-        User userAdmin = User.builder()
-                .birth(birthLocalDate)
-                .username("admin")
-                .name("admin")
-                .email("admin@blog.com")
-                .gender(MALE)
-                .mbti(INTJ)
-                .nickname("adminNick")
-                .password(hashedPassword)
-                .phoneNumber("123-456-7890")
-                .roles(roles)
-                .build();
+        User adminUser = userRepository.findByUsername("admin");
 
-        userRepository.save(userAdmin);
+        if(adminUser == null) {
+            User userAdmin = User.builder()
+                    .birth(birthLocalDate)
+                    .username("admin")
+                    .name("admin")
+                    .email("admin@blog.com")
+                    .gender(MALE)
+                    .mbti(INTJ)
+                    .nickname("adminNick")
+                    .password(hashedPassword)
+                    .phoneNumber("123-456-7890")
+                    .roles(roles)
+                    .build();
+            userRepository.save(userAdmin);
+        }
+
+
     }
 }
