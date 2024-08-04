@@ -1,43 +1,54 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>로그인 폼</title>
+    <link rel="stylesheet" href="/css/loginform.css">
+
 </head>
 <body>
-<header>
-    <a class="logo" th:href="@{/home}">
-        <h2 class="logo-text"> In Concert </h2>
-    </a>
-</header>
-<form id="loginForm">
-    <div>
-        <input type="text" name="username" id="username" placeholder="아이디" required>
-    </div>
-    <div>
-        <input type="password" name="password" id="password" placeholder="비밀번호" required>
-    </div>
-    <div>
-        <input type="checkbox" id="rememberMe" name="rememberMe">
-        <label for="rememberMe">간편로그인 정보 저장</label>
-    </div>
-    <div>
-        <button type="submit">로그인</button>
-    </div>
-    <div>
-        <span>또는</span>
-    </div>
-    <div>
-        <a th:href="@{/oauth2/authorization/naver}">
-            <button type="button">네이버 로그인</button>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
         </a>
+    </header>
+    <div class="login-container">
+        <form id="loginForm">
+            <div>
+                <input type="text" name="username" id="username" placeholder="아이디" required>
+            </div>
+            <div>
+                <input type="password" name="password" id="password" placeholder="비밀번호" required>
+            </div>
+            <div class="login-remember">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">로그인 상태 유지</label>
+            </div>
+            <div class="default-login">
+                <button type="submit">로그인</button>
+            </div>
+            <div class="divider">
+                <span>또는</span>
+            </div>
+            <div class="naver-login">
+                <a th:href="@{/oauth2/authorization/naver}">
+                    <button type="button">네이버 로그인</button>
+                </a>
+            </div>
+        </form>
+        <div class="link-container">
+            <a href="#">회원가입</a>
+            <div>
+                <a href="#">아이디 찾기</a>
+                <a href="#">비밀번호 찾기</a>
+            </div>
+        </div>
     </div>
-</form>
-<div>
-    <a href="#">회원가입</a>
-    <a href="#">계정 찾기</a>
-    <a href="#">비밀번호 찾기</a>
+
+    <div id='wrapper'></div>
 </div>
-<div th:replace="~{fragments/footer :: footer}"></div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
@@ -112,5 +123,7 @@
         }
     });
 </script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>
