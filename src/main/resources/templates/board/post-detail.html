@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>메인 화면</title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
-    <script src="/js/board/post-detail.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script defer src="/js/board/post-detail.js"></script>
 </head>
 <body>
 <div class="container">
@@ -62,13 +63,13 @@
         </div>
 
         <div class="interaction">
-            <button class="like-icon" id="like-icon"
-                    th:data-post-id="${post.id}"
-                    th:data-category-title="${categoryTitle}"
-                    th:data-user="${user}"
-                    onclick="toggleLike(this)">♡</button>
+            <i class="like-icon far fa-heart" id="like-icon"
+               th:data-post-id="${post.id}"
+               th:data-category-title="${categoryTitle}"
+               th:data-user="${user}"
+               onclick="toggleLike(this)"></i>
             <span id="like-count" th:text="${post.likeCount}"></span>
-            <span th:text="${post.commentCount}">댓글</span>
+            <span th:text="'댓글 '+ ${post.commentCount}"></span>
         </div>
 
         <div class="sort-buttons">

@@ -346,6 +346,7 @@ header {
 .interaction {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     padding: 10px 20px;
     background-color: #d3d3d3;
     border-radius: 20px;
@@ -356,8 +357,14 @@ header {
 }
 
 .interaction .like-icon {
+    border: none;
+    background-color: transparent;
     margin-right: 5px;
     font-size: 16px;
+}
+
+.interaction .like-icon:hover {
+    cursor: pointer;
 }
 
 .interaction span {

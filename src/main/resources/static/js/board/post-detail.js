@@ -13,7 +13,13 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     if (response.ok) {
         const data = await response.json();
-        likeIcon.textContent = data.liked ? '♥' : '♡';
+        if (data.liked) {
+            likeIcon.classList.remove('far');
+            likeIcon.classList.add('fas');
+        } else {
+            likeIcon.classList.remove('fas');
+            likeIcon.classList.add('far');
+        }
     } else {
         console.error('올바르지 않은 요청입니다.');
     }
@@ -25,7 +31,7 @@ async function toggleLike(button) {
 
     const likeIcon = document.getElementById('like-icon');
     const likeCountSpan = document.getElementById('like-count');
-    let liked = likeIcon.textContent === '♡';
+    let liked = likeIcon.classList.contains('far');
 
     const response = await fetch(`/api/${categoryTitle}/like/${postId}`, {
         method: 'POST',
@@ -46,12 +52,13 @@ async function toggleLike(button) {
         console.error('올바르지 않은 요청입니다.');
     }
 
-    if (liked){
-        likeIcon.textContent = '♥';
+    if (liked) {
+        likeIcon.classList.remove('far');
+        likeIcon.classList.add('fas');
         likeCountSpan.textContent = (parseInt(likeCountSpan.textContent) + 1).toString();
-    }
-    else{
-        likeIcon.textContent = '♡';
+    } else {
+        likeIcon.classList.remove('fas');
+        likeIcon.classList.add('far');
         likeCountSpan.textContent = (parseInt(likeCountSpan.textContent) - 1).toString();
     }
 }
