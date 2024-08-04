@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>메인 화면</title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
+    <script src="/js/board/post-detail.js"></script>
 </head>
 <body>
 <div class="container">
@@ -61,10 +62,12 @@
         </div>
 
         <div class="interaction">
-            <span class="like-icon"> ❤️</span>
-            <span th:text="'좋아요 '+ ${post.likeCount}"></span>
-            <span th:text="'댓글 '+ ${post.commentCount}"></span>
+            <button class="like-icon" id="like-icon" th:onclick="'toggleLike('' + ${post.id} + '', '' + ${categoryTitle} + '');'">좋아요</button>
+            <span id="like-count" th:text="${post.likeCount}">좋아요</span>
+            <span th:text="${post.commentCount}">댓글</span>
         </div>
+
+
 
 
         <div class="sort-buttons">
