@@ -13,12 +13,12 @@ public interface TransferRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p " +
             "JOIN FETCH p.postCategory pc " +
             "JOIN FETCH pc.category c " +
-            "WHERE c.title = 'Transfer' AND pc.title = :postCategoryTitle")
+            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle")
     List<Post> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     @Query("SELECT p FROM Post p " +
             "JOIN FETCH p.postCategory pc " +
             "JOIN FETCH pc.category c " +
-            "WHERE c.title = 'Transfer'")
+            "WHERE c.title = 'transfer'")
     List<Post> findPostsByCategoryTitleTransfer();
 }

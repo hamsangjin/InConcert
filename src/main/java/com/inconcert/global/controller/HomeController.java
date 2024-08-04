@@ -1,6 +1,8 @@
 package com.inconcert.global.controller;
 
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.user.entity.User;
+import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,19 +15,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
     private final HomeService homeService;
+    private final UserService userService;
 
     @GetMapping("/home")
     public String home(Model model) {
-        List<PostDto> infoPosts = homeService.getAllCategoryPosts("Info");
-        List<PostDto> reviewPosts = homeService.getAllCategoryPosts("Review");
-        List<PostDto> matchPosts = homeService.getAllCategoryPosts("Match");
-        List<PostDto> transferPosts = homeService.getAllCategoryPosts("Transfer");
+        List<PostDto> infoPosts = homeService.getAllCategoryPosts("info");
+        List<PostDto> reviewPosts = homeService.getAllCategoryPosts("review");
+        List<PostDto> matchPosts = homeService.getAllCategoryPosts("match");
+        List<PostDto> transferPosts = homeService.getAllCategoryPosts("transfer");
 
         model.addAttribute("infoPosts", infoPosts);
         model.addAttribute("reviewPosts", reviewPosts);
         model.addAttribute("matchPosts", matchPosts);
         model.addAttribute("transferPosts", transferPosts);
         return "home";
+    }
+
+    @GetMapping("/mypage")
+    public String mypage(Model model) {
+        User user = userService.getAuthenticatedUser();
+        model.addAttribute("user", user);
+        return "/user/mypage";
     }
 
     @GetMapping("/write")

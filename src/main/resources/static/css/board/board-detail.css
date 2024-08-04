@@ -1,3 +1,4 @@
+/* 공통 설정 */
 html {
     font-family: Arial, sans-serif;
     height: 100%;
@@ -5,6 +6,11 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
 }
 
 body {
@@ -17,15 +23,29 @@ body {
 .container {
     flex: 1;
     min-width: calc(100% - 300px);
+    max-width: calc(100% - 300px);
     margin: 0 auto;
+}
+
+
+/* 헤더 설정 */
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
 }
 
 header {
     display: flex;
-    min-width: calc(100% - 20px);
+    min-width: 1280px;
+    max-width: 1280px;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 10px 0px;
+    padding: 10px;
+    margin: 0 auto;
 }
 
 .left {
@@ -34,26 +54,26 @@ header {
     gap: 10px;
 }
 
-.logo {
+.logo{
     display: flex;
     align-items: center;
     text-decoration: none;
     margin-right: 30px;
 }
 
-.logo-text {
+.logo-text{
     font-weight: bolder;
     font-style: italic;
     color: #00A885;
 }
 
-.logo-img {
+.logo-img{
     width: 40px;
     height: 40px;
     margin-right: 5px;
 }
 
-.category {
+.category{
     display: flex;
     align-items: center;
     gap: 30px;
@@ -63,10 +83,13 @@ header {
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
-    cursor: pointer;
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -77,19 +100,19 @@ header {
     gap: 30px;
 }
 
-.right a {
+.right a{
     color: #6f6f6f;
     text-decoration: none;
 }
 
-.search {
+.search{
     display: flex;
     align-items: center;
     border: #6f6f6f 1px solid;
     border-radius: 10px;
 }
 
-.search img {
+.search img{
     width: 20px;
     height: 20px;
     margin-top: 2px;
@@ -105,41 +128,123 @@ header {
     outline: none;
 }
 
-.user-header a {
+.user-header > div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-header a{
     margin-left: 15px;
 }
 
-.profile-img {
-    border-radius: 50%;
+.write-btn {
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px 10px;
 }
 
-.profile-img, .notification-img, .chat-img {
+.profile-img, .notification-img, .chat-img{
     width: 30px;
     height: 30px;
 }
 
+.profile-img{
+    border-radius: 50%;
+}
+
+.profile-img:hover{
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1;
+    min-width: 160px;
+    border-radius: 15px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    margin-left: 0;
+    border-radius: 15px;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* footer 설정 */
 #wrapper {
     padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* tab 설정 */
+.tabs-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto;
 }
 
 .tabs {
     display: flex;
     justify-content: space-between;
     background-color: #9f9f9f;
-    padding: 10px 20px;
+    padding: 10px 10px;
     margin-bottom: 20px;
     border-radius: 30px;
+    min-width: 1280px;
+    max-width: 1280px;
 }
 
 .tab-button {
     flex: 1;
-    padding: 10px 0;
+    padding: 0;
     margin: 0 10px;
     border: none;
     background-color: transparent;
     text-align: center;
     color: white;
     font-size: 16px;
+    text-decoration: none;
 }
 
 .tab-button:hover {
@@ -147,12 +252,28 @@ header {
     cursor: pointer;
 }
 
+.tab-button.selected{
+    color: #00A885;
+}
+
+.review-block{
+    margin-top: 40px;
+}
+
+/*board-detail 설정*/
 .filters-container {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
     gap: 10px;
+    min-width: 1300px;
+    max-width: 1300px;
+}
+
+.filters-container > div > a{
+    color: white;
+    text-decoration: none;
 }
 
 .filters {
@@ -169,32 +290,15 @@ header {
     border: 1px solid #ccc;
 }
 
-.write-btn {
-    display: flex;
-    gap: 10px;
-    margin-left: 10px;
-}
-
-.write-btn a {
-    background-color: #00A885;
-    color: white;
-    text-decoration: none;
-    border: none;
-    border-radius: 15px;
-    padding: 10px 20px;
-}
-
-.write-btn a:hover {
-    background-color: #00896b;
-}
-
 .post-header {
     display: flex;
     justify-content: space-between;
     padding: 10px;
     font-weight: bold;
-    background-color: #ffffff; /* 흰색 배경 */
-    border-bottom: 1px solid #ddd;
+    margin: 0 auto;
+    gap: 10px;
+    min-width: 1280px;
+    max-width: 1280px;
 }
 
 .post-header span {
@@ -214,19 +318,17 @@ header {
 
 .post-list {
     border-top: 1px solid #ddd;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
 }
 
 .post {
     display: flex;
     padding: 10px;
     border-bottom: 1px solid #ddd;
-    background-color: #ffffff; /* 기본 배경 색상 흰색으로 설정 */
-    transition: background-color 0.3s ease; /* 부드러운 색상 전환 효과 추가 */
-}
-
-.post:hover {
-    background-color: #00A885; /* 마우스 오버 시 배경 색상 변경 */
-    color: white; /* 마우스 오버 시 텍스트 색상 변경 */
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
 }
 
 .post-thumbnail {
@@ -246,29 +348,40 @@ header {
     align-items: center;
 }
 
-.post-info {
-    display: flex;
-    flex-grow: 1;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .post-title {
     flex: 5; /* 제목이 50% 차지 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.comment-count {
-    color: #f97300;
-    margin-left: 10px;
+.post-title > a{
+    color: black;
+    text-decoration: none;
 }
 
-.new-icon {
-    width: 20px;
-    height: 20px;
-    margin-left: 5px;
+.post-title > a:hover{
+    text-decoration: underline;
+}
+
+.comment-count{
+    color: red;
+    padding: 0;
+}
+
+.post-title > div{
+    border: none;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .post-meta {
@@ -276,38 +389,12 @@ header {
     flex: 5;
     justify-content: space-between;
     align-items: center;
-    margin-left: 90px; /* 요소들이 더 오른쪽으로 이동하도록 설정 */
+    margin-left: 80px;
 }
 
 .post-meta span {
     flex: 1;
     text-align: center;
     color: #6f6f6f;
-    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
-}
-
-.footer {
-    height: 70px;
-    background-color: #6f6f6f;
-    color: white;
-    opacity: 0.5;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.footer p {
-    margin: 3px 0;
-}
-
-.visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
+    white-space: nowrap;
 }

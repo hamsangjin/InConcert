@@ -21,4 +21,8 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<PostCategory> postCategories;
+
+    public Category(String title) {
+        this.title = title;
+    }
 }

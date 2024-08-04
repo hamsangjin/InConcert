@@ -23,16 +23,29 @@ body {
 .container {
     flex: 1;
     min-width: calc(100% - 300px);
+    max-width: calc(100% - 300px);
     margin: 0 auto;
 }
 
+
 /* 헤더 설정 */
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
+}
+
 header {
     display: flex;
-    min-width: calc(100% - 20px);
+    min-width: 1280px;
+    max-width: 1280px;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    margin: 0 auto;
 }
 
 .left {
@@ -197,31 +210,6 @@ header {
     margin: 3px 0;
 }
 
-/* 카테고리 tab 설정*/
-.tabs {
-    display: flex;
-    justify-content: space-between;
-    background-color: #9f9f9f;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    border-radius: 30px;
-}
-
-.tab-button {
-    flex: 1;
-    padding: 10px 0;
-    margin: 0 10px;
-    border: none;
-    background-color: transparent;
-    text-align: center;
-    color: white;
-    font-size: 16px;
-}
-
-.tab-button:hover {
-    color: #00A885;
-    cursor: pointer;
-}
 
 /* 게시글 작성 설정 */
 .write-container{
@@ -229,7 +217,9 @@ header {
     padding: 20px;
     background-color: #9f9f9f;
     border-radius: 5px;
-    width: calc(100% - 42px);
+    min-width: 1240px;
+    max-width: 1240px;
+    margin: 0 auto;
 }
 
 .dropdowns{

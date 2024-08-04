@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" class="jua-regular" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" class="jua-regular" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Fragment Header</title>
@@ -13,16 +13,20 @@
                 <h2 class="logo-text"> In Concert </h2>
             </a>
             <div class="category">
-                <a th:href="@{/info}">
+                <a th:href="@{/info}"
+                   th:classappend="${categoryTitle == 'info'} ? ' selected'">
                     <span> 공연 소식 </span>
                 </a>
-                <a th:href="@{/review}">
+                <a th:href="@{/review}"
+                   th:classappend="${categoryTitle == 'review'} ? ' selected'">
                     <span> 공연 후기 </span>
                 </a>
-                <a th:href="@{/match}">
+                <a th:href="@{/match}"
+                   th:classappend="${categoryTitle == 'match'} ? ' selected'">
                     <span> 동행 </span>
                 </a>
-                <a th:href="@{/transfer}">
+                <a th:href="@{/transfer}"
+                   th:classappend="${categoryTitle == 'transfer'} ? ' selected'">
                     <span> 양도 </span>
                 </a>
             </div>
@@ -37,11 +41,11 @@
             </div>
 
             <div class="user-header">
-                <div th:if="${user != null}">
+                <div sec:authorize="isAnonymous()">
                     <a th:href="@{/loginform}">로그인</a>
                     <a th:href="@{/registerform}">회원가입</a>
                 </div>
-                <div th:if="${user == null}">
+                <div sec:authorize="isAuthenticated()">
                     <a th:href="@{/write}">
                         <span class="write-btn"> 글쓰기 </span>
                     </a>

@@ -7,16 +7,16 @@ import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
+import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
+import com.inconcert.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +24,15 @@ public class TransferService {
     private final TransferRepository transferRepository;
     private final CategoryRepository categoryRepository;
     private final PostCategoryRepository postCategoryRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
         List<Post> posts;
-        if(postCategoryTitle.equals("Musical"))         posts = transferRepository.findPostsByPostCategoryTitle("Musical");
-        else if(postCategoryTitle.equals("Concert"))    posts = transferRepository.findPostsByPostCategoryTitle("Concert");
-        else if(postCategoryTitle.equals("Theater"))    posts = transferRepository.findPostsByPostCategoryTitle("Theater");
-        else if(postCategoryTitle.equals("Etc"))        posts = transferRepository.findPostsByPostCategoryTitle("Etc");
+        if(postCategoryTitle.equals("musical"))         posts = transferRepository.findPostsByPostCategoryTitle("musical");
+        else if(postCategoryTitle.equals("concert"))    posts = transferRepository.findPostsByPostCategoryTitle("concert");
+        else if(postCategoryTitle.equals("theater"))    posts = transferRepository.findPostsByPostCategoryTitle("theater");
+        else if(postCategoryTitle.equals("etc"))        posts = transferRepository.findPostsByPostCategoryTitle("etc");
         else                                            throw new PostCategoryNotFoundException(postCategoryTitle);
 
         List<PostDto> postDtos = new ArrayList<>();
@@ -40,27 +41,57 @@ public class TransferService {
                     .id(post.getId())
                     .title(post.getTitle())
                     .postCategory(post.getPostCategory())
-                    .username(post.getUser().getUsername())
-                    .viewSize(post.getViewCount())
-                    .commentSize(post.getComments().size())
+                    .nickname(post.getUser().getNickname())
+                    .viewCount(post.getViewCount())
+                    .commentCount(post.getComments().size())
+                    .likeCount(post.getLikes().size())
                     .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                     .createdAt(post.getCreatedAt())
                     .build();
             postDtos.add(postDto);
         }
-
         return postDtos;
     }
 
     @Transactional
+    public PostDto getPostById(Long postId) {
+        Post findPost = transferRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+
+        // viewCount 증가
+        findPost.incrementViewCount();
+        Post post = transferRepository.save(findPost);
+
+        return PostDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .postCategory(post.getPostCategory())
+                .nickname(post.getUser().getNickname())
+                .viewCount(post.getViewCount())
+                .commentCount(post.getComments().size())
+                .comments(post.getComments())
+                .likeCount(post.getLikes().size())
+                .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    @Transactional
     public void save(PostDto postDto){
-        // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 객체 생성
-        PostCategory postCategory = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle())
-                .orElseThrow(() -> new PostCategoryNotFoundException(postDto.getPostCategoryTitle() + "라는 Post Category를 찾지 못했습니다."));
+
+        // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
+        List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
         // 게시물 작성 폼에서 가져온 Category 제목으로 조회해서 Category 객체 생성
-        Category category = categoryRepository.findById(postDto.getPostCategory().getId())
+        Category category = categoryRepository.findByTitle(postDto.getCategoryTitle())
                 .orElseThrow(() -> new CategoryNotFoundException(postDto.getCategoryTitle() + "라는 Category를 찾지 못했습니다."));
+
+        // 적절한 PostCategory 찾기
+        PostCategory postCategory = postCategories.stream()
+                .filter(pc -> pc.getCategory().equals(category))
+                .findFirst()
+                .orElseThrow(() -> new PostCategoryNotFoundException("해당 제목과 카테고리 조합의 PostCategory를 찾지 못했습니다."));
 
         // 생성한 Category를 builder를 통해 연관관계 주입
         PostCategory updatedPostCategory = postCategory.builder()
@@ -68,6 +99,8 @@ public class TransferService {
                 .title(postCategory.getTitle())
                 .category(category)
                 .build();
+
+        postDto.setUser(userService.getAuthenticatedUser());
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
