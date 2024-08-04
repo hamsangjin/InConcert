@@ -14,11 +14,10 @@ public class InfoRestController {
     private final LikeService likeService;
 
     @PostMapping("/like/{postId}")
-    public ResponseEntity<?> toggleLike(@PathVariable("postId") Long postId){
-        boolean result = likeService.toggleLike(postId, "info");
-
-        if(result)      return ResponseEntity.ok("좋아요 성공");
-        else            return ResponseEntity.badRequest().body("좋아요 실패");
+    public ResponseEntity<Map<String, Boolean>> toggleLike(@PathVariable("postId") Long postId){
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("liked", likeService.toggleLike(postId, "info"));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/like/status/{postId}")
