@@ -1,20 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <title>로그인 폼</title>
 </head>
 <body>
+<header>
+    <a class="logo" th:href="@{/home}">
+        <h2 class="logo-text"> In Concert </h2>
+    </a>
+</header>
 <form id="loginForm">
-    <input type="text" name="username" id="username" required>
-    <input type="password" name="password" id="password" required>
-    <button type="submit">Login</button>
+    <div>
+        <input type="text" name="username" id="username" placeholder="아이디" required>
+    </div>
+    <div>
+        <input type="password" name="password" id="password" placeholder="비밀번호" required>
+    </div>
+    <div>
+        <input type="checkbox" id="rememberMe" name="rememberMe">
+        <label for="rememberMe">간편로그인 정보 저장</label>
+    </div>
+    <div>
+        <button type="submit">로그인</button>
+    </div>
+    <div>
+        <span>또는</span>
+    </div>
+    <div>
+        <a th:href="@{/oauth2/authorization/naver}">
+            <button type="button">네이버 로그인</button>
+        </a>
+    </div>
 </form>
-
+<div>
+    <a href="#">회원가입</a>
+    <a href="#">계정 찾기</a>
+    <a href="#">비밀번호 찾기</a>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
 
-        loginForm.addEventListener('submit', function(event) {
+        loginForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
             const username = document.getElementById('username').value;
@@ -74,7 +102,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ refreshToken: refreshToken })
+                body: JSON.stringify({refreshToken: refreshToken})
             })
                 .then(response => response.json())
                 .then(data => {

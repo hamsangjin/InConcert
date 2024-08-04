@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>MyPage</title>
+    <link rel="stylesheet" href="/css/user/mypage.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="mypage-container">
+        <div class="top-container">
+            <img class="profile-img2" src="/images/profile.png" alt="No Posts"/>
+            <div>
+                <div class="name-container">
+                    <h3 th:text="${user.name}"></h3>
+                    <p th:text="'(' + ${user.nickname} + ')'"></p>
+                    <a th:href="@{/mypage/editform}">
+                        <span class="edit-btn"> 내 정보 수정 </span>
+                    </a>
+                </div>
+                <h3 th:text="${user.email}"></h3>
+                <h3 th:text="${#temporals.format(user.birth, 'yyyy')} + '년생'"></h3>
+                <h3 th:text="${user.phoneNumber}"></h3>
+                <div class="link-container">
+                    <a class="link-btn" th:href="@{/mypage/board}">
+                        <h3> 내 글 보기 </h3>
+                    </a>
+                    <a class="link-btn" th:href="@{/mypage/comment}">
+                        <h3> 내 댓글 보기 </h3>
+                    </a>
+                    <a class="link-btn" th:href="@{/mypage/like}">
+                        <h3> 좋아요한 글 보기 </h3>
+                    </a>
+                    <a class="link-btn" th:href="@{/mypage/with}">
+                        <h3> 내 동행 목록 </h3>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="intro-container">
+            <p th:text="${user.intro}"></p>
+        </div>
+
+        <div class="mbti-mannerPoint-container">
+            <div class="mbti-mannerPoint-title">
+                <h3> MBTI </h3>
+                <h3> 매너점수 </h3>
+            </div>
+            <div class="mbti-mannerPoint-value">
+                <h3 th:text="${user.mbti}"></h3>
+                <h3 th:text="${user.mannerPoint}"></h3>
+            </div>
+        </div>
+
+        <div class="delete-btn-container">
+            <a th:href="@{/bye}">
+                <span class="delete-btn"> 회원 탈퇴 </span>
+            </a>
+        </div>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
