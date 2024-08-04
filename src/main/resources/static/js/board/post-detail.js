@@ -3,7 +3,7 @@ async function toggleLike(button) {
     const categoryTitle = button.getAttribute('data-category-title');
     const user = button.getAttribute('data-user');
 
-    if (!user) {
+    if(user == null) {
         window.location.href = '/loginform';
         return;
     }

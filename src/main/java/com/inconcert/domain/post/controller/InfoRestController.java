@@ -18,7 +18,4 @@ public class InfoRestController {
             return ResponseEntity.ok("성공");
         }else return ResponseEntity.badRequest().body("실패다 임마");
     }
-
-
-
 }

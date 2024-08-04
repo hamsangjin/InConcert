@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>메인 화면</title>
@@ -65,13 +65,11 @@
             <button class="like-icon" id="like-icon"
                     th:data-post-id="${post.id}"
                     th:data-category-title="${categoryTitle}"
-                    th:data-user="${#authentication}"
+                    th:data-user="${user}"
                     onclick="toggleLike(this)">좋아요</button>
             <span id="like-count" th:text="${post.likeCount}">좋아요</span>
             <span th:text="${post.commentCount}">댓글</span>
         </div>
-
-
 
         <div class="sort-buttons">
             <button class="sort-button">등록순</button>

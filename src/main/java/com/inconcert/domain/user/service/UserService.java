@@ -161,9 +161,13 @@ public class UserService {
     }
 
     public Optional<User> getAuthenticatedUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
+        try{
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = userDetails.getUsername();
 
-        return userRepository.findByUsername(username);
+            return userRepository.findByUsername(username);
+        }catch (Exception e) {
+            return null;
+        }
     }
 }
