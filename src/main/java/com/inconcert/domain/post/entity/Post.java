@@ -53,4 +53,9 @@ public class Post extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "post_category_id", nullable = false)
     private PostCategory postCategory;
+
+    // viewCount를 증가시키는 메소드
+    public void incrementViewCount() {
+        this.viewCount += 1;
+    }
 }

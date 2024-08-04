@@ -53,10 +53,14 @@ public class TransferService {
         return postDtos;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PostDto getPostById(Long postId) {
-        Post post = transferRepository.findById(postId)
+        Post findPost = transferRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+
+        // viewCount 증가
+        findPost.incrementViewCount();
+        Post post = transferRepository.save(findPost);
 
         return PostDto.builder()
                 .id(post.getId())

@@ -42,7 +42,7 @@ public class InfoService {
                     .title(post.getTitle())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
-                    .viewCount(post.getViewCount())
+                    .viewCount(post.getViewCount()+1)
                     .commentCount(post.getComments().size())
                     .likeCount(post.getLikes().size())
                     .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
@@ -54,10 +54,14 @@ public class InfoService {
     }
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
-    @Transactional(readOnly = true)
+    @Transactional
     public PostDto getPostById(Long postId) {
-        Post post = infoRepository.findById(postId)
+        Post findPost = infoRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+
+        // viewCount 증가
+        findPost.incrementViewCount();
+        Post post = infoRepository.save(findPost);
 
         return PostDto.builder()
                 .id(post.getId())

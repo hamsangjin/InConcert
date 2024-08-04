@@ -27,10 +27,14 @@ public class ReviewService {
     private final UserService userService;
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
-    @Transactional(readOnly = true)
+    @Transactional
     public PostDto getPostById(Long postId) {
-        Post post = reviewRepository.findById(postId)
+        Post findPost = reviewRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+
+        // viewCount 증가
+        findPost.incrementViewCount();
+        Post post = reviewRepository.save(findPost);
 
         return PostDto.builder()
                 .id(post.getId())
