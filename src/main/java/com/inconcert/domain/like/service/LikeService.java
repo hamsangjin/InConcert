@@ -33,16 +33,20 @@ public class LikeService {
 
         switch (categoryTitle){
             case "info":
-                post = infoRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                post = infoRepository.findById(postId)
+                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
                 break;
             case "match":
-                post = matchRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                post = matchRepository.findById(postId)
+                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
                 break;
             case "review":
-                post = reviewRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                post = reviewRepository.findById(postId)
+                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
                 break;
             case "transfer":
-                post = transferRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                post = transferRepository.findById(postId)
+                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
                 break;
         }
 
@@ -65,7 +69,6 @@ public class LikeService {
             // 이미 좋아요를 누른 경우, 좋아요 취소
             likeRepository.delete(findLike.get());
         }
-
         return true;
     }
 

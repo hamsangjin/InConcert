@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
             if (response.ok) {
                 const data = await response.json();
-                likeIcon.textContent = data.liked ? '❤' : '♡';
+                likeIcon.textContent = data.liked ? '♥' : '♡';
             } else {
                 console.error('Failed to get like status');
             }
@@ -40,30 +40,19 @@ async function toggleLike(button) {
     let liked = likeIcon.textContent === '♡';
 
     if (liked){
-        likeIcon.textContent = '❤';
-        likeCountSpan.textContent = (parseInt(likeIcon.textContent) + 1).toString();
+        likeIcon.textContent = '♥';
+        likeCountSpan.textContent = (parseInt(likeCountSpan.textContent) + 1).toString();
     }
     else{
         likeIcon.textContent = '♡';
-        likeCountSpan.textContent = (parseInt(likeIcon.textContent) - 1).toString();
+        likeCountSpan.textContent = (parseInt(likeCountSpan.textContent) - 1).toString();
     }
 
-    try {
-        const response = await fetch(`/api/${categoryTitle}/like/${postId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ liked })
-        });
-
-        if (response.ok) {
-            // const data = JSON.parse(responseText);  // JSON 파싱
-            // likeCountSpan.textContent = `좋아요 ${data.likeCount}`;
-        } else {
-            console.error('Failed to like post');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    const response = await fetch(`/api/${categoryTitle}/like/${postId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ liked })
+    });
 }

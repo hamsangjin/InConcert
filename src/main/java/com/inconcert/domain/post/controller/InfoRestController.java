@@ -3,8 +3,6 @@ package com.inconcert.domain.post.controller;
 import com.inconcert.domain.like.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -18,9 +16,9 @@ public class InfoRestController {
     @PostMapping("/like/{postId}")
     public ResponseEntity<?> toggleLike(@PathVariable("postId") Long postId){
         boolean result = likeService.toggleLike(postId, "info");
-        if(result){
-            return ResponseEntity.ok("성공");
-        }else return ResponseEntity.badRequest().body("실패다 임마");
+
+        if(result)      return ResponseEntity.ok("좋아요 성공");
+        else            return ResponseEntity.badRequest().body("좋아요 실패");
     }
 
     @GetMapping("/like/status/{postId}")
