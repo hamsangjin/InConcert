@@ -12,6 +12,7 @@ import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import com.inconcert.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +75,8 @@ public class ReviewService {
                 .category(category)
                 .build();
 
-        postDto.setUser(userService.getAuthenticatedUser());
+        postDto.setUser(userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username")));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);

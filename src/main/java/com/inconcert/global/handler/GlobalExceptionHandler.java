@@ -1,10 +1,6 @@
 package com.inconcert.global.handler;
 
-import com.inconcert.global.exception.CategoryNotFoundException;
-import com.inconcert.global.exception.CommentNotFoundException;
-import com.inconcert.global.exception.RoleNameNotFoundException;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.global.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,4 +37,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRoleNameNotFoundException(RoleNameNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(LikeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleLikeNotFoundException(LikeNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+
+
+
 }

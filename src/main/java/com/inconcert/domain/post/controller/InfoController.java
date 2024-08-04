@@ -2,6 +2,7 @@ package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.service.InfoService;
+import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class InfoController {
     private final InfoService infoService;
+    private final UserService userService;
 
     @GetMapping
     public String info(Model model) {
@@ -35,6 +37,7 @@ public class InfoController {
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", infoService.getPostById(postId));
+        model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "info");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         return "board/post-detail";

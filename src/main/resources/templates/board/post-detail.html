@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>메인 화면</title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
+    <script src="/js/board/post-detail.js"></script>
 </head>
 <body>
 <div class="container">
@@ -61,11 +62,14 @@
         </div>
 
         <div class="interaction">
-            <span class="like-icon"> ❤️</span>
-            <span th:text="'좋아요 '+ ${post.likeCount}"></span>
-            <span th:text="'댓글 '+ ${post.commentCount}"></span>
+            <button class="like-icon" id="like-icon"
+                    th:data-post-id="${post.id}"
+                    th:data-category-title="${categoryTitle}"
+                    th:data-user="${user}"
+                    onclick="toggleLike(this)">♡</button>
+            <span id="like-count" th:text="${post.likeCount}"></span>
+            <span th:text="${post.commentCount}">댓글</span>
         </div>
-
 
         <div class="sort-buttons">
             <button class="sort-button">등록순</button>
