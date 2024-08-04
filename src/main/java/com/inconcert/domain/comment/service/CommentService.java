@@ -2,49 +2,17 @@ package com.inconcert.domain.comment.service;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.comment.dto.CommentDto;
-import com.inconcert.domain.comment.entity.Comment;
-import com.inconcert.domain.comment.repository.CommentRepository;
-import com.inconcert.global.exception.CommentNotFoundException;
-import lombok.RequiredArgsConstructor;
+import com.inconcert.domain.user.entity.User;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class CommentService {
-    private final CommentRepository commentRepository;
-
-    @Transactional(readOnly = true)
-    public List<CommentDto> findByPostId(Long Id) {
-        List<Comment> byPostId = commentRepository.findByPostId(Id);
-        List<CommentDto> dtoList = new ArrayList<>();
-
-        for (Comment comment : byPostId) {
-            dtoList.add(comment.toCommentDto());
-        }
-        return dtoList;
-    }
-
-    @Transactional
-    public CommentDto findComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
-        return comment.toCommentDto();
-    }
-
-    @Transactional
-    public Long CommentUpdate(Long id, CommentCreateForm dto) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
-        comment.update(dto.getContent(), dto.isSecret());
-        commentRepository.save(comment);
-        return comment.getId();
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
-        commentRepository.delete(comment);
-    }
+public interface CommentService {
+    List<CommentDto> findByPostId(String boardType, Long id);
+    CommentDto findComment(String boardType, Long id);
+    Long saveComment(String boardType, Long id, User user, CommentCreateForm dto);
+    void reSaveComment(String boardType, Long postId, Long parentId, User user, CommentCreateForm dto);
+    Long updateComment(String boardType, Long id, CommentCreateForm dto);
+    void deleteComment(String boardType, Long id);
 }
