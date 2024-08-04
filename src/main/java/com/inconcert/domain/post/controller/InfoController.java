@@ -7,34 +7,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Controller
+@RequestMapping("/info")
 @RequiredArgsConstructor
 public class InfoController {
     private final InfoService infoService;
 
-    @GetMapping("/info")
+    @GetMapping
     public String info(Model model) {
-        model.addAttribute("Musicalposts", infoService.getAllInfoPostsByPostCategory("Musical"));
-        model.addAttribute("Concertposts", infoService.getAllInfoPostsByPostCategory("Concert"));
-        model.addAttribute("Theaterposts", infoService.getAllInfoPostsByPostCategory("Theater"));
-        model.addAttribute("Etcposts", infoService.getAllInfoPostsByPostCategory("Etc"));
+        model.addAttribute("Musicalposts", infoService.getAllInfoPostsByPostCategory("musical"));
+        model.addAttribute("Concertposts", infoService.getAllInfoPostsByPostCategory("concert"));
+        model.addAttribute("Theaterposts", infoService.getAllInfoPostsByPostCategory("theater"));
+        model.addAttribute("Etcposts", infoService.getAllInfoPostsByPostCategory("etc"));
+        model.addAttribute("categoryTitle", "info");
         return "board/board";
     }
 
-    @GetMapping("/info/{postCategoryTitle}")
+    @GetMapping("/{postCategoryTitle}")
     public String infoDetail(@PathVariable("postCategoryTitle") String postCategoryTitle, Model model) {
-        List<PostDto> postDtos = infoService.getAllInfoPostsByPostCategory(postCategoryTitle);
-        model.addAttribute("postDtos", postDtos);
+        model.addAttribute("posts", infoService.getAllInfoPostsByPostCategory(postCategoryTitle));
+        model.addAttribute("categoryTitle", "info");
+        model.addAttribute("postCategoryTitle", postCategoryTitle);
         return "board/board-detail";
     }
 
-    @PostMapping("/info/write")
-    public String write(@ModelAttribute PostDto postDto, @RequestParam("categoryTitle") String categoryTitle){
-        System.out.println(categoryTitle);
-        System.out.println(postDto.getCategoryTitle());
-        System.out.println(postDto);
+    @GetMapping("/{postCategoryTitle}/{postId}")
+    public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                                @PathVariable("postId") Long postId, Model model) {
+        model.addAttribute("post", infoService.getPostById(postId));
+        model.addAttribute("categoryTitle", "info");
+        model.addAttribute("postCategoryTitle", postCategoryTitle);
+        return "board/post-detail";
+    }
+
+    @PostMapping("/write")
+    public String write(@ModelAttribute PostDto postDto){
         infoService.save(postDto);
         return "redirect:/info";
     }

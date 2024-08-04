@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 화면</title>
+    <link rel="stylesheet" href="/css/board/post-detail.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="tabs-container" th:if="${categoryTitle} != 'review'">
+        <div class="tabs">
+            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/musical'}"
+               th:classappend="${postCategoryTitle == 'musical'} ? ' selected'">
+                <p>뮤지컬</p>
+            </a>
+            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/concert'}"
+               th:classappend="${postCategoryTitle == 'concert'} ? ' selected'">
+                <p>콘서트</p>
+            </a>
+            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/theater'}"
+               th:classappend="${postCategoryTitle == 'theater'} ? ' selected'">
+                <p>연극</p>
+            </a>
+            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/etc'}"
+               th:classappend="${postCategoryTitle == 'etc'} ? ' selected'">
+                <p>기타</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
+
+    <div class="button-group">
+        <button class="nav-button">이전 글</button>
+        <button class="nav-button">다음 글</button>
+        <button class="nav-button">목록</button>
+    </div>
+
+    <div class="post-container">
+        <h2 th:text="'[' + ${postCategoryTitle} + '] ' + ${post.title}"></h2>
+        <div class="post-info">
+            <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+            <div>
+                <div class="author-row">
+                    <span class="author" th:text="${post.nickname}"></span>
+                    <button class="chat-button">1:1 채팅</button>
+                </div>
+                <div class="date-row">
+                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span class="views" th:text="${post.viewCount}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-body">
+            <img src="/images/logo.png" class="post-image">
+            <div class="post-text">
+                <p th:text="${post.content}"></p>
+            </div>
+        </div>
+
+        <div class="interaction">
+            <span class="like-icon"> ❤️</span>
+            <span th:text="'좋아요 '+ ${post.likeCount}"></span>
+            <span th:text="'댓글 '+ ${post.commentCount}"></span>
+        </div>
+
+
+        <div class="sort-buttons">
+            <button class="sort-button">등록순</button>
+            <button class="sort-button">최신순</button>
+        </div>
+
+        <!-- 댓글쓰기 폼 추가해야 하고, css도 수정 필요-->
+        <div class="comments" th:each="comment : ${post.comments}">
+            <div class="comment">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <!-- user의 이미지로 변경 -->
+                        <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+                        <div>
+                            <p class="author" th:text="${comment.user.nickname}">송민형</p>
+                            <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                        </div>
+                    </div>
+                    <div class="comment-options">...</div>
+                </div>
+                <p th:text="${comment.content}"></p>
+            </div>
+        </div>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

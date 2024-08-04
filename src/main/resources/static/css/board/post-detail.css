@@ -89,6 +89,10 @@ header {
     color: #00A885;
 }
 
+.category a.selected{
+    color: #00A885;
+}
+
 .right {
     display: flex;
     align-items: center;
@@ -210,109 +214,211 @@ header {
     margin: 3px 0;
 }
 
-/*mypage 설정*/
-.mypage-container{
-    border: 1px solid #6f6f6f;
-    border-radius: 10px;
+/* tab 설정 */
+.tabs-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 1300px;
+    max-width: 1300px;
     margin: 0 auto;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    background-color: #9f9f9f;
+    padding: 10px 10px;
+    margin-bottom: 20px;
+    border-radius: 30px;
     min-width: 1280px;
     max-width: 1280px;
 }
 
-.top-container{
-    display: flex;
-    align-items: center;
-}
-
-.profile-img2{
-    width: calc(20%);
-    height: auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 20px;
-    margin: 20px;
-}
-
-.name-container{
-    display: flex;
-    align-items: center;
-}
-
-.edit-btn{
-    color: black;
-    text-decoration: black underline;
-    margin-left: 40px;
-}
-
-h3{
-    padding-top: 20px;
-    padding-bottom: 20px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.link-container{
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.link-btn{
-    text-decoration: none;
-    color: black;
-}
-
-.intro-container{
-    border-radius: 5px;
-    border: 1px solid #6f6f6f;
-    margin: 20px;
-    padding: 10px;
-    height: 200px
-}
-
-.mbti-mannerPoint-container{
-    display: flex;
-    margin: 0 20px;
-}
-
-.mbti-mannerPoint-container div > h3{
+.tab-button {
+    flex: 1;
     padding: 0;
+    margin: 0 10px;
+    border: none;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
 }
 
-.mbti-mannerPoint-title{
-    margin-right: 15px;
+.tab-button:hover {
+    color: #00A885;
+    cursor: pointer;
 }
 
-.mbti-mannerPoint-title > h3:first-child, .mbti-mannerPoint-value > h3:first-child {
-    margin-bottom: 10px;
+.tab-button.selected{
+    color: #00A885;
 }
 
-.mbti-mannerPoint-value > h3{
-    color: #54BBD6;
+.review-block{
+    margin-top: 40px;
+}
+
+.button-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.nav-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.post-container{
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.post-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.post-info > .profile-img {
+    width: 40px;
+    height: 40px;
+    margin-top: 3px;
+    border-radius: 50%;
+}
+
+.author-row, .date-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chat-button {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 8px;
+    font-size: 12px;
+    color: #333;
+    cursor: pointer;
     font-weight: bold;
 }
 
-.mypage-container > a{
-    text-align: right;
+.chat-button:hover {
+    background-color: #ddd;
 }
 
-.delete-btn-container{
+.date, .views {
+    font-size: 12px;
+    color: #999;
+}
+
+.post-body {
     display: flex;
-    justify-content: right;
+    flex-direction: column;
     align-items: center;
-    margin: 20px;
+    padding-top: 10px;
 }
 
-.delete-btn-container > a{
-    text-decoration: none;
+.post-image {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+.post-text {
+    text-align: left;
+    width: 100%;
+}
+
+.interaction {
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 20px;
+    background-color: #d3d3d3;
+    border-radius: 20px;
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.interaction .like-icon {
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.interaction span {
+    margin-right: 20px;
     display: flex;
     align-items: center;
 }
 
-.delete-btn{
-    background-color: #00A885;
-    color: white;
-    text-decoration: none;
-    border: 1px #6f6f6f solid;
-    border-radius: 15px;
+.sort-buttons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.sort-button {
+    background-color: #f1f1f1;
+    border: none;
+    border-radius: 10px;
     padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.sort-button:hover {
+    background-color: #ddd;
+}
+
+.comments {
+    margin-top: 20px;
+}
+
+.comment {
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+}
+
+.comment-content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-header{
+    display: flex;
+    align-items: center;
+}
+
+.comment-header > div > .author,  .comment-header > div > .date{
+    margin: 0 0 0 5px;
+}
+
+.comment-header .author {
+    font-weight: bold;
+}
+
+.comment-header .date {
+    font-size: 12px;
+    color: #999;
+}
+
+.comment-options {
+    margin-left: auto;
+    cursor: pointer;
 }

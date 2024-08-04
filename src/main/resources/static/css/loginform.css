@@ -1,0 +1,224 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 900px);
+    max-width: calc(100% - 900px);
+    margin: 0 auto;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+
+/* login 설정 */
+header {
+    display: flex;
+    min-width: 808px;
+    max-width: 808px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+.login-container{
+    align-items: center;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 60px;
+    min-width: 708px;
+    max-width: 708px;
+    margin: 0 auto;
+}
+
+#username, #password{
+    border: none;
+    border-bottom: 1px solid #00A885;
+    max-width: calc(50%);
+    min-width: calc(50%);
+    margin: 20px;
+    font-size: 18px;
+    outline: none;
+}
+
+#username:focus, #password:focus {
+    background-color: transparent;
+}
+
+.login-remember{
+    max-width: calc(50%);
+    min-width: calc(50%);
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+}
+
+.login-remember input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-remember input[type="checkbox"]:checked::before {
+    content:'✔';
+    min-width: 21px;
+    min-height: 21px;
+    max-width: 21px;
+    max-height: 21px;
+    background-color: #00A885;
+    color: white;
+    font-size: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-remember > label{
+    margin-top: 2px;
+    color: #6f6f6f;
+}
+
+.default-login, .naver-login{
+    background-color: #00A885;
+    opacity: 0.6;
+    color: white;
+    border-radius: 10px;
+    max-width: calc(50% - 20px);
+    min-width: calc(50% - 20px);
+    margin: 0 auto 20px;
+    padding: 10px;
+    align-items: center;
+}
+
+.default-login > button, .naver-login > a > button{
+    background-color: #00A885;
+    color: white;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.default-login > button:hover, .naver-login > a > button:hover{
+    cursor: pointer;
+}
+
+.divider {
+    max-width: calc(50%);
+    min-width: calc(50%);
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+
+.divider::before {
+    margin-right: 10px;
+}
+
+.divider::after {
+    margin-left: 10px;
+}
+
+.divider > span{
+    color: #6f6f6f;
+}
+
+.link-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-width: calc(50%);
+    max-width: calc(50%);
+    margin: 40px auto 0;
+}
+
+.login-container a{
+    text-decoration: none;
+    color: #6f6f6f;
+}
+
+.link-container > {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

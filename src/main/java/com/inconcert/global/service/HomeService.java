@@ -29,10 +29,10 @@ public class HomeService {
     @Transactional(readOnly = true)
     public List<PostDto> getAllCategoryPosts(String categoryTitle) {
         List<Post> posts;
-        if(categoryTitle.equals("Info"))            posts = infoRepository.findPostsByCategoryTitleInfo();
-        else if(categoryTitle.equals("Review"))     posts = reviewRepository.findPostsByCategoryTitleReview();
-        else if(categoryTitle.equals("Match"))      posts = matchRepository.findPostsByCategoryTitleMatch();
-        else if(categoryTitle.equals("Transfer"))   posts = transferRepository.findPostsByCategoryTitleTransfer();
+        if(categoryTitle.equals("info"))            posts = infoRepository.findPostsByCategoryTitleInfo();
+        else if(categoryTitle.equals("review"))     posts = reviewRepository.findPostsByCategoryTitleReview();
+        else if(categoryTitle.equals("match"))      posts = matchRepository.findPostsByCategoryTitleMatch();
+        else if(categoryTitle.equals("transfer"))   posts = transferRepository.findPostsByCategoryTitleTransfer();
         else                                        throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
 
         List<PostDto> postDtos = new ArrayList<>();
@@ -47,8 +47,9 @@ public class HomeService {
                     .category(category)
                     .postCategory(postCategory)
                     .username(post.getUser().getUsername())
-                    .viewSize(post.getViewCount())
-                    .commentSize(post.getComments().size())
+                    .viewCount(post.getViewCount())
+                    .commentCount(post.getComments().size())
+                    .likeCount(post.getLikes().size())
                     .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                     .createdAt(post.getCreatedAt())
                     .build();
