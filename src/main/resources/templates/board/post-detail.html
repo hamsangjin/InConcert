@@ -62,11 +62,14 @@
         </div>
 
         <div class="interaction">
-            <button class="like-icon" id="like-icon" th:onclick="'toggleLike('' + ${post.id} + '', '' + ${categoryTitle} + '');'">좋아요</button>
+            <button class="like-icon" id="like-icon"
+                    th:data-post-id="${post.id}"
+                    th:data-category-title="${categoryTitle}"
+                    th:data-user="${#authentication}"
+                    onclick="toggleLike(this)">좋아요</button>
             <span id="like-count" th:text="${post.likeCount}">좋아요</span>
             <span th:text="${post.commentCount}">댓글</span>
         </div>
-
 
 
 
