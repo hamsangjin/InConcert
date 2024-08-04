@@ -29,12 +29,13 @@ public class InfoService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts;
-        if(postCategoryTitle.equals("musical"))         posts = infoRepository.findPostsByPostCategoryTitle("musical");
-        else if(postCategoryTitle.equals("concert"))    posts = infoRepository.findPostsByPostCategoryTitle("concert");
-        else if(postCategoryTitle.equals("theater"))    posts = infoRepository.findPostsByPostCategoryTitle("theater");
-        else if(postCategoryTitle.equals("etc"))        posts = infoRepository.findPostsByPostCategoryTitle("etc");
-        else                                            throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
+        List<Post> posts = switch (postCategoryTitle) {
+            case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical");
+            case "concert" -> infoRepository.findPostsByPostCategoryTitle("concert");
+            case "theater" -> infoRepository.findPostsByPostCategoryTitle("theater");
+            case "etc" -> infoRepository.findPostsByPostCategoryTitle("etc");
+            default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
+        };
 
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {

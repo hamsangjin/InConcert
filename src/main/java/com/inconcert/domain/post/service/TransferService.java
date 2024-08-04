@@ -29,12 +29,13 @@ public class TransferService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts;
-        if(postCategoryTitle.equals("musical"))         posts = transferRepository.findPostsByPostCategoryTitle("musical");
-        else if(postCategoryTitle.equals("concert"))    posts = transferRepository.findPostsByPostCategoryTitle("concert");
-        else if(postCategoryTitle.equals("theater"))    posts = transferRepository.findPostsByPostCategoryTitle("theater");
-        else if(postCategoryTitle.equals("etc"))        posts = transferRepository.findPostsByPostCategoryTitle("etc");
-        else                                            throw new PostCategoryNotFoundException(postCategoryTitle);
+        List<Post> posts = switch (postCategoryTitle) {
+            case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical");
+            case "concert" -> transferRepository.findPostsByPostCategoryTitle("concert");
+            case "theater" -> transferRepository.findPostsByPostCategoryTitle("theater");
+            case "etc" -> transferRepository.findPostsByPostCategoryTitle("etc");
+            default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
+        };
 
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {

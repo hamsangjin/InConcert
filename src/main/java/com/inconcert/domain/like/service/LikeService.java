@@ -6,7 +6,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.*;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.LikeNotFoundException;
+import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -29,29 +29,20 @@ public class LikeService {
 
     @Transactional
     public boolean toggleLike(Long postId, String categoryTitle) {
-        Post post = null;
-
-        switch (categoryTitle){
-            case "info":
-                post = infoRepository.findById(postId)
-                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "match":
-                post = matchRepository.findById(postId)
-                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "review":
-                post = reviewRepository.findById(postId)
-                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "transfer":
-                post = transferRepository.findById(postId)
-                        .orElseThrow(() -> new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-        }
+        Post post = switch (categoryTitle) {
+            case "info" -> infoRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "match" -> matchRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "review" -> reviewRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "transfer" -> transferRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
+        };
 
         Optional<User> loginUser = userService.getAuthenticatedUser();
-        User user = null;
+        User user;
         if(!loginUser.isPresent())  return false;
         else                        user = loginUser.get();
 
@@ -73,24 +64,19 @@ public class LikeService {
     }
 
     public boolean isLikedByUser(Long postId, String categoryTitle) {
-        Post post = null;
+        Post post = switch (categoryTitle) {
+            case "info" -> infoRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "match" -> matchRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "review" -> reviewRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            case "transfer" -> transferRepository.findById(postId)
+                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+            default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
+        };
 
-        switch (categoryTitle){
-            case "info":
-                post = infoRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "match":
-                post = matchRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "review":
-                post = reviewRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-            case "transfer":
-                post = transferRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
-                break;
-        }
-
-        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException("user not found."));
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
         return likeRepository.existsByPostAndUser(post, user);
     }

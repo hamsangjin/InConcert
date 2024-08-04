@@ -29,12 +29,13 @@ public class MatchService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllMatchPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts;
-        if(postCategoryTitle.equals("musical"))         posts = matchRepository.findPostsByPostCategoryTitle("musical");
-        else if(postCategoryTitle.equals("concert"))    posts = matchRepository.findPostsByPostCategoryTitle("concert");
-        else if(postCategoryTitle.equals("theater"))    posts = matchRepository.findPostsByPostCategoryTitle("theater");
-        else if(postCategoryTitle.equals("etc"))        posts = matchRepository.findPostsByPostCategoryTitle("etc");
-        else                                            throw new PostCategoryNotFoundException(postCategoryTitle);
+        List<Post> posts = switch (postCategoryTitle) {
+            case "musical" -> matchRepository.findPostsByPostCategoryTitle("musical");
+            case "concert" -> matchRepository.findPostsByPostCategoryTitle("concert");
+            case "theater" -> matchRepository.findPostsByPostCategoryTitle("theater");
+            case "etc" -> matchRepository.findPostsByPostCategoryTitle("etc");
+            default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
+        };
 
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {

@@ -2,6 +2,7 @@ package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.service.TransferService;
+import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TransferController {
     private final TransferService transferService;
+    private final UserService userService;
 
     @GetMapping
     public String transfer(Model model) {
@@ -35,6 +37,7 @@ public class TransferController {
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
         model.addAttribute("post", transferService.getPostById(postId));
+        model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         return "board/post-detail";
