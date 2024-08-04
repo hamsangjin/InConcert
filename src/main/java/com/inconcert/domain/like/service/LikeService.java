@@ -8,6 +8,7 @@ import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.LikeNotFoundException;
 import com.inconcert.global.exception.PostNotFoundException;
+import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,5 +67,28 @@ public class LikeService {
         }
 
         return true;
+    }
+
+    public boolean isLikedByUser(Long postId, String categoryTitle) {
+        Post post = null;
+
+        switch (categoryTitle){
+            case "info":
+                post = infoRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                break;
+            case "match":
+                post = matchRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                break;
+            case "review":
+                post = reviewRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                break;
+            case "transfer":
+                post = transferRepository.findById(postId).orElseThrow(()->new PostNotFoundException("게시글을 찾을수 없습니다."));
+                break;
+        }
+
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException("user not found."));
+
+        return likeRepository.existsByPostAndUser(post, user);
     }
 }

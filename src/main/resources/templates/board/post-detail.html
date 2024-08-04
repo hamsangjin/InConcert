@@ -66,8 +66,8 @@
                     th:data-post-id="${post.id}"
                     th:data-category-title="${categoryTitle}"
                     th:data-user="${user}"
-                    onclick="toggleLike(this)">좋아요</button>
-            <span id="like-count" th:text="${post.likeCount}">좋아요</span>
+                    onclick="toggleLike(this)">♡</button>
+            <span id="like-count" th:text="${post.likeCount}"></span>
             <span th:text="${post.commentCount}">댓글</span>
         </div>
 
