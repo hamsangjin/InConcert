@@ -40,9 +40,9 @@ public class TransferController {
         return "board/post-detail";
     }
 
-    @PostMapping("/transfer/write")
+    @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
         transferService.save(postDto);
-        return "redirect:/transfer/";
+        return "redirect:/transfer";
     }
 }
