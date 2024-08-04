@@ -209,7 +209,7 @@ header {
     align-items: center;
     min-width: calc(50%);
     max-width: calc(50%);
-    margin: 40px auto 0px;
+    margin: 40px auto 0;
 }
 
 .login-container a{
