@@ -41,10 +41,10 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Like> likes;
 
     @Column(name = "view_count")
@@ -54,7 +54,6 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "post_category_id", nullable = false)
     private PostCategory postCategory;
 
-    // viewCount를 증가시키는 메소드
     public void incrementViewCount() {
         this.viewCount += 1;
     }

@@ -3,6 +3,7 @@ package com.inconcert.domain.like.entity;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Like(Post post, User user) {
+        this.post = post;
+        this.user = user;
+    }
 }

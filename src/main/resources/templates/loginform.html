@@ -38,17 +38,16 @@
             </div>
         </form>
         <div class="link-container">
-            <a href="#">회원가입</a>
+            <a th:href="@{/registerform}">회원가입</a>
             <div>
-                <a href="#">아이디 찾기</a>
-                <a href="#">비밀번호 찾기</a>
+                <a th:href="@{/idform}">아이디 찾기</a>
+                <a th:href="@{/pwform}">비밀번호 찾기</a>
             </div>
         </div>
     </div>
-
     <div id='wrapper'></div>
 </div>
-
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
@@ -123,7 +122,5 @@
         }
     });
 </script>
-
-<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

@@ -12,6 +12,7 @@ import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import com.inconcert.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +29,13 @@ public class InfoService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts;
-        if(postCategoryTitle.equals("musical"))         posts = infoRepository.findPostsByPostCategoryTitle("musical");
-        else if(postCategoryTitle.equals("concert"))    posts = infoRepository.findPostsByPostCategoryTitle("concert");
-        else if(postCategoryTitle.equals("theater"))    posts = infoRepository.findPostsByPostCategoryTitle("theater");
-        else if(postCategoryTitle.equals("etc"))        posts = infoRepository.findPostsByPostCategoryTitle("etc");
-        else                                            throw new PostCategoryNotFoundException(postCategoryTitle);
+        List<Post> posts = switch (postCategoryTitle) {
+            case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical");
+            case "concert" -> infoRepository.findPostsByPostCategoryTitle("concert");
+            case "theater" -> infoRepository.findPostsByPostCategoryTitle("theater");
+            case "etc" -> infoRepository.findPostsByPostCategoryTitle("etc");
+            default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
+        };
 
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {
@@ -57,7 +59,7 @@ public class InfoService {
     @Transactional
     public PostDto getPostById(Long postId) {
         Post findPost = infoRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new PostNotFoundException("찾으려는 Post가 존재하지 않습니다."));
 
         // viewCount 증가
         findPost.incrementViewCount();
@@ -86,7 +88,7 @@ public class InfoService {
 
         // 게시물 작성 폼에서 가져온 Category 제목으로 조회해서 Category 객체 생성
         Category category = categoryRepository.findByTitle(postDto.getCategoryTitle())
-                .orElseThrow(() -> new CategoryNotFoundException(postDto.getCategoryTitle() + "라는 Category를 찾지 못했습니다."));
+                .orElseThrow(() -> new CategoryNotFoundException("찾으려는 Category가 존재하지 않습니다."));
 
         // 적절한 PostCategory 찾기
         PostCategory postCategory = postCategories.stream()
@@ -101,7 +103,8 @@ public class InfoService {
                 .category(category)
                 .build();
 
-        postDto.setUser(userService.getAuthenticatedUser());
+        postDto.setUser(userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username")));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
