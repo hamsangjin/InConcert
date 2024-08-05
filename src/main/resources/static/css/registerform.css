@@ -1,0 +1,177 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0 ;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 700px);
+    max-width: calc(100% - 700px);
+    margin: 0 auto;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* register 설정 */
+header {
+    display: flex;
+    flex-direction: column;
+    min-width: 1008px;
+    max-width: 1008px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+.register-title{
+    width: calc(100%);
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+.register-title > h2{
+    margin-left: 20px;
+}
+
+.register-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    min-width: 988px;
+    max-width: 988px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.input-container{
+    text-align: left;
+    width: 50%;
+}
+
+.form-group{
+    display: flex;
+    align-items: center;
+}
+
+.form-group > label{
+    width: 100px;
+    text-align: right;
+
+}
+
+#username, #password, #password-confirm,
+#email, #certificationNumber, #name,
+#nickname, #phoneNumber, #birth,
+#gender, #mbti{
+    border: 1px solid #00A885;
+    max-width: calc(50%);
+    min-width: calc(50%);
+    margin: 10px;
+    padding: 5px;
+    font-size: 14px;
+    outline: none;
+}
+
+#gender, #mbti{
+    min-width: 249px;
+    max-width: 249px;
+    min-height: 31px;
+    max-height: 31px;
+}
+
+#checkIdBtn, #checkEmailBtn,
+#checkCertificationBtn{
+    border: none;
+    border-radius: 10px;
+    background-color: #ccc;
+    padding: 5px;
+    color: white;
+}
+
+#registerBtn{
+    border: none;
+    border-radius: 10px;
+    background-color: #00A885;
+    padding: 5px;
+    color: white;
+}
+
+.submit-container{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.submit-container > .form-group > label{
+    width: auto;
+    margin-left: 50px;
+}
+
+.logo-img{
+    padding: 20px;
+    width: 50%;
+}
+
+.logo-img > img{
+    min-width: calc(80%);
+    max-width: calc(80%);
+}
