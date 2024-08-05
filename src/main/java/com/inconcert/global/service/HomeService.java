@@ -28,12 +28,13 @@ public class HomeService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllCategoryPosts(String categoryTitle) {
-        List<Post> posts;
-        if(categoryTitle.equals("info"))            posts = infoRepository.findPostsByCategoryTitleInfo();
-        else if(categoryTitle.equals("review"))     posts = reviewRepository.findPostsByCategoryTitleReview();
-        else if(categoryTitle.equals("match"))      posts = matchRepository.findPostsByCategoryTitleMatch();
-        else if(categoryTitle.equals("transfer"))   posts = transferRepository.findPostsByCategoryTitleTransfer();
-        else                                        throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
+        List<Post> posts = switch (categoryTitle) {
+            case "info" -> infoRepository.findPostsByCategoryTitleInfo();
+            case "review" -> reviewRepository.findPostsByCategoryTitleReview();
+            case "match" -> matchRepository.findPostsByCategoryTitleMatch();
+            case "transfer" -> transferRepository.findPostsByCategoryTitleTransfer();
+            default -> throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
+        };
 
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {
@@ -46,7 +47,7 @@ public class HomeService {
                     .title(post.getTitle())
                     .category(category)
                     .postCategory(postCategory)
-                    .username(post.getUser().getUsername())
+                    .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount())
                     .commentCount(post.getComments().size())
                     .likeCount(post.getLikes().size())
