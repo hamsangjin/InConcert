@@ -51,7 +51,7 @@
             <div class="post-list" th:each="post : ${Musicalposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/musical/' + ${post.id}}">
-                        <p class="post-title" th:text="'[musical] '+ ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[뮤지컬] '+ ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -77,7 +77,7 @@
             <div class="post-list" th:each="post : ${Concertposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/concert/' + ${post.id}}">
-                        <p class="post-title" th:text="'[concert] '+ ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[콘서트] '+ ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -105,7 +105,7 @@
             <div class="post-list" th:each="post : ${Theaterposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/theater/' + ${post.id}}">
-                        <p class="post-title" th:text="'[theater] '+ ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[연극] '+ ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -130,7 +130,7 @@
             <div class="post-list" th:each="post : ${Etcposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/etc/' + ${post.id}}">
-                        <p class="post-title" th:text="'[etc] '+ ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[기타] '+ ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">

@@ -49,7 +49,6 @@ public class HomeController {
 
     @GetMapping("/search")
     public String search(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        System.out.println(keyword);
         model.addAttribute("posts", homeService.findByKeyword(keyword));
         return "search-result";
     }
