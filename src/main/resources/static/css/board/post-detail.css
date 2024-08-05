@@ -289,6 +289,17 @@ header {
     margin: 0 auto;
 }
 
+.title-container{
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.title-container h2:last-of-type {
+    word-break: break-all;
+    white-space: normal;
+}
+
 .post-info {
     display: flex;
     align-items: center;

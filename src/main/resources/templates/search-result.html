@@ -41,8 +41,23 @@
             </div>
             <div class="post-content">
                 <div class="post-title">
-                    <a th:href="@{'/' + ${post.category.title} + '/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:text="'[' + ${post.postCategory.title} + '] ' + ${post.title}"></span>
+                    <a th:href="@{'/' + ${post.postCategory.category.title}}">
+                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.postCategory.category.title}">
+                            <span th:case="'info'">공연 소식</span>
+                            <span th:case="'review'">공연 후기</span>
+                            <span th:case="'match'">동행</span>
+                            <span th:case="'transfer'">양도</span>
+                        </span>
+                    </a>
+
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategory.title}">
+                            <span th:case="'musical'">[뮤지컬]</span>
+                            <span th:case="'concert'">[콘서트]</span>
+                            <span th:case="'theater'">[연극]</span>
+                            <span th:case="'etc'">[기타]</span>
+                        </span>
+                        <span th:text="${post.title}">Post Title</span>
                     </a>
                     <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
                     <div th:if="${post.isNew}">

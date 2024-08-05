@@ -295,6 +295,20 @@ header {
     border: 1px solid #ccc;
 }
 
+.filters > button{
+    background-color: #00A885;
+    color: white;
+    text-decoration: none;
+    border: 1px #6f6f6f solid;
+    border-radius: 15px;
+    padding: 5px 10px;
+    font-size: 18px;
+}
+
+.filters > button:hover{
+    cursor: pointer;
+}
+
 .post-header {
     display: flex;
     justify-content: space-between;
@@ -366,17 +380,20 @@ header {
 .post-title > a{
     color: black;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
 .post-title > a:hover{
     text-decoration: underline;
 }
 
-.post-title > a > span{
+.post-title > a > span:nth-child(2){
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 530px;
+    max-width: 480px;
     display: block;
 }
 

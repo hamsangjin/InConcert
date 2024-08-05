@@ -75,13 +75,11 @@ public class LikeService {
         return post;
     }
 
-    // 로그아웃 상태: null 리턴
-    // 로그인 상태: User 리턴
     private User getUser() {
-        User user;
-        Optional<User> loginUser = userService.getAuthenticatedUser();
-        if (loginUser == null || !loginUser.isPresent()) return null;
-        else user = loginUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+        Optional<User> optionalUser = userService.getAuthenticatedUser();
+        if (optionalUser.isEmpty()) return null;
+
+        User user = optionalUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
         return user;
     }
 }
