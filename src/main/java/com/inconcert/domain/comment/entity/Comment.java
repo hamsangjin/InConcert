@@ -51,7 +51,7 @@ public class Comment extends BaseEntity {
 
     public void confirmPost(Post post) {
         this.post = post;
-//        post.addComment(this);
+        post.addComment(this);
     }
 
     public void addReply(Comment reply) {
@@ -64,15 +64,14 @@ public class Comment extends BaseEntity {
     }
 
     public CommentDto toCommentDto() {
-        CommentDto commentDto = CommentDto.builder()
+        return CommentDto.builder()
                 .id(id)
                 .user(user)
                 .post(post)
                 .content(content)
                 .isSecret(isSecret)
+                .parent(parent)
                 .replies(replies)
                 .build();
-
-        return commentDto;
     }
 }

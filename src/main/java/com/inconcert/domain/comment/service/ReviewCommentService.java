@@ -8,7 +8,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.exception.CommentNotFoundException;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
+import com.inconcert.global.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,10 +24,14 @@ public class ReviewCommentService implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> findByPostId(String boardType, Long id) {
-        List<Comment> byPostId = commentRepository.findByPostId(id);
+    public List<CommentDto> findByPostId(String boardType, Long id, String sort) {
+        List<Comment> byPostId;
+        if ("recent".equals(sort)) {
+            byPostId = commentRepository.findByPostIdOrderByCreatedAtDesc(id);
+        } else {
+            byPostId = commentRepository.findByPostIdOrderByCreatedAtAsc(id);
+        }
         List<CommentDto> dtoList = new ArrayList<>();
-
         for (Comment comment : byPostId) {
             dtoList.add(comment.toCommentDto());
         }
@@ -44,7 +48,7 @@ public class ReviewCommentService implements CommentService {
     @Override
     @Transactional
     public Long saveComment(String boardType, Long id, User user, CommentCreateForm dto) {
-        Post post = reviewRepository.findById(id).orElseThrow(() -> new PostCategoryNotFoundException("ID = " + id + " 의 해당 게시글이 존재하지 않습니다."));
+        Post post = reviewRepository.findById(id).orElseThrow(() -> new PostNotFoundException("ID = " + id + " 의 해당 게시글이 존재하지 않습니다."));
 
         Comment comment = dto.toEntity();
         comment.setPost(post);
@@ -61,7 +65,7 @@ public class ReviewCommentService implements CommentService {
         dto.setUser(user);
         Comment comment = dto.toEntity();
 
-        comment.confirmPost(reviewRepository.findById(postId).orElseThrow(() -> new PostCategoryNotFoundException("ID = " + postId + " 의 해당 게시글이 존재하지 않습니다.")));
+        comment.confirmPost(reviewRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("ID = " + postId + " 의 해당 게시글이 존재하지 않습니다.")));
 
         comment.confirmParent(commentRepository.findById(parentId).orElseThrow(() -> new CommentNotFoundException("ID = " + postId + " 의 해당 부모 댓글이 존재하지 않습니다.")));
 
@@ -72,7 +76,7 @@ public class ReviewCommentService implements CommentService {
     @Transactional
     public Long updateComment(String boardType, Long id, CommentCreateForm dto) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException("ID = " + id + " 의 해당 댓글이 존재하지 않습니다."));
-        comment.update(dto.getContent(), dto.isSecret());
+        comment.update(dto.getContent(), dto.getIsSecret());
         commentRepository.save(comment);
         return comment.getId();
     }

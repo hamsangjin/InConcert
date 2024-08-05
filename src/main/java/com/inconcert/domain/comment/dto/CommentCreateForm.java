@@ -4,12 +4,11 @@ import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+//@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,6 +18,7 @@ public class CommentCreateForm {
     private User user;
     private Post post;
     private boolean isSecret;
+    private Long parent;
 
     @NotEmpty(message = "내용은 필수항목입니다.")
     private String content;
@@ -29,8 +29,12 @@ public class CommentCreateForm {
                 .user(getUser())
                 .post(getPost())
                 .content(getContent())
-                .isSecret(isSecret())
+                .isSecret(getIsSecret())
                 .build();
         return comment;
+    }
+
+    public boolean getIsSecret() {
+        return isSecret;
     }
 }

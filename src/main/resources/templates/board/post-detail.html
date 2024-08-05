@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/css/board/post-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script defer src="/js/board/post-detail.js"></script>
+    <script defer src="/js/comment.js"></script>
 </head>
 <body>
 <div class="container">
@@ -73,29 +74,97 @@
         </div>
 
         <div class="sort-buttons">
-            <button class="sort-button">등록순</button>
-            <button class="sort-button">최신순</button>
+            <button class="sort-button" onclick="sortComments('created')">등록순</button>
+            <button class="sort-button" onclick="sortComments('recent')">최신순</button>
         </div>
-
-        <!-- 댓글쓰기 폼 추가해야 하고, css도 수정 필요-->
-        <div class="comments" th:each="comment : ${post.comments}">
-            <div class="comment">
-                <div class="comment-content">
-                    <div class="comment-header">
-                        <!-- user의 이미지로 변경 -->
-                        <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
-                        <div>
-                            <p class="author" th:text="${comment.user.nickname}">송민형</p>
-                            <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
-                        </div>
-                    </div>
-                    <div class="comment-options">...</div>
+        <div class="comment-form">
+            <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/new'}"
+                  method="post" class="comment-form" th:object="${createForm}">
+                <textarea name="content" placeholder="댓글을 작성하세요" class="comment-textarea"></textarea>
+                <div>
+                    <input type="checkbox" th:field="*{isSecret}" id="isSecret" name="isSecret">
+                    <label for="isSecret">비밀</label>
                 </div>
-                <p th:text="${comment.content}"></p>
+                <div class="comment-form-actions">
+                    <button type="submit" class="submit-btn">댓글 작성</button>
+                </div>
+            </form>
+        </div>
+        <!-- 댓글 목록 -->
+        <div class="comments" th:each="comment : ${post.comments}">
+            <div th:if="${comment.parent == null}">
+                <div class="comment" th:class="${comment.parent != null} ? 'reply' : ''">
+                    <div class="comment" th:attr="data-comment-id=${comment.id}">
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <!-- user의 이미지로 변경 -->
+                                <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+                                <div>
+                                    <p class="author" th:text="${comment.user.nickname}">송민형</p>
+                                    <p class="date"
+                                       th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                </div>
+                            </div>
+                            <div class="comment-options">
+                                <!-- 댓글 수정/삭제 링크 -->
+                                <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.user != null and (#authentication.name == post.user.nickname))}"
+                                      th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
+                                    <button type="button">수정</button>
+                                </form>
+                                <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.user != null and (#authentication.name == post.user.nickname))}"
+                                      th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/delete/' + ${comment.id}}"
+                                      method="post"
+                                      onsubmit="return confirm('이 댓글을 삭제하시겠습니까?');">
+                                    <button type="submit">삭제</button>
+                                </form>
+                            </div>
+                        </div>
+                        <p th:text="${comment.content}"></p>
+                    </div>
+                    <!-- 댓글 수정 폼 -->
+                    <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">
+                        <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/edit/' + ${comment.id}}"
+                              method="post">
+                            <input type="hidden" name="commentId" th:value="${comment.id}"/>
+                            <input type="hidden" name="postId" th:value="${comment.post.id}"/>
+                            <textarea name="content" th:text="${comment.content}" placeholder="댓글을 작성하세요."
+                                      class="comment-textarea"></textarea>
+                            <div class="comment-form-actions">
+                                <button type="button" class="cancel-btn"
+                                        th:onclick="'cancelEdit(' + ${comment.id} + ');'">취소
+                                </button>
+                                <button type="submit" class="submit-btn">댓글 수정</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="comment-actions">
+                        <section>
+                            <button th:if="${comment.replies.size() > 0}" th:text="${comment.replies.size()} + '개의 답글'"
+                                    th:onclick="'toggleReplies(' + ${comment.id} + ');'">답글 보기
+                            </button>
+                            <button th:onclick="'toggleReplyForm(' + ${comment.id} + ');'">답글 달기</button>
+                        </section>
+                    </div>
+
+                    <div class="reply-form" th:id="'reply-form-' + ${comment.id}" style="display:none;">
+                        <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/reply/' + ${comment.parent != null ? comment.parent.id : 0}}"
+                              method="post">
+                            <input type="hidden" name="postId" th:value="${comment.post.id}"/>
+                            <input type="hidden" name="parentId" th:value="${comment.id}"/>
+                            <textarea name="content" placeholder="답글을 작성하세요" class="comment-textarea"></textarea>
+                            <div class="comment-form-actions">
+                                <button type="button" class="cancel-btn"
+                                        th:onclick="'hideReplyForm(' + ${comment.id} + ');'">취소
+                                </button>
+                                <button type="submit" class="submit-btn">댓글 작성</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
     <div id='wrapper'></div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>

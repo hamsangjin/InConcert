@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/info/**", "/review/**", "/match/**", "/transfer/**").permitAll()
                         .requestMatchers("/api/**","/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/{categoryTitle}/{postCategoryTitle}/{postId}/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
