@@ -68,17 +68,13 @@ public class InfoService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostDto> findByKeywordAndFilters(String keyword, String period, String type) {
+    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type) {
+        LocalDateTime startDate = DateUtil.getStartDate(period);
+        LocalDateTime endDate = DateUtil.getCurrentDate();
 
-        LocalDateTime startDate = DateUtil.getCurrentDate();
-        LocalDateTime endDate = DateUtil.getEndDate(period);
         // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
-        List<Post> posts = infoRepository.findByKeywordAndFilters(keyword, startDate, endDate, type);
+        List<Post> posts = infoRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type);
         List<PostDto> postDtos = getPostDtos(posts);
-
-        for (PostDto postDto : postDtos) {
-            System.out.println(postDto.getTitle());
-        }
 
         return postDtos;
     }

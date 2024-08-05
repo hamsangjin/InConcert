@@ -67,7 +67,6 @@
             <i class="like-icon far fa-heart" id="like-icon"
                th:data-post-id="${post.id}"
                th:data-category-title="${categoryTitle}"
-               th:data-user="${user}"
                onclick="toggleLike(this)"></i>
             <span id="like-count" th:text="${post.likeCount}"></span>
             <span th:text="'댓글 '+ ${post.commentCount}"></span>
