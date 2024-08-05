@@ -94,6 +94,8 @@
         <div class="comments" th:each="comment : ${post.comments}">
             <div th:if="${comment.parent == null}">
                 <div class="comment" th:class="${comment.parent != null} ? 'reply' : ''">
+
+                    <!--댓글 출력-->
                     <div class="comment" th:attr="data-comment-id=${comment.id}">
                         <div class="comment-content">
                             <div class="comment-header">
@@ -121,6 +123,7 @@
                         </div>
                         <p th:text="${comment.content}"></p>
                     </div>
+
                     <!-- 댓글 수정 폼 -->
                     <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">
                         <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/edit/' + ${comment.id}}"
@@ -148,7 +151,7 @@
                     </div>
 
                     <div class="reply-form" th:id="'reply-form-' + ${comment.id}" style="display:none;">
-                        <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/reply/' + ${comment.parent != null ? comment.parent.id : 0}}"
+                        <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/reply/' + ${comment.id}}"
                               method="post">
                             <input type="hidden" name="postId" th:value="${comment.post.id}"/>
                             <input type="hidden" name="parentId" th:value="${comment.id}"/>
@@ -160,6 +163,39 @@
                                 <button type="submit" class="submit-btn">댓글 작성</button>
                             </div>
                         </form>
+                    </div>
+
+                    <div class="replies" th:id="'replies-' + ${comment.id}" style="display:none;">
+                        <div class="comment" th:each="reply : ${comment.replies}">
+                            <!--댓글 출력-->
+                            <div class="comment" th:attr="data-comment-id=${comment.id}">
+                                <div class="comment-content">
+                                    <div class="comment-header">
+                                        <!-- user의 이미지로 변경 -->
+                                        <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+                                        <div>
+                                            <p class="author" th:text="${reply.user.nickname}">송민형</p>
+                                            <p class="date"
+                                               th:text="${#temporals.format(reply.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="comment-options">
+                                        <!-- 댓글 수정/삭제 링크 -->
+                                        <form th:if="${(reply.user != null and (#authentication.name == reply.user.username)) or (post.user != null and (#authentication.name == post.user.nickname))}"
+                                              th:onclick="'toggleEditForm(' + ${reply.id} + ');'">
+                                            <button type="button">수정</button>
+                                        </form>
+                                        <form th:if="${(reply.user != null and (#authentication.name == reply.user.username)) or (post.user != null and (#authentication.name == post.user.nickname))}"
+                                              th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/delete/' + ${comment.id}}"
+                                              method="post"
+                                              onsubmit="return confirm('이 댓글을 삭제하시겠습니까?');">
+                                            <button type="submit">삭제</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <p th:text="${reply.content}"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
