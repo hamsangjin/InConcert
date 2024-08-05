@@ -52,13 +52,16 @@
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
 
+        // OAuth2 로그인 성공 후 쿠키 확인
+        checkOAuth2LoginSuccess();
+
         loginForm.addEventListener('submit', function (event) {
             event.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch('/login', {
+            fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,6 +88,16 @@
                     alert('아이디와 비밀번호를 다시 입력해주세요.');
                 });
         });
+
+        function checkOAuth2LoginSuccess() {
+            const accessToken = localStorage.getItem('JSESSIONID') || getCookie('JSESSIONID');
+            if (accessToken) {
+                localStorage.setItem('accessToken', accessToken);
+                // 쿠키 삭제
+                document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                window.location.href = '/home';
+            }
+        }
 
         function makeAuthenticatedRequest(url, method = 'GET', body = null) {
             const token = localStorage.getItem('accessToken');
@@ -119,6 +132,12 @@
                     localStorage.setItem('accessToken', data.accessToken);
                     return data;
                 });
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
         }
     });
 </script>
