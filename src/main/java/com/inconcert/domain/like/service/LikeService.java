@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
-
     private final InfoRepository infoRepository;
     private final MatchRepository matchRepository;
     private final ReviewRepository reviewRepository;
@@ -29,22 +28,10 @@ public class LikeService {
 
     @Transactional
     public boolean toggleLike(Long postId, String categoryTitle) {
-        Post post = switch (categoryTitle) {
-            case "info" -> infoRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-            case "match" -> matchRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-            case "review" -> reviewRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-            case "transfer" -> transferRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
-            default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
-        };
+        Post post = getPost(postId, categoryTitle);
 
-        Optional<User> loginUser = userService.getAuthenticatedUser();
-        User user;
-        if(!loginUser.isPresent())  return false;
-        else                        user = loginUser.get();
+        User user = getUser();
+        if (user == null) return false;
 
         // 현재 사용자가 해당 포스트에 좋아요를 눌렀는지 확인
         Optional<Like> findLike = likeRepository.findByPostAndUser(post, user);
@@ -64,6 +51,16 @@ public class LikeService {
     }
 
     public boolean isLikedByUser(Long postId, String categoryTitle) {
+        Post post = getPost(postId, categoryTitle);
+
+        User user = getUser();
+        if (user == null) return false;
+
+        return likeRepository.existsByPostAndUser(post, user);
+    }
+
+    // 카테고리 제목에 맞는 repository에서 post 찾는 메소드
+    private Post getPost(Long postId, String categoryTitle) {
         Post post = switch (categoryTitle) {
             case "info" -> infoRepository.findById(postId)
                     .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
@@ -75,9 +72,16 @@ public class LikeService {
                     .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
             default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
         };
+        return post;
+    }
 
-        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-
-        return likeRepository.existsByPostAndUser(post, user);
+    // 로그아웃 상태: null 리턴
+    // 로그인 상태: User 리턴
+    private User getUser() {
+        User user;
+        Optional<User> loginUser = userService.getAuthenticatedUser();
+        if (loginUser == null || !loginUser.isPresent()) return null;
+        else user = loginUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+        return user;
     }
 }

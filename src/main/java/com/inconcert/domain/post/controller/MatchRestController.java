@@ -16,10 +16,9 @@ public class MatchRestController {
 
     @PostMapping("/like/{postId}")
     public ResponseEntity<?> toggleLike(@PathVariable("postId") Long postId) {
-        boolean result = likeService.toggleLike(postId, "match");
-
-        if(result)      return ResponseEntity.ok("좋아요 성공");
-        else            return ResponseEntity.badRequest().body("좋아요 실패");
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("liked", likeService.toggleLike(postId, "match"));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/like/status/{postId}")
