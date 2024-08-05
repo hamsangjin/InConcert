@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -44,5 +45,12 @@ public class HomeController {
     public String write(Model model) {
         model.addAttribute("postDto", new PostDto());
         return "board/writeform";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        System.out.println(keyword);
+        model.addAttribute("posts", homeService.findByKeyword(keyword));
+        return "search-result";
     }
 }

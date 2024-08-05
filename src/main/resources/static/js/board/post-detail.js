@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async function() {
+document.addEventListener("DOMContentLoaded", async function () {
     const likeIcon = document.getElementById('like-icon');
     const postId = likeIcon.getAttribute('data-post-id');
     const categoryTitle = likeIcon.getAttribute('data-category-title');
@@ -38,7 +38,7 @@ async function toggleLike(button) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ liked })
+        body: JSON.stringify({liked})
     });
 
     // 로그아웃 상태인 경우 로그인 폼으로 이동
@@ -61,4 +61,13 @@ async function toggleLike(button) {
         likeIcon.classList.add('far');
         likeCountSpan.textContent = (parseInt(likeCountSpan.textContent) - 1).toString();
     }
+}
+
+function validateSearch() {
+    let keyword = document.getElementById("search-input").value.trim();
+    if (keyword.length < 2) {
+        alert("검색어를 2자 이상 입력하세요.");
+        return false;
+    }
+    return true;
 }

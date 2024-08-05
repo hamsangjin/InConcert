@@ -9,6 +9,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.global.exception.CategoryNotFoundException;
+import com.inconcert.global.repository.HomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class HomeService {
     private final ReviewRepository reviewRepository;
     private final MatchRepository matchRepository;
     private final TransferRepository transferRepository;
+    private final HomeRepository homeRepository;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllCategoryPosts(String categoryTitle) {
@@ -36,6 +38,20 @@ public class HomeService {
             default -> throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
         };
 
+        List<PostDto> postDtos = getPostDtos(posts);
+        return postDtos;
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDto> findByKeyword(String keyword) {
+        List<Post> posts = homeRepository.findByKeyword(keyword);
+
+        List<PostDto> postDtos = getPostDtos(posts);
+
+        return postDtos;
+    }
+
+    private static List<PostDto> getPostDtos(List<Post> posts) {
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {
 
