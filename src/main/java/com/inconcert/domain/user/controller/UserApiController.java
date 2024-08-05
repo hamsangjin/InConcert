@@ -179,7 +179,6 @@ public class UserApiController {
 
     // 아이디 찾기
     @PostMapping("/idform")
-    @ResponseBody
     public ResponseEntity<String> findId(@RequestBody FindIdReqDto reqDto) {
         try {
             String username = userService.findUserId(reqDto);
