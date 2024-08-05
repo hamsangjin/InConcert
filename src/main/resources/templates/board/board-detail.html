@@ -72,7 +72,7 @@
                 </div>
                 <div class="post-meta">
                     <span class="author" th:text="${post.nickname}"></span>
-                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
                     <span class="views" th:text="${post.viewCount}"></span>
                     <span class="likes" th:text="${post.likeCount}"></span>
                 </div>
