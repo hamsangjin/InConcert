@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>메인 화면</title>
-    <link rel="stylesheet" href="/css/board/board-detail.css">
+    <link rel="stylesheet" href="/css/search-result.css">
     <script>
         function validateSearch() {
             let keyword = document.getElementById("search-input").value.trim();
@@ -19,45 +19,14 @@
 <div class="container">
     <div th:replace="~{fragments/header :: header}"></div>
 
-    <div class="tabs-container" th:if="${categoryTitle} != 'review'">
-        <div class="tabs">
-            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/musical'}"
-               th:classappend="${postCategoryTitle == 'musical'} ? ' selected'">
-                <p>뮤지컬</p>
-            </a>
-            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/concert'}"
-               th:classappend="${postCategoryTitle == 'concert'} ? ' selected'">
-                <p>콘서트</p>
-            </a>
-            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/theater'}"
-               th:classappend="${postCategoryTitle == 'theater'} ? ' selected'">
-                <p>연극</p>
-            </a>
-            <a class="tab-button" th:href="@{'/' + ${categoryTitle} + '/etc'}"
-               th:classappend="${postCategoryTitle == 'etc'} ? ' selected'">
-                <p>기타</p>
-            </a>
-        </div>
+    <div class="review-block"></div>
+
+    <div class="title-container">
+        <h1 class="title"> 검색 결과</h1>
+        <p th:text="${posts.size() + '개의 게시물을 찾았습니다.'}"> </p>
     </div>
 
-    <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
-
-    <div class="filters-container">
-        <div class="filters">
-            <select>
-                <option>전체 기간</option>
-            </select>
-            <select>
-                <option>게시물 + 댓글</option>
-            </select>
-            <input type="text" placeholder="검색어를 입력해주세요">
-        </div>
-        <div class="write-btn">
-            <a href="#">검색</a>
-        </div>
-    </div>
-
-    <div class="post-header">
+    <div class="post-header" th:if="${posts.size() > 0}">
         <span class="header-title">제목</span>
         <span class="header-author">작성자</span>
         <span class="header-date">작성일</span>
@@ -72,7 +41,7 @@
             </div>
             <div class="post-content">
                 <div class="post-title">
-                    <a th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                    <a th:href="@{'/' + ${post.category.title} + '/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:text="'[' + ${post.postCategory.title} + '] ' + ${post.title}"></span>
                     </a>
                     <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
