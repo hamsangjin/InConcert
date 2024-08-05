@@ -72,6 +72,8 @@ public class InfoService {
                 .postCategory(post.getPostCategory())
                 .nickname(post.getUser().getNickname())
                 .viewCount(post.getViewCount())
+                .matchCount(post.getMatchCount())
+                .endDate(post.getEndDate())
                 .commentCount(post.getComments().size())
                 .comments(post.getComments())
                 .likeCount(post.getLikes().size())
@@ -104,11 +106,19 @@ public class InfoService {
                 .build();
 
         postDto.setUser(userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username")));
+                .orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다.")));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         infoRepository.save(post);
+    }
+
+    @Transactional
+    public void deletePost(Long postId) {
+
+        Post post = infoRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("삭제하려는 게시글이 존재하지 않습니다."));
+        infoRepository.delete(post);
     }
 }

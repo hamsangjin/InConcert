@@ -1,3 +1,7 @@
+function confirmDelete() {
+    return confirm("정말 삭제하시겠습니까?");
+}
+
 document.addEventListener("DOMContentLoaded", async function() {
     const likeIcon = document.getElementById('like-icon');
     const postId = likeIcon.getAttribute('data-post-id');

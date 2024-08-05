@@ -54,6 +54,15 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "post_category_id", nullable = false)
     private PostCategory postCategory;
 
+    //update 메서드
+    public void update(String title, String content,PostCategory postCategory,LocalDate endDate,int matchCount) {
+        this.title = title;
+        this.content = content;
+        this.endDate = endDate;
+        this.matchCount = matchCount;
+
+    }
+
     public void incrementViewCount() {
         this.viewCount += 1;
     }

@@ -111,4 +111,15 @@ public class MatchService {
 
         matchRepository.save(post);
     }
+
+
+    @Transactional
+    public void deletePost(Long postId) {
+        //예외 핸들링 하기위해 post 객체를 찾아서 직접 삭제
+        Post post = matchRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("삭제하려는 게시글이 존재하지 않습니다."));
+        matchRepository.delete(post);
+    }
+
+
 }
