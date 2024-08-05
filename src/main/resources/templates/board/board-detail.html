@@ -51,7 +51,28 @@
 
     <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
 
-    <div class="filters-container">
+    <div class="filters-container" th:if="${categoryTitle} != 'review'">
+        <form class="filters" onsubmit="return validateDetailSearch()" th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/search'}" method="get">
+            <select id="search-period" name="period">
+                <option value="all">전체 기간</option>
+                <option value="1day">1일</option>
+                <option value="1week">1주</option>
+                <option value="1month">1개월</option>
+                <option value="6months">6개월</option>
+                <option value="1year">1년</option>
+            </select>
+            <select id="search-type" name="type">
+                <option value="title+content">제목 + 내용</option>
+                <option value="title">제목만</option>
+                <option value="content">내용만</option>
+                <option value="author">글 작성자</option>
+            </select>
+            <input id="search-detail-input" type="text" name="keyword" placeholder="검색어를 입력해주세요">
+            <button type="submit">검색</button>
+        </form>
+    </div>
+
+    <div class="filters-container" th:if="${categoryTitle} == 'review'">
         <form class="filters" onsubmit="return validateDetailSearch()" th:action="@{'/' + ${categoryTitle} + '/search'}" method="get">
             <select id="search-period" name="period">
                 <option value="all">전체 기간</option>

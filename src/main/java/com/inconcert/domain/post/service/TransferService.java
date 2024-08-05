@@ -7,6 +7,7 @@ import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
+import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
@@ -37,24 +38,11 @@ public class TransferService {
             default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
         };
 
-        List<PostDto> postDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostDto postDto = PostDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .postCategory(post.getPostCategory())
-                    .nickname(post.getUser().getNickname())
-                    .viewCount(post.getViewCount())
-                    .commentCount(post.getComments().size())
-                    .likeCount(post.getLikes().size())
-                    .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
-                    .createdAt(post.getCreatedAt())
-                    .build();
-            postDtos.add(postDto);
-        }
+        List<PostDto> postDtos = getPostDtos(posts);
         return postDtos;
     }
 
+    // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
     public PostDto getPostById(Long postId) {
         Post findPost = transferRepository.findById(postId)
@@ -77,6 +65,18 @@ public class TransferService {
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type) {
+        LocalDateTime startDate = DateUtil.getStartDate(period);
+        LocalDateTime endDate = DateUtil.getCurrentDate();
+
+        // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
+        List<Post> posts = transferRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type);
+        List<PostDto> postDtos = getPostDtos(posts);
+
+        return postDtos;
     }
 
     @Transactional
@@ -109,5 +109,24 @@ public class TransferService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         transferRepository.save(post);
+    }
+
+    private static List<PostDto> getPostDtos(List<Post> posts) {
+        List<PostDto> postDtos = new ArrayList<>();
+        for (Post post : posts) {
+            PostDto postDto = PostDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .postCategory(post.getPostCategory())
+                    .nickname(post.getUser().getNickname())
+                    .viewCount(post.getViewCount()+1)
+                    .commentCount(post.getComments().size())
+                    .likeCount(post.getLikes().size())
+                    .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
+                    .createdAt(post.getCreatedAt())
+                    .build();
+            postDtos.add(postDto);
+        }
+        return postDtos;
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/review")
 @RequiredArgsConstructor
@@ -32,6 +34,17 @@ public class ReviewController {
         model.addAttribute("categoryTitle", "review");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         return "board/post-detail";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         Model model) {
+        List<PostDto> searchResults = reviewService.findByKeywordAndFilters(keyword, period, type);
+        model.addAttribute("posts", searchResults);
+        model.addAttribute("categoryTitle", "review");
+        return "board/board-detail";
     }
 
     @PostMapping("/write")

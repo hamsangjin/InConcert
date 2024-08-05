@@ -176,7 +176,7 @@ public class UserService {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetails principal = (UserDetails) authentication.getPrincipal();
-            String username = principal.getUsername();
+            String username = principal != null ? principal.getUsername() : null;
 
             return userRepository.findByUsername(username);
         } catch (Exception e) {

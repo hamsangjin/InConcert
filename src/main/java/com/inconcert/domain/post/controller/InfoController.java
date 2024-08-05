@@ -45,12 +45,13 @@ public class InfoController {
         return "board/post-detail";
     }
 
-    @GetMapping("/search")
-    public String search(@RequestParam(name = "keyword") String keyword,
+    @GetMapping("/{postCategoryTitle}/search")
+    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @RequestParam(name = "keyword") String keyword,
                          @RequestParam(name = "period", required = false, defaultValue = "all") String period,
                          @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
                          Model model) {
-        List<PostDto> searchResults = infoService.findByKeywordAndFilters(keyword, period, type);
+        List<PostDto> searchResults = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type);
         model.addAttribute("posts", searchResults);
         model.addAttribute("categoryTitle", "info");
         return "board/board-detail";

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/match")
 @RequiredArgsConstructor
@@ -41,6 +43,18 @@ public class MatchController {
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         return "board/post-detail";
+    }
+
+    @GetMapping("/{postCategoryTitle}/search")
+    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         Model model) {
+        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type);
+        model.addAttribute("posts", searchResults);
+        model.addAttribute("categoryTitle", "match");
+        return "board/board-detail";
     }
 
     @PostMapping("/write")

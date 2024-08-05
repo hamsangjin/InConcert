@@ -27,13 +27,14 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN FETCH p.postCategory pc " +
             "JOIN FETCH pc.category c " +
             "JOIN FETCH p.user u " +
-            "WHERE c.title = 'info' AND " +
-            "((p.title LIKE %:keyword% OR p.content LIKE %:keyword%) AND " +
-            "p.createdAt BETWEEN :startDate AND :endDate AND " +
-            "(:type = 'title+content' OR (:type = 'title' AND p.title LIKE %:keyword%) " +
-            "OR (:type = 'content' AND p.content LIKE %:keyword%) " +
-            "OR (:type = 'author' AND u.nickname LIKE %:keyword%)))")
-    List<Post> findByKeywordAndFilters(@Param("keyword") String keyword,
+            "WHERE c.title = 'info' AND pc.title = :postCategoryTitle " +
+            "AND ((:type = 'title+content' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)) " +
+            "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
+            "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
+            "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
+            "AND p.createdAt BETWEEN :startDate AND :endDate")
+    List<Post> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
+                                       @Param("keyword") String keyword,
                                        @Param("startDate") LocalDateTime startDate,
                                        @Param("endDate") LocalDateTime endDate,
                                        @Param("type") String type);
