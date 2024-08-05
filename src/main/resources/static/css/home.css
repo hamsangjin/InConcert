@@ -292,6 +292,7 @@ header {
 }
 
 .post-left{
+    flex: 4;
     display: flex;
     align-items: center;
 }
@@ -300,6 +301,18 @@ header {
     text-decoration: none;
     color: black;
     padding: 0;
+}
+
+.post-left a:hover{
+    text-decoration: underline;
+}
+
+.post-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 270px; /* 너비를 조정하세요 */
+    display: block; /* 블록 요소로 설정하여 너비 제한 적용 */
 }
 
 .comment-count{
@@ -330,5 +343,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex: 3;
     gap: 10px;
+}
+
+.post-right > p{
+    text-align: center;
+    flex: 1;
 }

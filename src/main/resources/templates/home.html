@@ -36,7 +36,7 @@
             <div class="post-list" th:each="post : ${infoPosts}">
                 <div class="post-left">
                     <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.username}"></span></p>
+                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -62,7 +62,7 @@
             <div class="post-list" th:each="post : ${reviewPosts}">
                 <div class="post-left">
                     <a th:href="@{'/review/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.username}"></span></p>
+                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -90,7 +90,7 @@
             <div class="post-list" th:each="post : ${matchPosts}">
                 <div class="post-left">
                     <a th:href="@{'/match/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -99,7 +99,7 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.username}"></span></p>
+                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -115,7 +115,7 @@
             <div class="post-list" th:each="post : ${transferPosts}">
                 <div class="post-left">
                     <a th:href="@{'/transfer/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <p th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
+                        <p class="post-title" th:text="'[' + ${post.postCategory.title} + ']  ' + ${post.title}">Post Title</p>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${post.isNew}">
@@ -124,7 +124,7 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.username}"></span></p>
+                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>

@@ -296,6 +296,7 @@ header {
 }
 
 .post-left{
+    flex: 4;
     display: flex;
     align-items: center;
 }
@@ -308,6 +309,14 @@ header {
 
 .post-left a:hover{
     text-decoration: underline;
+}
+
+.post-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: block;
 }
 
 .comment-count{
@@ -338,5 +347,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex: 3;
     gap: 10px;
+}
+
+.post-right > p{
+    text-align: center;
+    flex: 1;
 }
