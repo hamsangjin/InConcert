@@ -316,8 +316,8 @@ header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 270px; /* 너비를 조정하세요 */
-    display: block; /* 블록 요소로 설정하여 너비 제한 적용 */
+    max-width: 270px;
+    display: block;
 }
 
 .comment-count{

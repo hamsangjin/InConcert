@@ -380,17 +380,20 @@ header {
 .post-title > a{
     color: black;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
 .post-title > a:hover{
     text-decoration: underline;
 }
 
-.post-title > a > span{
+.post-title > a > span:nth-child(2){
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 530px;
+    max-width: 480px;
     display: block;
 }
 
