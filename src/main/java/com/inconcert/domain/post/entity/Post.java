@@ -57,4 +57,8 @@ public class Post extends BaseEntity {
     public void incrementViewCount() {
         this.viewCount += 1;
     }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
 }

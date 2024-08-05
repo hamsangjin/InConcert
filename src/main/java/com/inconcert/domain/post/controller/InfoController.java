@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.controller;
 
+import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.service.InfoService;
 import com.inconcert.domain.user.service.UserService;
@@ -38,10 +39,12 @@ public class InfoController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
+
         model.addAttribute("post", infoService.getPostById(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "info");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
+        model.addAttribute("createForm",new CommentCreateForm());
         return "board/post-detail";
     }
 

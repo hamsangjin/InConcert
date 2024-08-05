@@ -9,10 +9,11 @@ import java.util.List;
 
 @Service
 public interface CommentService {
-    List<CommentDto> findByPostId(String boardType, Long id);
+    List<CommentDto> findByPostId(String boardType, Long id, String sort);
     CommentDto findComment(String boardType, Long id);
     Long saveComment(String boardType, Long id, User user, CommentCreateForm dto);
     void reSaveComment(String boardType, Long postId, Long parentId, User user, CommentCreateForm dto);
     Long updateComment(String boardType, Long id, CommentCreateForm dto);
     void deleteComment(String boardType, Long id);
 }
+
