@@ -12,6 +12,7 @@ import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.global.dto.ResponseDto;
 import com.inconcert.global.exception.RoleNameNotFoundException;
+import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -183,5 +184,12 @@ public class UserService {
             log.error("Error getting authenticated user", e);
             return Optional.empty();
         }
+    }
+
+    // 아이디 찾기
+    public String findUserId(FindIdReqDto reqDto) {
+        User findUser = userRepository.findByNameAndEmail(reqDto.getName(), reqDto.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+        return findUser.getUsername();
     }
 }
