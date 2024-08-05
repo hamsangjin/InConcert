@@ -97,7 +97,7 @@ header {
     display: flex;
     align-items: center;
     text-align: right;
-    gap: 30px;
+    gap: 20px;
 }
 
 .right a{
@@ -112,6 +112,15 @@ header {
     border-radius: 10px;
 }
 
+.search  > button{
+    border: none;
+    background-color: transparent;
+}
+
+.search  > button:hover{
+    cursor: pointer;
+}
+
 .search img{
     width: 20px;
     height: 20px;
@@ -124,7 +133,7 @@ header {
     border: none;
     min-width: 240px;
     min-height: 30px;
-    margin-right: 10px;
+    margin-left: 10px;
     outline: none;
 }
 
@@ -132,10 +141,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.user-header a{
-    margin-left: 15px;
+    gap: 10px;
 }
 
 .write-btn {
@@ -163,7 +169,6 @@ header {
 .dropdown {
     position: relative;
     display: inline-block;
-    margin-left: 15px;
 }
 
 .dropdown-content {

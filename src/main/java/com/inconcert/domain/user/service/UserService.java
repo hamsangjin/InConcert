@@ -15,6 +15,7 @@ import com.inconcert.global.exception.RoleNameNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -147,7 +148,18 @@ public class UserService {
             Set<Role> roles = new HashSet<>();
             roles.add(userRole);
 
-            User user = new User(reqDto, encodedPassword, roles);
+            User user = User.builder()
+                    .username(username)
+                    .password(encodedPassword)
+                    .email(email)
+                    .name(reqDto.getName())
+                    .nickname(reqDto.getNickname())
+                    .phoneNumber(reqDto.getPhoneNumber())
+                    .birth(reqDto.getBirth())
+                    .gender(reqDto.getGender())
+                    .mbti(reqDto.getMbti())
+                    .roles(roles)
+                    .build();
 
             userRepository.save(user);
             certificationRepository.delete(certification); // 회원가입이 되면 안증번호 내역 지우기
@@ -161,13 +173,15 @@ public class UserService {
     }
 
     public Optional<User> getAuthenticatedUser() {
-        try{
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String username = userDetails.getUsername();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails principal = (UserDetails) authentication.getPrincipal();
+            String username = principal.getUsername();
 
             return userRepository.findByUsername(username);
-        }catch (Exception e) {
-            return null;
+        } catch (Exception e) {
+            log.error("Error getting authenticated user", e);
+            return Optional.empty();
         }
     }
 }

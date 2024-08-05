@@ -33,12 +33,12 @@
         </div>
 
         <div class="right">
-            <div class="search">
-                <a th:href="@{/where}">
+            <form class="search" action="/search" method="get" onsubmit="return validateSearch()">
+                <input id="search-input" name="keyword" placeholder="게시판 검색">
+                <button type="submit">
                     <img class="logo-img" src="/images/search.png" alt="No Posts"/>
-                </a>
-                <input placeholder="게시판 검색">
-            </div>
+                </button>
+            </form>
 
             <div class="user-header">
                 <div sec:authorize="isAnonymous()">

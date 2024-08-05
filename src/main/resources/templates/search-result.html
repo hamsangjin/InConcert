@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 화면</title>
+    <link rel="stylesheet" href="/css/search-result.css">
+    <script>
+        function validateSearch() {
+            let keyword = document.getElementById("search-input").value.trim();
+            if (keyword.length < 2) {
+                alert("검색어를 2자 이상 입력하세요.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="review-block"></div>
+
+    <div class="title-container">
+        <h1 class="title"> 검색 결과</h1>
+        <p th:text="${posts.size() + '개의 게시물을 찾았습니다.'}"> </p>
+    </div>
+
+    <div class="post-header" th:if="${posts.size() > 0}">
+        <span class="header-title">제목</span>
+        <span class="header-author">작성자</span>
+        <span class="header-date">작성일</span>
+        <span class="header-views">조회</span>
+        <span class="header-likes">좋아요</span>
+    </div>
+
+    <div class="post-list" th:each="post : ${posts}">
+        <div class="post">
+            <div class="post-thumbnail">
+                <img src="/images/profile.png">
+            </div>
+            <div class="post-content">
+                <div class="post-title">
+                    <a th:href="@{'/' + ${post.category.title} + '/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                        <span th:text="'[' + ${post.postCategory.title} + '] ' + ${post.title}"></span>
+                    </a>
+                    <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
+                    <div th:if="${post.isNew}">
+                        <p class="new"> N </p>
+                    </div>
+                </div>
+                <div class="post-meta">
+                    <span class="author" th:text="${post.nickname}"></span>
+                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
+                    <span class="views" th:text="${post.viewCount}"></span>
+                    <span class="likes" th:text="${post.likeCount}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='wrapper'></div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

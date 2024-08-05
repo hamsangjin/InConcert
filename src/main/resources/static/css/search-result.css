@@ -27,7 +27,6 @@ body {
     margin: 0 auto;
 }
 
-
 /* 헤더 설정 */
 .header-container {
     display: flex;
@@ -219,108 +218,107 @@ header {
     margin: 3px 0;
 }
 
-/* tab 설정 */
-.tabs-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 1300px;
-    max-width: 1300px;
-    margin: 0 auto;
+.review-block{
+    margin-top: 40px;
 }
 
-.tabs {
+.title-container{
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto 50px;
+}
+
+.title-container > h1{
+    border-bottom: 1px solid #ccc;
+    color: #6f6f6f;
+}
+
+.title-container > p{
+    color: #6f6f6f;
+}
+
+.post-header {
     display: flex;
     justify-content: space-between;
-    background-color: #9f9f9f;
-    padding: 10px 10px;
-    margin-bottom: 20px;
-    border-radius: 30px;
+    padding: 10px;
+    font-weight: bold;
+    margin: 0 auto;
+    gap: 10px;
     min-width: 1280px;
     max-width: 1280px;
 }
 
-.tab-button {
-    flex: 1;
-    padding: 0;
-    margin: 0 10px;
-    border: none;
-    background-color: transparent;
+.post-header span {
     text-align: center;
-    color: white;
-    font-size: 16px;
-    text-decoration: none;
 }
 
-.tab-button:hover {
-    color: #00A885;
-    cursor: pointer;
+.header-title {
+    flex: 5; /* 제목이 50% 차지 */
 }
 
-/*board 설정*/
-.board-container{
-    display: flex;
-    justify-content: center;
-    margin: 0 auto 50px;
+.header-author,
+.header-date,
+.header-views,
+.header-likes {
+    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
+}
+
+.post-list {
+    border-top: 1px solid #ddd;
+    margin: 0 auto;
     min-width: 1300px;
     max-width: 1300px;
 }
 
-.board-container > div{
-    min-width: calc(40%);
-    max-width: calc(40%);
-}
-
-.board-header{
+.post {
     display: flex;
-    justify-content: space-between;
-    color: #00A885;
-    align-items: center;
-    margin-top: 0;
-    margin-bottom: 3px;
-    padding: 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
 }
 
-.board-header h1{
-    padding: 0;
-    margin: 0;
+.post-thumbnail {
+    flex-shrink: 0;
+    margin-right: 15px;
 }
 
-.board-header a{
-    text-decoration: none;
-    color: #00A885;
-    padding: 0;
-    margin: 0;
+.post-thumbnail img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
 }
 
-.post-list{
+.post-content {
     display: flex;
-    justify-content: space-between;
+    flex-grow: 1;
     align-items: center;
-    border-bottom: 1px solid #6f6f6f;
-}
-
-.post-left{
-    flex: 4;
-    display: flex;
-    align-items: center;
-}
-
-.post-left a{
-    text-decoration: none;
-    color: black;
-    padding: 0;
-}
-
-.post-left a:hover{
-    text-decoration: underline;
 }
 
 .post-title {
+    flex: 5; /* 제목이 50% 차지 */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.post-title > a{
+    color: black;
+    text-decoration: none;
+}
+
+.post-title > a:hover{
+    text-decoration: underline;
+}
+
+.post-title > a > span{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 530px;
     display: block;
 }
 
@@ -329,10 +327,11 @@ header {
     padding: 0;
 }
 
-.post-left div{
+.post-title > div{
     border: none;
     border-radius: 50%;
     background-color: red;
+    color: white;
     width: 18px;
     height: 18px;
     display: flex;
@@ -340,23 +339,17 @@ header {
     align-items: center;
 }
 
-.new{
-    padding: 0;
-    margin: 0;
-    color: white;
-    font-weight: bolder;
-}
-
-.post-right{
-    color: #6f6f6f;
+.post-meta {
     display: flex;
+    flex: 5;
     justify-content: space-between;
     align-items: center;
-    flex: 3;
-    gap: 10px;
+    margin-left: 45px;
 }
 
-.post-right > p{
-    text-align: center;
+.post-meta span {
     flex: 1;
+    text-align: center;
+    color: #6f6f6f;
+    white-space: nowrap;
 }
