@@ -7,6 +7,7 @@ import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
+import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
@@ -37,21 +38,7 @@ public class InfoService {
             default -> throw new PostCategoryNotFoundException("찾으려는 PostCategory가 존재하지 않습니다.");
         };
 
-        List<PostDto> postDtos = new ArrayList<>();
-        for (Post post : posts) {
-            PostDto postDto = PostDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .postCategory(post.getPostCategory())
-                    .nickname(post.getUser().getNickname())
-                    .viewCount(post.getViewCount()+1)
-                    .commentCount(post.getComments().size())
-                    .likeCount(post.getLikes().size())
-                    .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
-                    .createdAt(post.getCreatedAt())
-                    .build();
-            postDtos.add(postDto);
-        }
+        List<PostDto> postDtos = getPostDtos(posts);
         return postDtos;
     }
 
@@ -78,6 +65,22 @@ public class InfoService {
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDto> findByKeywordAndFilters(String keyword, String period, String type) {
+
+        LocalDateTime startDate = DateUtil.getCurrentDate();
+        LocalDateTime endDate = DateUtil.getEndDate(period);
+        // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
+        List<Post> posts = infoRepository.findByKeywordAndFilters(keyword, startDate, endDate, type);
+        List<PostDto> postDtos = getPostDtos(posts);
+
+        for (PostDto postDto : postDtos) {
+            System.out.println(postDto.getTitle());
+        }
+
+        return postDtos;
     }
 
     @Transactional
@@ -110,5 +113,24 @@ public class InfoService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         infoRepository.save(post);
+    }
+
+    private static List<PostDto> getPostDtos(List<Post> posts) {
+        List<PostDto> postDtos = new ArrayList<>();
+        for (Post post : posts) {
+            PostDto postDto = PostDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .postCategory(post.getPostCategory())
+                    .nickname(post.getUser().getNickname())
+                    .viewCount(post.getViewCount()+1)
+                    .commentCount(post.getComments().size())
+                    .likeCount(post.getLikes().size())
+                    .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
+                    .createdAt(post.getCreatedAt())
+                    .build();
+            postDtos.add(postDto);
+        }
+        return postDtos;
     }
 }
