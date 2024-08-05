@@ -41,7 +41,7 @@ public class UserApiController {
     private final JwtTokenizer jwtTokenizer;
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LogInReqDto reqDto, HttpServletResponse response) {
         try {
             Authentication authentication = authenticationManager.authenticate(

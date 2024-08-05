@@ -22,7 +22,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getToken(request);
 
         // header 에 값이 있는지 확인
-        if(StringUtils.hasText(token)){
+        if(StringUtils.hasText(token)) {
             try{
                 getAuthentication(token);
             }catch (ExpiredJwtException e){
@@ -84,14 +83,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);   // contextholder에 인증 설정
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Claims claims){
-        List<String> roles = (List<String>) claims.get("roles");
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles){
-            authorities.add(()->role);  // role 찾아서 권한에 추가
-        }
-        return authorities;
+    private List<GrantedAuthority> getGrantedAuthorities(Claims claims) {
+        List<String> roles = claims.get("roles", List.class);
+        return roles.stream()
+                .map(role -> (GrantedAuthority) () -> role)
+                .collect(Collectors.toList());
     }
 
     private String getToken(HttpServletRequest request) {

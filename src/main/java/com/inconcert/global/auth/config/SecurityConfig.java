@@ -1,7 +1,10 @@
 package com.inconcert.global.auth.config;
 
+import com.inconcert.global.auth.CustomOAuth2UserService;
 import com.inconcert.global.auth.filter.JwtAuthenticationFilter;
 import com.inconcert.global.auth.CustomUserDetailsService;
+import com.inconcert.global.handler.CustomOAuth2AuthenticationFailureHandler;
+import com.inconcert.global.handler.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -27,12 +30,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomOAuth2AuthenticationFailureHandler customOAuth2AuthenticationFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/home", "/loginform", "/registerform", "/register", "/login").permitAll()
+                        .requestMatchers("/home", "/loginform", "/registerform", "/register", "/login", "/api/login").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                         .requestMatchers("/user/**").permitAll()
                         .requestMatchers("/info/**", "/review/**", "/match/**", "/transfer/**").permitAll()
                         .requestMatchers("/search").permitAll()
@@ -41,6 +48,15 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form.disable())
+                .oauth2Login(oauth2 -> oauth2
+                        // oauth2 인증 서버로 리다이렉션하기 위한 엔드포인트
+                        .authorizationEndpoint(endpoint -> endpoint.baseUri("/oauth2/authorization"))
+                        // 사용자가 네이버 로그인 페이지로 이동하도록하는 단계
+                        .redirectionEndpoint(endpoint -> endpoint.baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(endpoint -> endpoint.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                        .failureHandler(customOAuth2AuthenticationFailureHandler)
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/home")

@@ -5,7 +5,6 @@ import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.role.entity.Role;
-import com.inconcert.domain.user.dto.request.RegisterReqDto;
 import com.inconcert.global.auth.jwt.token.entity.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -40,14 +39,14 @@ public class User {
     @Column(unique = true, nullable = false)
     private String nickname;
 
-    @Column(unique = true, nullable = false, name = "phone_number")
+    @Column(nullable = false, name = "phone_number")
     private String phoneNumber;
 
     @Column(nullable = false)
     private LocalDate birth;
 
     @Column
-    private String profileImage = "/기본값..";
+    private String profileImage = "/images/profile.png";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -111,19 +110,6 @@ public class User {
         this.intro = intro != null ? intro : this.intro;
         this.mbti = mbti;
         this.point = point != null ? point : this.point;
-        this.roles = roles;
-    }
-
-    public User(RegisterReqDto reqDto, String encodedPassword, Set<Role> roles) {
-        this.username = reqDto.getUsername();
-        this.password = encodedPassword;
-        this.email = reqDto.getEmail();
-        this.name = reqDto.getName();
-        this.nickname = reqDto.getNickname();
-        this.phoneNumber = reqDto.getPhoneNumber();
-        this.birth = reqDto.getBirth();
-        this.gender = reqDto.getGender();
-        this.mbti = reqDto.getMbti();
         this.roles = roles;
     }
 }
