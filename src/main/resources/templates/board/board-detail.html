@@ -104,7 +104,7 @@
     <div class="post-list" th:each="post : ${posts}">
         <div class="post">
             <div class="post-thumbnail">
-                <img src="/images/profile.png">
+                <img th:src="@{${post.thumbnailUrl}}">
             </div>
 
             <div class="post-content">

@@ -56,6 +56,15 @@
                 <div class="author-row">
                     <span class="author" th:text="${post.nickname}"></span>
                     <button class="chat-button">1:1 채팅</button>
+                    <button class="chat-button" th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}"
+                            th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
+                            onclick="location.href=this.getAttribute('href');">
+                        수정
+                    </button>
+
+                    <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/delete|}" method="post" th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
+                        <button type="submit" class="chat-button" onclick="return confirmDelete()">삭제</button>
+                    </form>
                 </div>
                 <div class="date-row">
                     <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>

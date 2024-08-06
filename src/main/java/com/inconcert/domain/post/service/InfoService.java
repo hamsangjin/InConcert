@@ -4,6 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.crawling.service.PerformanceService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
@@ -24,6 +25,7 @@ public class InfoService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final PerformanceService performanceService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
@@ -101,7 +103,6 @@ public class InfoService {
                 .category(category)
                 .build();
 
-        postDto.setThumbnailUrl("<p><img src=" + postDto.getThumbnailUrl() + "></p>");
         postDto.setUser(userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
@@ -124,7 +125,7 @@ public class InfoService {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
-                    .thumbnailUrl(post.getThumbnailUrl())  // 썸네일 URL 추가
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount()+1)
@@ -137,4 +138,10 @@ public class InfoService {
         }
         return postDtos;
     }
+
+    @Transactional
+    public void crawlAndSavePosts(String type) {
+        performanceService.crawlPerformances(type);
+    }
+
 }

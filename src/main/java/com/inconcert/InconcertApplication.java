@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+//@EnableScheduling // 스케줄링 관련 (현재는 로컬에서 작업하므로 주석 처리)
 public class InconcertApplication {
 
 	public static void main(String[] args) {

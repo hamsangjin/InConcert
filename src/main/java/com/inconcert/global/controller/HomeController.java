@@ -3,6 +3,7 @@ package com.inconcert.global.controller;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.service.CrawlingService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,9 +19,14 @@ import java.util.List;
 public class HomeController {
     private final HomeService homeService;
     private final UserService userService;
+    private final CrawlingService crawlingService;
 
     @GetMapping("/home")
     public String home(Model model) {
+        // 크롤링 판단
+        crawlingService.crawlIfNecessary();
+
+        // 기존의 게시글 로드
         List<PostDto> infoPosts = homeService.getAllCategoryPosts("info");
         List<PostDto> reviewPosts = homeService.getAllCategoryPosts("review");
         List<PostDto> matchPosts = homeService.getAllCategoryPosts("match");
@@ -30,6 +36,7 @@ public class HomeController {
         model.addAttribute("reviewPosts", reviewPosts);
         model.addAttribute("matchPosts", matchPosts);
         model.addAttribute("transferPosts", transferPosts);
+
         return "home";
     }
 

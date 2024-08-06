@@ -34,7 +34,7 @@ public class ImageService {
             Files.write(savePath, file.getBytes());
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/uploads/images/")
+                    .path("/images/uploads/")
                     .path(savedFileName)
                     .toUriString();
 

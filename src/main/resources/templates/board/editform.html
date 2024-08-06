@@ -48,6 +48,7 @@
             <input type="text" id="title" placeholder="제목을 입력해주세요." class="title-input" name="title" th:field="*{title}" required>
             <div id="editor"></div>
             <input type="hidden" name="content" id="content" th:field="*{content}" required>
+            <input type="hidden" name="thumbnailUrl" id="thumbnailUrl" th:value="${post.thumbnailUrl}">
 
             <div style="text-align: right">
                 <button type="submit" class="submit-btn">수정</button>
@@ -72,9 +73,40 @@
         }
     });
 
-    // Set initial content for Quill editor
     var initialContent = /*[[${post.content}]]*/ '[(${post.content})]';
     quill.root.innerHTML = initialContent;
+
+    function imageHandler() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = function() {
+            var file = input.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/uploadImage', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+                .then(result => {
+                    var range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', result.url);
+                    quill.setSelection(range.index + 1);
+
+                    // post.thumbnailUrl이 null인 경우에만 썸네일로 설정
+                    if (!document.getElementById('thumbnailUrl').value) {
+                        document.getElementById('thumbnailUrl').value = result.url;
+                    }
+                }).catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    }
+
+    quill.getModule('toolbar').addHandler('image', imageHandler);
 
     document.getElementById('editForm').addEventListener('submit', function(event) {
         document.getElementById('content').value = quill.root.innerHTML;

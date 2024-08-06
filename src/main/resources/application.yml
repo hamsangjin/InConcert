@@ -67,4 +67,8 @@ jwt:
 
 image:
   upload:
-    dir: /Users/sangjin/Desktop/inconcert/src/main/resources/static/images/uploads/
+    dir: ${imageUploadPath}
+
+# chromedriver 경로
+chrome:
+  driver: ${drivePath}

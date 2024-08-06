@@ -80,7 +80,6 @@ public class MatchService {
 
     @Transactional
     public void save(PostDto postDto){
-
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
@@ -101,7 +100,6 @@ public class MatchService {
                 .category(category)
                 .build();
 
-        postDto.setThumbnailUrl("<p><img src=" + postDto.getThumbnailUrl() + "></p>");
         postDto.setUser(userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
@@ -125,6 +123,7 @@ public class MatchService {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount() + 1)

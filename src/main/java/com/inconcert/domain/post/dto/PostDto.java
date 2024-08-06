@@ -6,6 +6,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import lombok.*;
 import java.time.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -42,6 +43,8 @@ public class PostDto {
                 .endDate(postDto.getEndDate())
                 .matchCount(postDto.getMatchCount())
                 .thumbnailUrl(postDto.getThumbnailUrl())
+                .comments(new HashSet<>())
+                .likes(new HashSet<>())
                 .postCategory(postCategory)
                 .user(postDto.getUser())
                 .build();

@@ -179,8 +179,14 @@ public class UserService {
     public Optional<User> getAuthenticatedUser() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            UserDetails principal = (UserDetails) authentication.getPrincipal();
-            String username = principal != null ? principal.getUsername() : null;
+            Object principal = authentication.getPrincipal();
+            String username = null;
+
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                username = (String) principal;
+            }
 
             return userRepository.findByUsername(username);
         } catch (Exception e) {

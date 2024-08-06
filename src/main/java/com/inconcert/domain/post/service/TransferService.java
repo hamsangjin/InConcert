@@ -101,7 +101,6 @@ public class TransferService {
                 .category(category)
                 .build();
 
-        postDto.setThumbnailUrl("<p><img src=" + postDto.getThumbnailUrl() + "></p>");
         postDto.setUser(userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
@@ -124,6 +123,7 @@ public class TransferService {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount()+1)
