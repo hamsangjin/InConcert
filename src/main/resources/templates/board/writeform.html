@@ -93,7 +93,7 @@
             var formData = new FormData();
             formData.append('file', file);
 
-            fetch('/info/upload', {
+            fetch('/uploadImage', {
                 method: 'POST',
                 body: formData
             }).then(response => response.json())
