@@ -4,6 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.crawling.service.PerformanceService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
@@ -24,6 +25,7 @@ public class InfoService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final PerformanceService performanceService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
@@ -114,6 +116,11 @@ public class InfoService {
         Post post = infoRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         infoRepository.delete(post);
+    }
+
+    @Transactional
+    public void crawlAndSavePosts(String type) {
+        performanceService.crawlPerformances(type);
     }
 
     private static List<PostDto> getPostDtos(List<Post> posts) {

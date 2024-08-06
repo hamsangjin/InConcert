@@ -77,7 +77,7 @@ public class User {
     private Set<Comment> comments;
 
     @OneToMany(mappedBy = "user")
-    private Set<Like> likes;
+    private Set<Like> likes = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
