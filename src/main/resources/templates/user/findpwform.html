@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>비밀번호 찾기</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("findPassword").addEventListener("submit", function(event) {
+                event.preventDefault();
+
+                const username = document.getElementById("username").value;
+                const email = document.getElementById("email").value;
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/findpw", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) { // 요청 완료
+                        if (xhr.status === 200) {   // 요청 성공
+                            alert(xhr.responseText);
+                        } else {
+                            alert(xhr.responseText);
+                        }
+                    }
+                };
+
+                const data = JSON.stringify({ username: username, email: email });
+                xhr.send(data);
+            });
+        });
+    </script>
+</head>
+<body>
+<header>
+    <a class="logo" href="/home">
+        <h2 class="logo-text">In Concert</h2>
+    </a>
+
+    <div class="findpw-title">
+        <h2>비밀번호 찾기</h2>
+    </div>
+</header>
+<form id="findPassword">
+    <div>
+        <label for="username">아이디:</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <button type="submit">비밀번호 찾기</button>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</form>
+</body>
+</html>

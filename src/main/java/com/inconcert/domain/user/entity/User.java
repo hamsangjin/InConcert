@@ -112,4 +112,9 @@ public class User {
         this.point = point != null ? point : this.point;
         this.roles = roles;
     }
+
+    // 임시 비밀번호로 업데이트
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

@@ -93,7 +93,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
         catch (Exception e) {
             log.error("OAuth2 로그인 처리 중 오류 발생", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "OAuth2 로그인 처리 중 오류가 발생했습니다.");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"OAuth2 로그인 처리 중 오류가 발생했습니다.\"}");
         }
     }
 }

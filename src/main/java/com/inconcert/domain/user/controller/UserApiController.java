@@ -187,4 +187,16 @@ public class UserApiController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
+
+    // 비밀번호 찾기
+    @PostMapping("/findpw")
+    public ResponseEntity<String> findId(@RequestBody FindPasswordReqDto reqDto) {
+        try {
+            User user = userService.findPassword(reqDto);
+            return ResponseEntity.ok(user.getEmail() + "로 임시 비밀번호를 전송하였습니다.");
+        }
+        catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
+        }
+    }
 }

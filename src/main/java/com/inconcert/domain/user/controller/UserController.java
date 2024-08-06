@@ -29,4 +29,10 @@ public class UserController {
     public String idform() {
         return "user/idform";
     }
+
+    // 비밀번호 찾기
+    @GetMapping("/findpwform")
+    public String findpw() {
+        return "/user/findpwform";
+    }
 }
