@@ -26,21 +26,29 @@ function toggleReplies(commentId) {
 }
 
 function toggleEditForm(commentId) {
-    // const commentContent = document.getElementById('comment-content-' + commentId);
+    const commentContent = document.getElementById('comment-content-' + commentId);
     const editForm = document.getElementById('comment-edit-form-' + commentId);
-    if (editForm != null) {
-        editForm.style.display = (editForm.style.display === 'none' || editForm.style.display === '') ? 'block' : 'none';
+    if (commentContent && editForm) {
+        if (editForm.style.display === 'none' || editForm.style.display === '') {
+            commentContent.style.display = 'none';
+            editForm.style.display = 'block';
+        } else {
+            commentContent.style.display = 'block';
+            editForm.style.display = 'none';
+        }
     } else {
-        console.error('Edit form not found for commentId: ' + commentId);
+        console.error('Edit form or comment content not found for commentId: ' + commentId);
     }
 }
 
 function cancelEdit(commentId) {
+    const commentContent = document.getElementById('comment-content-' + commentId);
     const editForm = document.getElementById('comment-edit-form-' + commentId);
-    if (editForm != null) {
+    if (commentContent && editForm) {
+        commentContent.style.display = 'block';
         editForm.style.display = 'none';
     } else {
-        console.error('Edit form found for commentId: ' + commentId);
+        console.error('Edit form or comment content not found for commentId: ' + commentId);
     }
 }
 
