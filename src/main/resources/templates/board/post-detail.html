@@ -65,9 +65,9 @@
         </div>
 
         <div class="post-body">
-            <img src="/images/logo.png" class="post-image">
+            <p th:utext="${post.thumbnailUrl}"> </p>
             <div class="post-text">
-                <p th:text="${post.content}"></p>
+                <p th:utext="${post.content}"></p>
             </div>
         </div>
 

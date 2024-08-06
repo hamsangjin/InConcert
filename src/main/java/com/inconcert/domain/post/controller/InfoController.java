@@ -6,13 +6,21 @@ import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.InfoService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/info")
@@ -101,5 +109,32 @@ public class InfoController {
     public String write(@ModelAttribute PostDto postDto){
         infoService.save(postDto);
         return "redirect:/info";
+    }
+
+    @Value("${image.upload.dir}")
+    private String uploadDir;
+
+    @PostMapping("/upload")
+    @ResponseBody
+    public Map<String, String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+        String uuid = UUID.randomUUID().toString();
+        String savedFileName = uuid + "_" + file.getOriginalFilename();
+        Path savePath = Paths.get(uploadDir, savedFileName);
+
+        // 디렉토리가 존재하지 않으면 생성
+        if (!Files.exists(savePath.getParent())) {
+            Files.createDirectories(savePath.getParent());
+        }
+
+        Files.write(savePath, file.getBytes());
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/images/uploads/")
+                .path(savedFileName)
+                .toUriString();
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", fileDownloadUri);
+        return result;
     }
 }

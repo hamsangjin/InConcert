@@ -52,6 +52,7 @@ public class InfoService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .thumbnailUrl(post.getThumbnailUrl())  // 썸네일 URL 추가
                 .postCategory(post.getPostCategory())
                 .nickname(post.getUser().getNickname())
                 .viewCount(post.getViewCount())
@@ -122,6 +123,7 @@ public class InfoService {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())  // 썸네일 URL 추가
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount()+1)

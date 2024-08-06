@@ -41,7 +41,7 @@ public class PostDto {
                 .content(postDto.getContent())
                 .endDate(postDto.getEndDate())
                 .matchCount(postDto.getMatchCount())
-//                .thumbnailUrl(postDto.getThumbnailUrl())
+                .thumbnailUrl(postDto.getThumbnailUrl())
                 .postCategory(postCategory)
                 .user(postDto.getUser())
                 .build();

@@ -354,10 +354,11 @@ header {
     padding-top: 10px;
 }
 
-.post-image {
+.post-body img {
     width: 100%;
     max-width: 400px;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .post-text {
