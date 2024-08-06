@@ -9,7 +9,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "performances")
 @Getter
-@Setter
 @NoArgsConstructor
 public class Performance extends BaseEntity {
     @Id
