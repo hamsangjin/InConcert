@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>아이디 찾기</title>
+</head>
+<body>
+<h2>아이디 찾기</h2>
+<form id="findIdForm">
+    <div>
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div>
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <button type="submit">아이디 찾기</button>
+</form>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const findIdForm = document.getElementById('findIdForm');
+        findIdForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            fetch('/idform', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email
+                })
+            })
+                .then(response => {
+                    if (response.status === 404) {
+                        throw new Error('사용자가 존재하지 않습니다.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    alert(`당신의 아이디는 ${data} 입니다.`);
+                    window.location.href = '/loginform';
+                })
+                .catch(error => {
+                    alert(error.message);
+                    window.location.href = '/loginform';
+                });
+        });
+    });
+</script>
+</body>
+</html>
