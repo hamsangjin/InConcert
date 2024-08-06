@@ -9,11 +9,8 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.CategoryNotFoundException;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.PostNotFoundException;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +29,7 @@ public class ReviewService {
     @Transactional
     public PostDto getPostById(Long postId) {
         Post findPost = reviewRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("ID가 " + postId + "인 게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
         // viewCount 증가
         findPost.incrementViewCount();
@@ -45,6 +42,8 @@ public class ReviewService {
                 .postCategory(post.getPostCategory())
                 .nickname(post.getUser().getNickname())
                 .viewCount(post.getViewCount())
+                .matchCount(post.getMatchCount())
+                .endDate(post.getEndDate())
                 .commentCount(post.getComments().size())
                 .comments(post.getComments())
                 .likeCount(post.getLikes().size())
@@ -73,13 +72,13 @@ public class ReviewService {
 
         // 게시물 작성 폼에서 가져온 Category 제목으로 조회해서 Category 객체 생성
         Category category = categoryRepository.findByTitle(postDto.getCategoryTitle())
-                .orElseThrow(() -> new CategoryNotFoundException(postDto.getCategoryTitle() + "라는 Category를 찾지 못했습니다."));
+                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
 
         // 적절한 PostCategory 찾기
         PostCategory postCategory = postCategories.stream()
                 .filter(pc -> pc.getCategory().equals(category))
                 .findFirst()
-                .orElseThrow(() -> new PostCategoryNotFoundException("해당 제목과 카테고리 조합의 PostCategory를 찾지 못했습니다."));
+                .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
 
         // 생성한 Category를 builder를 통해 연관관계 주입
         PostCategory updatedPostCategory = postCategory.builder()
@@ -89,12 +88,19 @@ public class ReviewService {
                 .build();
 
         postDto.setUser(userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username")));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         reviewRepository.save(post);
+    }
+
+    @Transactional
+    public void deletePost(Long postId) {
+        Post post = reviewRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        reviewRepository.delete(post);
     }
 
     private static List<PostDto> getPostDtos(List<Post> posts) {
