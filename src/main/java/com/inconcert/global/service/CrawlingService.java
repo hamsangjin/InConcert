@@ -6,6 +6,7 @@ import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.service.InfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,24 +26,26 @@ public class CrawlingService {
 //        }
 //    }
 
+    @Transactional
     public void crawlIfNecessary() {
         Performance lastCrawl = performanceRepository.findTopByOrderByIdDesc();
         LocalDateTime now = LocalDateTime.now();
 
         // 크롤링이 되어있지 않은 상태
         if (lastCrawl == null) {
-            infoRepository.afterCrawling();
             performCrawling();
         }
-        // 마지막으로 크롤링한 지 24시간이 지났을 때 다시 크롤링
-        else if(ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 24){
-            if(lastCrawl != null) performanceRepository.delete(lastCrawl);    // 이전 크롤링 지우기
+        // 마지막으로 크롤링한 지 24시간이 지났을 때 다시 크롤링 (현재는 테스트 중이므로 10분으로 설정함)
+//        ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 24 // 24시간으로 설정 시
+        else if(ChronoUnit.MINUTES.between(lastCrawl.getUpdatedAt(), now) >= 10){
+            performanceRepository.delete(lastCrawl);    // 이전 크롤링 지우기
             infoRepository.afterCrawling();
             performCrawling();
         }
     }
 
-    private void performCrawling() {
+    @Transactional
+    protected void performCrawling() {
         for (int type = 1; type <= 4; type++) {
             infoService.crawlAndSavePosts(String.valueOf(type));
         }

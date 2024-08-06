@@ -2,6 +2,7 @@ package com.inconcert.domain.post.repository;
 
 import com.inconcert.domain.post.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -41,7 +42,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
                                        @Param("type") String type);
 
     // 크롤링 후 post category의 1~4번까지 지우기
-    @Transactional
+    @Modifying
     @Query("DELETE Post p WHERE p.postCategory.id BETWEEN 1 AND 4")
     void afterCrawling();
 }
