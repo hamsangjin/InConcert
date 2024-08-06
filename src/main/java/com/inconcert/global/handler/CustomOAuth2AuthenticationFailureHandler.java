@@ -20,9 +20,10 @@ public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String errorMessage = "Unknown error - " + exception.getLocalizedMessage();
-        log.info("error? {}", errorMessage);
         log.error("네이버 로그인에 실패하였습니다.: {}", errorMessage);
 
-        redirectStrategy.sendRedirect(request, response, "/login?error=" + errorMessage);
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write("{\"error\": \"" + errorMessage + "\"}");
     }
 }

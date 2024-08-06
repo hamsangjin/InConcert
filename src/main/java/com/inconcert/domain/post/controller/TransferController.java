@@ -1,6 +1,8 @@
 package com.inconcert.domain.post.controller;
 
+import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.TransferService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.List;
 public class TransferController {
     private final TransferService transferService;
     private final UserService userService;
+    private final EditService editService;
 
     @GetMapping
     public String transfer(Model model) {
@@ -42,6 +45,8 @@ public class TransferController {
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
+        model.addAttribute("createForm", new CommentCreateForm());
+
         return "board/post-detail";
     }
 
@@ -55,6 +60,36 @@ public class TransferController {
         model.addAttribute("posts", searchResults);
         model.addAttribute("categoryTitle", "transfer");
         return "board/board-detail";
+    }
+
+    //글 삭제
+    @PostMapping("/{postCategoryTitle}/{postId}/delete")
+    public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                             @PathVariable("postId") Long postId) {
+        transferService.deletePost(postId);
+        return "redirect:/transfer/" + postCategoryTitle;
+    }
+
+    //글 수정
+    @GetMapping("/{postCategoryTitle}/{postId}/edit")
+    public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                               @PathVariable("postId") Long postId, Model model) {
+        PostDto postDto = transferService.getPostById(postId);
+
+
+        model.addAttribute("post", postDto);
+        model.addAttribute("categoryTitle", "transfer");
+        model.addAttribute("postCategoryTitle", postCategoryTitle);
+        return "board/editform";
+    }
+
+    @PostMapping("/{postCategoryTitle}/{postId}/edit")
+    public String updatePost(@PathVariable("postId") Long postId,
+                             @ModelAttribute PostDto postDto,
+                             @RequestParam("newCategoryTitle") String newCategoryTitle,
+                             @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
+        Long updatedPostId = editService.updatePost(postId, postDto, "transfer", newCategoryTitle, newPostCategoryTitle);
+        return "redirect:/" + newCategoryTitle + '/' + newPostCategoryTitle + '/' + updatedPostId;
     }
 
     @PostMapping("/write")

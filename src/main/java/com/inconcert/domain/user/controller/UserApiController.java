@@ -24,10 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +38,7 @@ public class UserApiController {
     private final JwtTokenizer jwtTokenizer;
     private final AuthenticationManager authenticationManager;
 
+    // 로그인
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LogInReqDto reqDto, HttpServletResponse response) {
         try {
@@ -173,9 +171,32 @@ public class UserApiController {
         return userService.checkCertification(reqDto);
     }
 
+    // 회원가입
     @PostMapping("/register")
     public ResponseEntity<?> register(@ModelAttribute RegisterReqDto reqDto) {
         return userService.joinUser(reqDto);
     }
 
+    // 아이디 찾기
+    @PostMapping("/idform")
+    public ResponseEntity<String> findId(@RequestBody FindIdReqDto reqDto) {
+        try {
+            String username = userService.findUserId(reqDto);
+            return ResponseEntity.ok(username);
+        } catch (UserNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+    }
+
+    // 비밀번호 찾기
+    @PostMapping("/findpw")
+    public ResponseEntity<String> findId(@RequestBody FindPasswordReqDto reqDto) {
+        try {
+            User user = userService.findPassword(reqDto);
+            return ResponseEntity.ok(user.getEmail() + "로 임시 비밀번호를 전송하였습니다.");
+        }
+        catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
+        }
+    }
 }
