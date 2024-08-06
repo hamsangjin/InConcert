@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/info")
@@ -59,10 +61,14 @@ public class InfoController {
         List<PostDto> searchResults = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type);
         model.addAttribute("posts", searchResults);
         model.addAttribute("categoryTitle", "info");
+        Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("period", period);
+        searchInfo.put("type", type);
+        searchInfo.put("keyword", keyword);
+        model.addAttribute("searchInfo", searchInfo);
         return "board/board-detail";
     }
 
-    //글 삭제
     @PostMapping("/{postCategoryTitle}/{postId}/delete")
     public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
                              @PathVariable("postId") Long postId) {
@@ -70,7 +76,6 @@ public class InfoController {
         return "redirect:/info/" + postCategoryTitle;
     }
 
-    //글 수정
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
@@ -84,8 +89,7 @@ public class InfoController {
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/edit")
-    public String updatePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                             @PathVariable("postId") Long postId,
+    public String updatePost(@PathVariable("postId") Long postId,
                              @ModelAttribute PostDto postDto,
                              @RequestParam("newCategoryTitle") String newCategoryTitle,
                              @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
