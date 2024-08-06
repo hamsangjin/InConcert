@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 수정</title>
+    <link rel="stylesheet" href="/css/board/writeform.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <form method="post" enctype="multipart/form-data" id="editForm"
+          th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
+          th:object="${post}">
+
+        <div class="write-container">
+            <div class="dropdowns">
+                <select id="categoryTitle" name="newCategoryTitle" required>
+                    <option value="info" th:selected="${categoryTitle == 'info'}">공연 소식</option>
+                    <option value="review" th:selected="${categoryTitle == 'review'}">공연 후기</option>
+                    <option value="match" th:selected="${categoryTitle == 'match'}">동행</option>
+                    <option value="transfer" th:selected="${categoryTitle == 'transfer'}">양도</option>
+                </select>
+
+                <select id="postCategoryTitle" name="newPostCategoryTitle" required>
+                    <option value="musical" th:selected="${postCategoryTitle == 'musical'}">뮤지컬</option>
+                    <option value="concert" th:selected="${postCategoryTitle == 'concert'}">콘서트</option>
+                    <option value="theater" th:selected="${postCategoryTitle == 'theater'}">연극</option>
+                    <option value="etc" th:selected="${postCategoryTitle == 'etc'}">기타</option>
+                </select>
+            </div>
+
+            <div class="dropdowns">
+                <select id="matchCount" name="matchCount" th:field="*{matchCount}" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+                <div class="date-container">
+                    <label for="endDate">종료 날짜 지정</label>
+                    <input type="date" id="endDate" name="endDate" th:field="*{endDate}" required>
+                </div>
+            </div>
+
+            <input type="text" id="title" placeholder="제목을 입력해주세요." class="title-input" name="title" th:field="*{title}" required>
+            <div id="editor"></div>
+            <input type="hidden" name="content" id="content" th:field="*{content}" required>
+
+            <div style="text-align: right">
+                <button type="submit" class="submit-btn">수정</button>
+            </div>
+        </div>
+    </form>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    var quill = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'color': [] }, { 'background': [] }],
+                ['link', 'image'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+            ]
+        }
+    });
+
+    // Set initial content for Quill editor
+    var initialContent = /*[[${post.content}]]*/ '[(${post.content})]';
+    quill.root.innerHTML = initialContent;
+
+    document.getElementById('editForm').addEventListener('submit', function(event) {
+        document.getElementById('content').value = quill.root.innerHTML;
+
+        var matchCount = document.getElementById('matchCount');
+        var endDate = document.getElementById('endDate');
+        var title = document.getElementById('title');
+        var content = document.getElementById('content');
+
+        if (
+            matchCount.value === 'default' ||
+            !endDate.value ||
+            !title.value.trim() ||
+            !content.value.trim()
+        ) {
+            event.preventDefault();
+            alert('모든 필드를 올바르게 입력해주세요.');
+        }
+    });
+</script>
+</body>
+</html>
