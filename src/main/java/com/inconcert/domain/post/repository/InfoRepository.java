@@ -38,4 +38,8 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
                                        @Param("startDate") LocalDateTime startDate,
                                        @Param("endDate") LocalDateTime endDate,
                                        @Param("type") String type);
+
+    // 크롤링 후 post category의 1~4번까지 지우기
+    @Query("SELECT p FROM Post p JOIN FETCH p.postCategory pc WHERE pc.id BETWEEN 1 AND 4")
+    List<Post> afterCrawling();
 }
