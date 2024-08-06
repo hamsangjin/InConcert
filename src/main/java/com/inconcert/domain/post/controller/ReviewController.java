@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/review")
@@ -41,7 +43,22 @@ public class ReviewController {
         return "board/post-detail";
     }
 
-    //글 삭제
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         Model model) {
+        List<PostDto> searchResults = reviewService.findByKeywordAndFilters(keyword, period, type);
+        model.addAttribute("posts", searchResults);
+        model.addAttribute("categoryTitle", "review");
+        Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("period", period);
+        searchInfo.put("type", type);
+        searchInfo.put("keyword", keyword);
+        model.addAttribute("searchInfo", searchInfo);
+        return "board/board-detail";
+    }
+
     @PostMapping("/{postCategoryTitle}/{postId}/delete")
     public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
                              @PathVariable("postId") Long postId) {
@@ -49,7 +66,6 @@ public class ReviewController {
         return "redirect:/review/" + postCategoryTitle;
     }
 
-    //글 수정
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
@@ -69,17 +85,6 @@ public class ReviewController {
                              @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
         Long updatedPostId = editService.updatePost(postId, postDto, "review", newCategoryTitle, newPostCategoryTitle);
         return "redirect:/" + newCategoryTitle + '/' + newPostCategoryTitle + '/' + updatedPostId;
-    }
-
-    @GetMapping("/search")
-    public String search(@RequestParam(name = "keyword") String keyword,
-                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
-                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
-                         Model model) {
-        List<PostDto> searchResults = reviewService.findByKeywordAndFilters(keyword, period, type);
-        model.addAttribute("posts", searchResults);
-        model.addAttribute("categoryTitle", "review");
-        return "board/board-detail";
     }
 
     @PostMapping("/write")
