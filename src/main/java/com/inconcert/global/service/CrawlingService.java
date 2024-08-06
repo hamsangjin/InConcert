@@ -27,11 +27,16 @@ public class CrawlingService {
 
     public void crawlIfNecessary() {
         Performance lastCrawl = performanceRepository.findTopByOrderByIdDesc();
-        if(lastCrawl != null) performanceRepository.delete(lastCrawl);    // 이전 크롤릴 지우기
         LocalDateTime now = LocalDateTime.now();
 
+        // 크롤링이 되어있지 않은 상태
+        if (lastCrawl == null) {
+            infoRepository.afterCrawling();
+            performCrawling();
+        }
         // 마지막으로 크롤링한 지 24시간이 지났을 때 다시 크롤링
-        if (lastCrawl == null || ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 24) {
+        else if(ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 24){
+            if(lastCrawl != null) performanceRepository.delete(lastCrawl);    // 이전 크롤링 지우기
             infoRepository.afterCrawling();
             performCrawling();
         }

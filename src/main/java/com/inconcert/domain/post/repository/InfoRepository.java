@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
                                        @Param("type") String type);
 
     // 크롤링 후 post category의 1~4번까지 지우기
-    @Query("SELECT p FROM Post p JOIN FETCH p.postCategory pc WHERE pc.id BETWEEN 1 AND 4")
-    List<Post> afterCrawling();
+    @Transactional
+    @Query("DELETE Post p WHERE p.postCategory.id BETWEEN 1 AND 4")
+    void afterCrawling();
 }
