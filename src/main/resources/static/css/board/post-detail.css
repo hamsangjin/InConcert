@@ -274,12 +274,19 @@ header {
     margin: 0 auto;
 }
 
-.nav-button {
+.button-group a{
     padding: 10px 20px;
     border: none;
     border-radius: 15px;
     cursor: pointer;
     font-size: 14px;
+    color: black;
+    text-decoration: none;
+    background-color: #ccc;
+}
+
+.button-group a:hover{
+    background-color: #9f9f9f;
 }
 
 .post-container {
@@ -356,6 +363,8 @@ header {
 .post-text {
     text-align: left;
     width: 100%;
+    word-break: break-all;
+    white-space: normal;
 }
 
 .interaction {
