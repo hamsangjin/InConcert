@@ -1,8 +1,10 @@
 package com.inconcert.domain.user.service;
 
 import com.inconcert.domain.certification.common.CertificationNumber;
+import com.inconcert.domain.certification.common.TempPassword;
 import com.inconcert.domain.certification.entity.Certification;
 import com.inconcert.domain.certification.provider.EmailProvider;
+import com.inconcert.domain.certification.provider.TempPasswordEmailProvider;
 import com.inconcert.domain.certification.repository.CertificationRepository;
 import com.inconcert.domain.role.entity.Role;
 import com.inconcert.domain.role.repository.RoleRepository;
@@ -37,6 +39,7 @@ public class UserService {
     private final CertificationRepository certificationRepository;
     private final RoleRepository roleRepository;
     private final EmailProvider emailProvider;
+    private final TempPasswordEmailProvider tempPasswordEmailProvider;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -191,5 +194,24 @@ public class UserService {
         User findUser = userRepository.findByNameAndEmail(reqDto.getName(), reqDto.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
         return findUser.getUsername();
+    }
+
+    // 비밀번호 찾기
+    @Transactional
+    public User findPassword(FindPasswordReqDto reqDto) {
+        User user = userRepository.findByUsernameAndEmail(reqDto.getUsername(), reqDto.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+
+        // 임시 비밀번호
+        String tempPassword = TempPassword.certificationNumber();
+
+        // 메일 전송
+        tempPasswordEmailProvider.sendEmail(reqDto.getEmail(), tempPassword);
+
+        // 해당 비밀번호로 유저 정보 수정
+        String encodePassword = passwordEncoder.encode(tempPassword);
+        user.updatePassword(encodePassword);
+
+        return userRepository.save(user);
     }
 }

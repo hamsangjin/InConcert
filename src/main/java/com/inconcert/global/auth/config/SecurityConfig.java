@@ -38,9 +38,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/home", "/loginform", "/registerform", "/register", "/login", "/api/login", "/idform").permitAll()
+                        .requestMatchers("/home", "/loginform", "/registerform", "/register", "/login", "/api/login").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
-                        .requestMatchers("/user/**").permitAll()
+                        .requestMatchers("/user/**", "/idform", "/findpw", "/findpwform").permitAll()
                         .requestMatchers("/info/**", "/review/**", "/match/**", "/transfer/**").permitAll()
                         .requestMatchers("/search").permitAll()
                         .requestMatchers("/api/**","/css/**", "/js/**", "/images/**").permitAll()
