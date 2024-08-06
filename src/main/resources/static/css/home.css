@@ -346,7 +346,7 @@ header {
 .post-right{
     color: #6f6f6f;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     flex: 3;
     gap: 10px;
@@ -354,5 +354,4 @@ header {
 
 .post-right > p{
     text-align: center;
-    flex: 1;
 }

@@ -35,9 +35,8 @@
     <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
 
     <div class="button-group">
-        <button class="nav-button">이전 글</button>
-        <button class="nav-button">다음 글</button>
-        <button class="nav-button">목록</button>
+        <a class="nav-button" th:if="${categoryTitle != 'review'}" th:href="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle}}">목록</a>
+        <a class="nav-button" th:if="${categoryTitle == 'review'}" th:href="@{'/' + ${categoryTitle}}">목록</a>
     </div>
 
     <div class="post-container">
