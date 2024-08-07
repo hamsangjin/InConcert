@@ -16,8 +16,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 5MB
-      max-request-size: 5MB
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   # mail send (인증번호 전송)
   mail:
@@ -64,6 +64,10 @@ jwt:
   refreshKey: ${refreshKey}
   access-token-expire-time: 1800000   # 30분
   refresh-token-expire-time: 604800000  # 7일
+
+image:
+  upload:
+    dir: ${imageUploadPath}
 
 # chromedriver 경로
 chrome:

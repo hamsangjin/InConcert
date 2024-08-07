@@ -54,6 +54,7 @@ public class InfoService {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .thumbnailUrl(post.getThumbnailUrl())  // 썸네일 URL 추가
                 .postCategory(post.getPostCategory())
                 .nickname(post.getUser().getNickname())
                 .viewCount(post.getViewCount())
@@ -118,17 +119,13 @@ public class InfoService {
         infoRepository.delete(post);
     }
 
-    @Transactional
-    public void crawlAndSavePosts(String type) {
-        performanceService.crawlPerformances(type);
-    }
-
     private static List<PostDto> getPostDtos(List<Post> posts) {
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount()+1)
@@ -141,4 +138,10 @@ public class InfoService {
         }
         return postDtos;
     }
+
+    @Transactional
+    public void crawlAndSavePosts(String type) {
+        performanceService.crawlPerformances(type);
+    }
+
 }

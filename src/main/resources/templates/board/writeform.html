@@ -58,9 +58,7 @@
             <input type="text" id="title" placeholder="제목을 입력해주세요." class="title-input" name="title" required>
             <div id="editor"></div>
             <input type="hidden" name="content" id="content" required>
-
-            <!--            <label for="thumbnailImageFile">대표 이미지</label>-->
-            <!--            <input type="file" id="thumbnailImageFile" name="thumbnailImageFile">-->
+            <input type="hidden" name="thumbnailUrl" id="thumbnailUrl">
 
             <div style="text-align: right">
                 <button type="submit" class="submit-btn">글쓰기</button>
@@ -79,11 +77,42 @@
                 [{ 'header': [1, 2, false] }],
                 ['bold', 'italic', 'underline'],
                 [{ 'color': [] }, { 'background': [] }],
-                ['link', 'image'],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+                ['link', 'image']
             ]
         }
     });
+
+    function imageHandler() {
+        var input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = function() {
+            var file = input.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/uploadImage', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+                .then(result => {
+                    var range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', result.url);
+                    quill.setSelection(range.index + 1);
+
+                    // 첫 번째 이미지일 경우 썸네일로 설정
+                    if (!document.getElementById('thumbnailUrl').value) {
+                        document.getElementById('thumbnailUrl').value = result.url;
+                    }
+                }).catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    }
+
+    quill.getModule('toolbar').addHandler('image', imageHandler);
 
     document.getElementById('postForm').addEventListener('submit', function(event) {
         document.getElementById('content').value = quill.root.innerHTML;

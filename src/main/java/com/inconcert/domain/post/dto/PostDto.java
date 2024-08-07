@@ -42,11 +42,12 @@ public class PostDto {
                 .content(postDto.getContent())
                 .endDate(postDto.getEndDate())
                 .matchCount(postDto.getMatchCount())
+                .thumbnailUrl(postDto.getThumbnailUrl())
                 .comments(new HashSet<>())
                 .likes(new HashSet<>())
-//                .thumbnailUrl(postDto.getThumbnailUrl())
                 .postCategory(postCategory)
                 .user(postDto.getUser())
                 .build();
     }
+
 }

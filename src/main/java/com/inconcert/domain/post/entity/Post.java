@@ -26,6 +26,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
+    @Lob
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
@@ -35,8 +36,8 @@ public class Post extends BaseEntity {
     @Column(name = "match_count", nullable = false)
     private int matchCount;
 
-//    @Column(name = "thumbnail_url")
-//    private String thumbnailUrl;
+    @Column(name = "thumbnail_url")
+    private String thumbnailUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

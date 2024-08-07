@@ -109,6 +109,7 @@ public class ReviewService {
             PostDto postDto = PostDto.builder()
                     .id(post.getId())
                     .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount() + 1)

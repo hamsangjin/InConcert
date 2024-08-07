@@ -43,4 +43,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleLikeNotFoundException(LikeNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ImageUploadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleImageUploadException(ImageUploadException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
