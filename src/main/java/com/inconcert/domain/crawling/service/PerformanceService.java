@@ -25,6 +25,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.List;
@@ -120,7 +121,14 @@ public class PerformanceService {
                 }
 
                 if (!title.isEmpty() && !date.isEmpty() && !place.isEmpty()) {
-                    Performance performance = new Performance(title, date, place, poster, type);
+                    log.info("eijfaoe??!?!?!?! {} {} {} {} {}", title, poster, date, place, type);
+                    Performance performance = Performance.builder()
+                            .title(title)
+                            .imageUrl(poster)
+                            .date(date)
+                            .place(place)
+                            .type(type)
+                            .build();
                     performanceRepository.save(performance);
                     System.out.println("Saved performance: " + performance.getTitle());
 
@@ -148,7 +156,9 @@ public class PerformanceService {
             try {
                 String[] dateParts = performance.getDate().split("~");
                 if (dateParts.length > 1) {
-                    endDate = LocalDate.parse(dateParts[1].trim());
+                    String endDatePart = dateParts[1].trim();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+                    endDate = LocalDate.parse(endDatePart, formatter);
                 } else {
                     endDate = LocalDate.now();
                 }
@@ -159,7 +169,7 @@ public class PerformanceService {
 
             PostDto postDto = PostDto.builder()
                     .title(performance.getTitle())
-                    .content(performance.getPlace() + " - " + performance.getDate())
+                    .content("<img src=" + performance.getImageUrl() + "><br><span>장소: </span><span>" + performance.getPlace() + "</span><br><span>날짜: </span><span>"+ performance.getDate()+"</span>")
                     .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
                     .matchCount(0)
                     .postCategory(postCategory)
