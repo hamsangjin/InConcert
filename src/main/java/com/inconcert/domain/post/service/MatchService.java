@@ -126,7 +126,7 @@ public class MatchService {
                     .thumbnailUrl(post.getThumbnailUrl())
                     .postCategory(post.getPostCategory())
                     .nickname(post.getUser().getNickname())
-                    .viewCount(post.getViewCount() + 1)
+                    .viewCount(post.getViewCount())
                     .commentCount(post.getComments().size())
                     .likeCount(post.getLikes().size())
                     .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)

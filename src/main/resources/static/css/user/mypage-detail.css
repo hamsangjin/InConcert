@@ -27,7 +27,6 @@ body {
     margin: 0 auto;
 }
 
-
 /* 헤더 설정 */
 .header-container {
     display: flex;
@@ -86,6 +85,10 @@ header {
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -215,115 +218,141 @@ header {
     margin: 3px 0;
 }
 
-/*mypage 설정*/
-.mypage-container{
-    border: 1px solid #6f6f6f;
-    border-radius: 10px;
+.review-block{
+    margin-top: 40px;
+}
+
+.title-container{
+    min-width: 1300px;
+    max-width: 1300px;
+    margin: 0 auto 50px;
+}
+
+.title-container h1{
+    border-bottom: 1px solid #ccc;
+    color: #6f6f6f;
+}
+
+.title-container > p{
+    color: #6f6f6f;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-weight: bold;
     margin: 0 auto;
+    gap: 10px;
     min-width: 1280px;
     max-width: 1280px;
 }
 
-.top-container{
+.post-header span {
+    text-align: center;
+}
+
+.header-title {
+    flex: 5; /* 제목이 50% 차지 */
+}
+
+.header-author,
+.header-date,
+.header-views,
+.header-likes {
+    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
+}
+
+.post-list {
+    border-top: 1px solid #ddd;
+    margin: 0 auto;
+    min-width: 1300px;
+    max-width: 1300px;
+}
+
+.post {
     display: flex;
-    align-items: center;
-}
-
-.profile-img2{
-    width: calc(20%);
-    height: auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 20px;
-    margin: 20px;
-}
-
-.name-container{
-    display: flex;
-    align-items: center;
-}
-
-.edit-btn{
-    color: black;
-    text-decoration: black underline;
-    margin-left: 40px;
-}
-
-h3{
-    padding-top: 20px;
-    padding-bottom: 20px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.link-container{
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.link-btn{
-    text-decoration: none;
-    color: black;
-}
-
-.intro-container{
-    border-radius: 5px;
-    border: 1px solid #6f6f6f;
-    margin: 20px;
     padding: 10px;
-    height: 200px
+    border-bottom: 1px solid #ddd;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
 }
 
-.mbti-mannerPoint-container{
-    display: flex;
-    margin: 0 20px;
-}
-
-.mbti-mannerPoint-container div > h3{
-    padding: 0;
-}
-
-.mbti-mannerPoint-title{
+.post-thumbnail {
+    flex-shrink: 0;
     margin-right: 15px;
 }
 
-.mbti-mannerPoint-title > h3:first-child, .mbti-mannerPoint-value > h3:first-child {
-    margin-bottom: 10px;
+.post-thumbnail img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
 }
 
-.mbti-mannerPoint-value > h3{
-    color: #54BBD6;
-    font-weight: bold;
-}
-
-.mypage-container > a{
-    text-align: right;
-}
-
-.delete-btn-container{
+.post-content {
     display: flex;
-    justify-content: right;
+    flex-grow: 1;
     align-items: center;
-    margin: 20px;
 }
 
-.delete-btn-container > a{
+.post-title {
+    flex: 5; /* 제목이 50% 차지 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.post-title > a{
+    color: black;
     text-decoration: none;
     display: flex;
     align-items: center;
+    gap: 3px;
 }
 
-.delete-btn{
-    background-color: #00A885;
+.post-title > a:hover{
+    text-decoration: underline;
+}
+
+.post-title > a > span:nth-child(2){
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 410px;
+    display: block;
+}
+
+.comment-count{
+    color: red;
+    padding: 0;
+}
+
+.post-title > div{
+    border: none;
+    border-radius: 50%;
+    background-color: red;
     color: white;
-    text-decoration: none;
-    border: 1px #6f6f6f solid;
-    border-radius: 15px;
-    padding: 5px 10px;
-    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.delete-btn:hover{
-    background-color: #0BA885;
-    cursor: pointer;
+.post-meta {
+    display: flex;
+    flex: 5;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 45px;
+}
+
+.post-meta span {
+    flex: 1;
+    text-align: center;
+    color: #6f6f6f;
+    white-space: nowrap;
 }

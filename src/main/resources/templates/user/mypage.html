@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>MyPage</title>
     <link rel="stylesheet" href="/css/user/mypage.css">
+    <script type="text/javascript">
+        function confirmDeletion() {
+            if (confirm("회원 정보를 포함한 모든 게시글 및 댓글 등이 삭제됩니다.\n정말 탈퇴하시겠습니까?")) {
+                document.getElementById("deleteForm").submit();
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container">
@@ -24,13 +31,13 @@
                 <h3 th:text="${#temporals.format(user.birth, 'yyyy')} + '년생'"></h3>
                 <h3 th:text="${user.phoneNumber}"></h3>
                 <div class="link-container">
-                    <a class="link-btn" th:href="@{/mypage/board}">
+                    <a class="link-btn" th:href="@{'/mypage/board/' + ${user.id}}">
                         <h3> 내 글 보기 </h3>
                     </a>
-                    <a class="link-btn" th:href="@{/mypage/comment}">
+                    <a class="link-btn" th:href="@{'/mypage/comment/' + ${user.id}}">
                         <h3> 내 댓글 보기 </h3>
                     </a>
-                    <a class="link-btn" th:href="@{/mypage/like}">
+                    <a class="link-btn" th:href="@{'/mypage/like/' + ${user.id}}">
                         <h3> 좋아요한 글 보기 </h3>
                     </a>
                     <a class="link-btn" th:href="@{/mypage/with}">
@@ -55,9 +62,9 @@
         </div>
 
         <div class="delete-btn-container">
-            <a th:href="@{/bye}">
-                <span class="delete-btn"> 회원 탈퇴 </span>
-            </a>
+            <form id="deleteForm" th:action="@{/mypage/bye}" method="post">
+                <button class="delete-btn" type="button" onclick="confirmDeletion()"> 회원 탈퇴 </button>
+            </form>
         </div>
     </div>
 
