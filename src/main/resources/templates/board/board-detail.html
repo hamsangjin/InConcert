@@ -103,8 +103,11 @@
 
     <div class="post-list" th:each="post : ${posts}">
         <div class="post">
-            <div class="post-thumbnail">
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl != ''}">
                 <img th:src="@{${post.thumbnailUrl}}">
+            </div>
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl == ''}">
+                <img src="/images/logo.png" alt="No Posts"/>
             </div>
 
             <div class="post-content">
