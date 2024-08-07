@@ -89,8 +89,8 @@
         </div>
 
         <div class="sort-buttons">
-            <button class="sort-button" onclick="sortComments('created')">등록순</button>
-            <button class="sort-button" onclick="sortComments('recent')">최신순</button>
+            <button class="sort-button" onclick="sortComments('asc')">등록순</button>
+            <button class="sort-button" onclick="sortComments('desc')">최신순</button>
         </div>
         <div class="comment-form-main">
             <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/new'}"

@@ -34,7 +34,11 @@ public class CommentCreateForm {
         return comment;
     }
 
-    public boolean getIsSecret() {
+    public Boolean getIsSecret() {
         return isSecret;
+    }
+
+    public void setIsSecret(Boolean isSecret) {
+        this.isSecret = isSecret;
     }
 }
