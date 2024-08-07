@@ -48,7 +48,7 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${Musicalposts}">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Musicalposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/musical/' + ${post.id}}">
                         <p class="post-title" th:text="'[뮤지컬] '+ ${post.title}">Post Title</p>
@@ -74,7 +74,7 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${Concertposts}">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Concertposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/concert/' + ${post.id}}">
                         <p class="post-title" th:text="'[콘서트] '+ ${post.title}">Post Title</p>
@@ -102,7 +102,7 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${Theaterposts}">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Theaterposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/theater/' + ${post.id}}">
                         <p class="post-title" th:text="'[연극] '+ ${post.title}">Post Title</p>
@@ -127,7 +127,7 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post : ${Etcposts}">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Etcposts}">
                 <div class="post-left">
                     <a th:href="@{'/' + ${categoryTitle} + '/etc/' + ${post.id}}">
                         <p class="post-title" th:text="'[기타] '+ ${post.title}">Post Title</p>

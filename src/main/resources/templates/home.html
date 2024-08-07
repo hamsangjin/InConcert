@@ -49,8 +49,8 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post, idx : ${infoPosts}">
-                <div class="post-left" th:if="${idx.index} < 5">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${infoPosts}">
+                <div class="post-left">
                     <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
@@ -61,12 +61,9 @@
                         <span th:text="${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${post.isNew}">
-                        <p class="new"> N </p>
-                    </div>
                 </div>
 
-                <div class="post-right" th:if="${idx.index} < 5">
+                <div class="post-right">
                     <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
@@ -82,8 +79,8 @@
                 </a>
             </div>
 
-            <div class="post-list" th:each="post, idx : ${reviewPosts}">
-                <div class="post-left" th:if="${idx.index} < 5">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${reviewPosts}">
+                <div class="post-left">
                     <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
@@ -99,7 +96,7 @@
                     </div>
                 </div>
 
-                <div class="post-right" th:if="${idx.index} < 5">
+                <div class="post-right">
                     <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
@@ -116,8 +113,8 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post, idx : ${matchPosts}">
-                <div class="post-left" th:if="${idx.index} < 5">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${matchPosts}">
+                <div class="post-left">
                     <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
@@ -133,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="post-right" th:if="${idx.index} < 5">
+                <div class="post-right">
                     <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
@@ -147,8 +144,8 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:each="post, idx : ${transferPosts}">
-                <div class="post-left" th:if="${idx.index} < 5">
+            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${transferPosts}">
+                <div class="post-left">
                     <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
@@ -164,7 +161,7 @@
                     </div>
                 </div>
 
-                <div class="post-right" th:if="${idx.index} < 5">
+                <div class="post-right">
                     <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>

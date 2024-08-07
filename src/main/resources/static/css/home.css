@@ -360,4 +360,5 @@ header {
 
 .post-right > p{
     text-align: center;
+    flex: 0.5;
 }
