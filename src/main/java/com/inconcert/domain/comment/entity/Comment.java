@@ -7,7 +7,9 @@ import com.inconcert.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,7 +35,7 @@ public class Comment extends BaseEntity {
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
-    @Column
+    @Column(name = "is_secret")
     private Boolean isSecret = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,7 +43,7 @@ public class Comment extends BaseEntity {
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> replies = new HashSet<>();
+    private List<Comment> replies = new ArrayList<>();
 
     // 댓글 수정
     public void update(String content, Boolean isSecret) {

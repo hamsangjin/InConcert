@@ -1,5 +1,5 @@
 <div th:fragment="commentFragment(comment)">
-    <div class="comment-wrapper">
+    <div class="comment-wrapper" th:attr="data-comment-id=${comment.id}">
         <div class="comment" th:class="${comment.parent != null} ? 'reply' : ''" th:attr="data-comment-id=${comment.id}">
             <div class="comment-content">
                 <div class="comment-header">
@@ -11,7 +11,7 @@
                             <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                         </div>
                     </div>
-                    <div class="comment-options">
+                    <div class="comment-options" th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}">
                         <!-- 댓글 수정/삭제 링크 -->
                         <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.nickname != null and (#authentication.name == post.nickname))}"
                               th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
@@ -25,16 +25,23 @@
                         </form>
                     </div>
                 </div>
-                <p class="comment-p" th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}">댓글 내용</p>
-                
+                <p class="comment-p" th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}"
+                   th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}">댓글 내용</p>
+                <p class="comment-p secret" th:if="${comment.isSecret and (#authentication.name != comment.user.username) and (#authentication.name != post.nickname)}">
+                    비밀 댓글입니다.</p>
+
                 <!-- 댓글 수정 폼 -->
                 <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">
                     <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/edit/' + ${comment.id}}"
-                          method="post">
+                          method="post" th:object="${createForm}">
                         <input type="hidden" name="commentId" th:value="${comment.id}"/>
                         <input type="hidden" name="postId" th:value="${comment.post.id}"/>
                         <textarea name="content" th:text="${comment.content}" placeholder="댓글을 작성하세요."
                                   class="comment-textarea"></textarea>
+                        <div>
+                            <input type="checkbox" th:field="*{isSecret}" id="isSecret-edit" name="isSecret">
+                            <label for="isSecret-edit">비밀 댓글</label>
+                        </div>
                         <div class="comment-form-actions">
                             <button type="button" class="cancel-btn" th:onclick="'cancelEdit(' + ${comment.id} + ');'">취소</button>
                             <button type="submit" class="submit-btn">등록</button>
@@ -51,10 +58,14 @@
 
                 <div class="reply-form" th:id="'reply-form-' + ${comment.id}" style="display:none;">
                     <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/reply/' + ${comment.id}}"
-                          method="post">
+                          method="post" th:object="${createForm}">
                         <input type="hidden" name="postId" th:value="${comment.post.id}"/>
                         <input type="hidden" name="parentId" th:value="${comment.id}"/>
                         <textarea name="content" placeholder="답글을 작성하세요" class="comment-textarea"></textarea>
+                        <div>
+                            <input type="checkbox" th:field="*{isSecret}" id="isSecret-edit" name="isSecret">
+                            <label for="isSecret-edit">비밀 댓글</label>
+                        </div>
                         <div class="comment-form-actions">
                             <button type="button" class="cancel-btn" th:onclick="'hideReplyForm(' + ${comment.id} + ');'">취소</button>
                             <button type="submit" class="submit-btn">등록</button>

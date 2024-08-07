@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +39,7 @@ public class EditService {
         Post currentPost = findPostByIdAndCategory(postId, currentCategoryTitle);
 
         Category category = categoryRepository.findByTitle(newCategoryTitle)
-                    .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
 
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(newPostCategoryTitle);
 
@@ -51,18 +49,15 @@ public class EditService {
                 .findFirst()
                 .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_COMBINATION_NOT_FOUND.getMessage()));
 
-        postDto.setThumbnailUrl(extractURL(postDto.getContent()));
-
         // 새로운 레포지토리에 저장
         Post updatedPost = Post.builder()
                 .id(currentPost.getId())
                 .title(postDto.getTitle())
-                .thumbnailUrl(postDto.getThumbnailUrl())
                 .content(postDto.getContent())
                 .endDate(postDto.getEndDate())
                 .matchCount(postDto.getMatchCount())
                 .user(currentPost.getUser())
-                .comments(new HashSet<>(currentPost.getComments()))
+                .comments(new ArrayList<>(currentPost.getComments()))
                 .likes(new HashSet<>(currentPost.getLikes()))
                 .viewCount(currentPost.getViewCount())
                 .postCategory(postCategory)
@@ -89,22 +84,5 @@ public class EditService {
             case "transfer" -> transferRepository;
             default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
         };
-    }
-
-    private static String extractURL(String input) {
-        // img의 src속성만 추출하는 패턴 생성
-        String regex = "http[s]?://[^\\s\"']+";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(input);
-
-
-        String url = null;
-        // 패턴에 맞는거 하나라도 찾을 경우 url에 저장 후 리턴
-        while (matcher.find()) {
-            url = matcher.group();
-            break;
-        }
-
-        return url;
     }
 }

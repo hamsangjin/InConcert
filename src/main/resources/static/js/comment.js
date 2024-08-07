@@ -53,28 +53,7 @@ function cancelEdit(commentId) {
 }
 
 function sortComments(order) {
-
-    fetch(`/${categoryTitle}/${postCategoryTitle}/${postId}/comments?sort=${order}`)
-        .then(response => response.json())
-        .then(data => {
-            const commentList = document.getElementById('comment-list');
-            commentList.innerHTML = ''; // 기존 댓글 비우기
-            data.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.className = 'comment';
-                commentElement.innerHTML = `
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
-                            <div>
-                                <p class="author">${comment.user.nickname}</p>
-                                <p class="date">${new Date(comment.createAt).toLocaleString()}</p>
-                            </div>
-                        </div>
-                        <p>${comment.content}</p>
-                    </div>
-                `;
-                commentList.appendChild(commentElement);
-            });
-        });
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('sort', order);
+    window.location.search = urlParams.toString();
 }

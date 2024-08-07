@@ -54,29 +54,15 @@ public class CommentController {
         return service;
     }
 
-//    등록순/조회순 테스트를 위해 잠시 주석 처리
-//    @GetMapping
-//    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("postCategoryTitle") String postCategoryTitle,
-//                                                        @PathVariable("postId") Long postId) {
-//        List<CommentDto> byPostId = getService(postCategoryTitle).findByPostId(postCategoryTitle, postId);
-//        return ResponseEntity.ok(byPostId);
-//    }
-//
-//    @GetMapping("/{commentId}")
-//    public ResponseEntity<CommentDto> getComment(@PathVariable("postCategoryTitle") String postCategoryTitle,
-//                                                 @PathVariable("commentId") Long commentId) {
-//        CommentDto commentDto = getService(postCategoryTitle).findComment(postCategoryTitle, commentId);
-//        return ResponseEntity.ok(commentDto);
-//    }
-
     @GetMapping
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable("categoryTitle") String categoryTitle,
                                                         @PathVariable("postCategoryTitle") String postCategoryTitle,
                                                         @PathVariable("postId") Long postId,
-                                                        @RequestParam(defaultValue = "created") String sort) {
+                                                        @RequestParam(defaultValue = "asc") String sort) {
         List<CommentDto> comments = getService(postCategoryTitle).findByPostId(postCategoryTitle, postId, sort);
         return ResponseEntity.ok(comments);
     }
+
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/edit/{commentId}")
@@ -126,16 +112,12 @@ public class CommentController {
                                 @PathVariable("postId") Long postId,
                                 @Valid @ModelAttribute("createForm") CommentCreateForm commentForm,
                                 BindingResult bindingResult,
-//                                @RequestParam
                                 Principal principal) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
         User user = userService.findByUsername(principal.getName());
-
-        // 디버깅을 위해 isSecret 값을 로그에 출력
-        System.out.println("isSecret: " + commentForm.getIsSecret());
 
         getService(postCategoryTitle).saveComment(postCategoryTitle, postId, user, commentForm);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;

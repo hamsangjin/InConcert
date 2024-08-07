@@ -564,6 +564,11 @@ header {
     margin: 20px 0 20px 5px;
 }
 
+.comment-p.secret {
+    color: blue;
+    font-weight: bold;
+}
+
 .comment-actions-reply {
     margin-bottom: 20px;
 }
