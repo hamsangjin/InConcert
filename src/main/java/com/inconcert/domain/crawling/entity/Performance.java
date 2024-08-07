@@ -2,13 +2,16 @@ package com.inconcert.domain.crawling.entity;
 
 import com.inconcert.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "performances")
 @Getter
 @NoArgsConstructor
+@ToString
 public class Performance extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,7 @@ public class Performance extends BaseEntity {
 
     private String type;
 
+    @Builder
     public Performance(String title, String imageUrl, String date, String place, String type) {
         this.title = title;
         this.imageUrl = imageUrl;
