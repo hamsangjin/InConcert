@@ -24,10 +24,16 @@
             <h1> 실시간 인기 공연</h1>
         </div>
         <div class="popular-info-img-container">
-            <div th:each="post : ${popularPostDto}">
+            <div th:each="post : ${popularPosts}">
                 <div class="popular-info">
-                    <img class="popular-info-img" src="/images/logo.png" alt="No Posts"/>
-                    <a th:href="@{'/info/' + ${post.category} + '/' + ${post.id}}">
+                    <span th:switch="${post.postCategory.title}">
+                        <span th:case="'musical'">뮤지컬</span>
+                        <span th:case="'concert'">콘서트</span>
+                        <span th:case="'theater'">연극</span>
+                        <span th:case="'etc'">기타</span>
+                    </span>
+                    <img class="popular-info-img" th:src="@{${post.thumbnailUrl}}">
+                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span> 자세히 보기 </span>
                     </a>
                 </div>
