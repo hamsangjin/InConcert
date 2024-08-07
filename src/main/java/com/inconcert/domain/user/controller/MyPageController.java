@@ -1,6 +1,8 @@
 package com.inconcert.domain.user.controller;
 
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
+import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.MyPageService;
 import com.inconcert.domain.user.service.UserService;
@@ -9,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,6 +28,21 @@ public class MyPageController {
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         model.addAttribute("user", user);
         return "/user/mypage";
+    }
+
+    @GetMapping("/editform")
+    public String editMyPage(Model model) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        model.addAttribute("user", user);
+        model.addAttribute("mbtiValues", Mbti.values());
+        return "/user/mypageedit";
+    }
+
+    @PostMapping("/edit")
+    public String editMyPage(@ModelAttribute("user") User user, MyPageEditReqDto reqDto) {
+        myPageService.editUser(reqDto);
+        return "redirect:/mypage";
     }
 
     @GetMapping("/board/{userId}")
