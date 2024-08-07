@@ -81,7 +81,7 @@
 
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${reviewPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                    <a class="post-title"  th:href="@{'/review/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
@@ -115,7 +115,7 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${matchPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                    <a class="post-title"  th:href="@{'/match/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
@@ -146,7 +146,7 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${transferPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                    <a class="post-title"  th:href="@{'/transfer/' + ${post.postCategory.title} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategory.title}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
