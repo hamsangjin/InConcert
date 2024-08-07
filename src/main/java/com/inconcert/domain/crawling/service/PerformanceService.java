@@ -121,7 +121,6 @@ public class PerformanceService {
                 }
 
                 if (!title.isEmpty() && !date.isEmpty() && !place.isEmpty()) {
-                    log.info("eijfaoe??!?!?!?! {} {} {} {} {}", title, poster, date, place, type);
                     Performance performance = Performance.builder()
                             .title(title)
                             .imageUrl(poster)
