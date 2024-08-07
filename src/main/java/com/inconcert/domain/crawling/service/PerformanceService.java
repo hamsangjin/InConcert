@@ -9,6 +9,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,6 @@ import org.springframework.util.ObjectUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -146,9 +145,12 @@ public class PerformanceService {
 
     @Transactional
     protected void saveAsPost(Performance performance, Long type) {
+        if(type == 2) type = 3L;
+        else if (type == 3) type = 2L;
+
         try {
             PostCategory postCategory = postCategoryRepository.findById(type)
-                    .orElseThrow(() -> new PostCategoryNotFoundException("PostCategory not found"));
+                    .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
 
             User user = userService.findByUsername("admin");    // 작성자는 항상 관리자
 
@@ -172,11 +174,8 @@ public class PerformanceService {
                     .content("<img src=" + performance.getImageUrl() + "><br><span>장소: </span><span>" + performance.getPlace() + "</span><br><span>날짜: </span><span>"+ performance.getDate()+"</span>")
                     .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
                     .matchCount(0)
-                    .postCategory(postCategory)
-                    .comments(new ArrayList<>())
-                    .likeCount(0)
-                    .commentCount(0)
                     .thumbnailUrl(performance.getImageUrl())
+                    .postCategory(postCategory)
                     .user(user)
                     .build();
 

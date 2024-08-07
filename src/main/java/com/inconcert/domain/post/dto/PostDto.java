@@ -7,9 +7,7 @@ import com.inconcert.domain.user.entity.User;
 import lombok.*;
 import java.time.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -46,10 +44,9 @@ public class PostDto {
                 .matchCount(postDto.getMatchCount())
                 .thumbnailUrl(postDto.getThumbnailUrl())
                 .comments(new ArrayList<>())
-                .likes(new HashSet<>())
+                .likes(new ArrayList<>())
                 .postCategory(postCategory)
                 .user(postDto.getUser())
                 .build();
     }
-
 }
