@@ -13,6 +13,7 @@ import com.inconcert.domain.user.dto.response.*;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.global.dto.ResponseDto;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.RoleNameNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -106,6 +107,7 @@ public class UserService {
     }
 
     // 인증 번호 확인
+    @Transactional(readOnly = true)
     public ResponseEntity<? super CheckCertificationRspDto> checkCertification(CheckCertificationReqDto reqDto) {
         try {
             String username = reqDto.getUsername();
@@ -176,25 +178,6 @@ public class UserService {
         }
     }
 
-    public Optional<User> getAuthenticatedUser() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Object principal = authentication.getPrincipal();
-            String username = null;
-
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else if (principal instanceof String) {
-                username = (String) principal;
-            }
-
-            return userRepository.findByUsername(username);
-        } catch (Exception e) {
-            log.error("Error getting authenticated user", e);
-            return Optional.empty();
-        }
-    }
-
     // 아이디 찾기
     public String findUserId(FindIdReqDto reqDto) {
         User findUser = userRepository.findByNameAndEmail(reqDto.getName(), reqDto.getEmail())
@@ -219,5 +202,30 @@ public class UserService {
         user.updatePassword(encodePassword);
 
         return userRepository.save(user);
+    }
+
+    public Optional<User> getAuthenticatedUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String username = null;
+
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                username = (String) principal;
+            }
+
+            return userRepository.findByUsername(username);
+        } catch (Exception e) {
+            log.error("Error getting authenticated user", e);
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    public void deleteUser(){
+        User user = getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        userRepository.deleteById(user.getId());
     }
 }
