@@ -216,42 +216,48 @@ header {
 }
 
 .popular-info-container{
-    background-color: #6f6f6f;
-    min-height: 500px;
-    opacity: 0.5;
+    border: #ccc 1px solid;
+    border-radius: 10px;
     padding: 20px;
-    margin: 0 auto 20px;
+    margin: 0 auto;
     min-width: 1260px;
     max-width: 1260px;
 }
 
 .popular-info-container div h1{
-    color: white;
+    color: #00A885;
     padding: 0;
-    margin: 0 0 50px;
+    margin: 0 0 30px;
 }
 
 .popular-info-img-container{
     display: flex;
     justify-content: space-around;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .popular-info{
     text-align: center;
 }
 
+.popular-info > span{
+    color: #00A885;
+    font-size: 20px;
+}
+
 .popular-info-img-container img{
-    height: 300px;
-    width: 150px;
+    height: 400px;
+    width: 300px;
     display: block;
     margin-bottom: 20px;
+    border: 1px solid #ccc;
 }
 
 .popular-info-img-container a{
     text-decoration: none;
-    color: white;
-    border: white 1px solid;
+    color: #00A885;
+    border: #00A885 1px solid;
     border-radius: 20px;
     padding: 5px;
 }

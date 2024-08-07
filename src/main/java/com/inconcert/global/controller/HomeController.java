@@ -31,11 +31,13 @@ public class HomeController {
         List<PostDto> reviewPosts = homeService.getAllCategoryPosts("review");
         List<PostDto> matchPosts = homeService.getAllCategoryPosts("match");
         List<PostDto> transferPosts = homeService.getAllCategoryPosts("transfer");
+        List<PostDto> popularPosts = homeService.findLatestPostsByPostCategory();
 
         model.addAttribute("infoPosts", infoPosts);
         model.addAttribute("reviewPosts", reviewPosts);
         model.addAttribute("matchPosts", matchPosts);
         model.addAttribute("transferPosts", transferPosts);
+        model.addAttribute("popularPosts", popularPosts);
 
         return "home";
     }

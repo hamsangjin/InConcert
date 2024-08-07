@@ -44,4 +44,15 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     @Modifying
     @Query("DELETE Post p WHERE p.postCategory.id BETWEEN 1 AND 4")
     void afterCrawling();
+
+    @Query("SELECT p FROM Post p " +
+            "JOIN FETCH p.postCategory pc " +
+            "JOIN FETCH pc.category c " +
+            "WHERE c.title = 'info' AND p.createdAt IN (" +
+            "SELECT MIN(p2.createdAt) FROM Post p2 " +
+            "JOIN p2.postCategory pc2 " +
+            "JOIN pc2.category c2 " +
+            "WHERE c2.title = 'info' " +
+            "GROUP BY pc2.id)")
+    List<Post> findLatestPostsByPostCategory();
 }

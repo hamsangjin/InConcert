@@ -51,6 +51,13 @@ public class HomeService {
         return postDtos;
     }
 
+    @Transactional(readOnly = true)
+    public List<PostDto> findLatestPostsByPostCategory(){
+        List<Post> posts = infoRepository.findLatestPostsByPostCategory();
+        List<PostDto> postDtos = getPostDtos(posts);
+        return postDtos;
+    }
+
     private static List<PostDto> getPostDtos(List<Post> posts) {
         List<PostDto> postDtos = new ArrayList<>();
         for (Post post : posts) {
@@ -63,6 +70,7 @@ public class HomeService {
                     .title(post.getTitle())
                     .category(category)
                     .postCategory(postCategory)
+                    .thumbnailUrl(post.getThumbnailUrl())
                     .nickname(post.getUser().getNickname())
                     .viewCount(post.getViewCount())
                     .commentCount(post.getComments().size())
