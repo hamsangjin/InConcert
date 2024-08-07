@@ -27,6 +27,7 @@ import org.springframework.util.ObjectUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -172,7 +173,7 @@ public class PerformanceService {
                     .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
                     .matchCount(0)
                     .postCategory(postCategory)
-                    .comments(new HashSet<>())
+                    .comments(new ArrayList<>())
                     .likeCount(0)
                     .commentCount(0)
                     .thumbnailUrl(performance.getImageUrl())

@@ -26,7 +26,7 @@ public class InfoCommentService implements CommentService {
     @Transactional(readOnly = true)
     public List<CommentDto> findByPostId(String boardType, Long id, String sort) {
         List<Comment> byPostId;
-        if ("recent".equals(sort)) {
+        if ("desc".equals(sort)) {
             byPostId = commentRepository.findByPostIdOrderByCreatedAtDesc(id);
         } else {
             byPostId = commentRepository.findByPostIdOrderByCreatedAtAsc(id);

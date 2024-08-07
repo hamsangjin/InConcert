@@ -6,7 +6,9 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import lombok.*;
 import java.time.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -30,7 +32,7 @@ public class PostDto {
     private int viewCount;
     private int likeCount;
     private int commentCount;
-    private Set<Comment> comments;
+    private List<Comment> comments;
     private boolean isNew;
     private LocalDateTime createdAt;
     private User user;
@@ -43,7 +45,7 @@ public class PostDto {
                 .endDate(postDto.getEndDate())
                 .matchCount(postDto.getMatchCount())
                 .thumbnailUrl(postDto.getThumbnailUrl())
-                .comments(new HashSet<>())
+                .comments(new ArrayList<>())
                 .likes(new HashSet<>())
                 .postCategory(postCategory)
                 .user(postDto.getUser())

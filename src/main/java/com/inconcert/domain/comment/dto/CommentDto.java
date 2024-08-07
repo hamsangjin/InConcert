@@ -3,14 +3,12 @@ package com.inconcert.domain.comment.dto;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -21,5 +19,5 @@ public class CommentDto {
     private String content;
     private boolean isSecret;
     private Comment parent;
-    private Set<Comment> replies;
+    private List<Comment> replies;
 }
