@@ -25,7 +25,6 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserService userService;
 
-
     @Transactional
     public boolean toggleLike(Long postId, String categoryTitle) {
         Post post = getPost(postId, categoryTitle);
