@@ -5,6 +5,7 @@ import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.role.entity.Role;
+import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.global.auth.jwt.token.entity.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -118,5 +119,16 @@ public class User {
     // 임시 비밀번호로 업데이트
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    // 유저 정보 수정
+    public void updateUser(MyPageEditReqDto reqDto, String password, String profileImageUrl) {
+        this.nickname = reqDto.getNickname();
+        this.password = password;
+        this.email = reqDto.getEmail();
+        this.phoneNumber = reqDto.getPhoneNumber();
+        this.mbti = reqDto.getMbti();
+        this.intro = reqDto.getIntro();
+        this.profileImage = profileImageUrl;
     }
 }

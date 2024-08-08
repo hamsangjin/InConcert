@@ -159,6 +159,12 @@ public class UserApiController {
         return userService.emailCheck(reqDto);
     }
 
+    // 닉네임 중복 확인
+    @PostMapping("/user/nickname-check")
+    public ResponseEntity<? super NicknameCheckRspDto> nicknameCheck(@RequestBody @Valid NicknameCheckReqDto reqDto) {
+        return userService.nicknameCheck(reqDto);
+    }
+
     // 인증번호 메일 전송
     @PostMapping("/user/email-certification")
     public ResponseEntity<? super EmailCertificationRspDto> emailCertification(@RequestBody @Valid EmailCertificationReqDto reqDto) {

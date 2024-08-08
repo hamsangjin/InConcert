@@ -79,6 +79,21 @@ public class UserService {
         return EmailCheckRspDto.success();
     }
 
+    // 닉네임 중복 확인
+    public ResponseEntity<? super NicknameCheckRspDto> nicknameCheck(NicknameCheckReqDto reqDto) {
+        try {
+            String nickname = reqDto.getNickname();
+            boolean isExistNickname = userRepository.existsByNickname(nickname);
+            if(isExistNickname) return NicknameCheckRspDto.duplicateNickname();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseDto.databaseError();
+        }
+
+        return NicknameCheckRspDto.success();
+    }
+
     // 인증 메일 전송
     @Transactional
     public ResponseEntity<? super EmailCertificationRspDto> emailCertification(EmailCertificationReqDto reqDto) {

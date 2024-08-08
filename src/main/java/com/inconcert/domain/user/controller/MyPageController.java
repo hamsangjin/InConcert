@@ -1,18 +1,19 @@
 package com.inconcert.domain.user.controller;
 
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
+import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.MyPageService;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -29,6 +30,31 @@ public class MyPageController {
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         model.addAttribute("user", user);
         return "/user/mypage";
+    }
+
+    @GetMapping("/editform")
+    public String editMyPage(Model model) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        model.addAttribute("user", user);
+        model.addAttribute("mbtiValues", Mbti.values());
+        return "/user/mypageedit";
+    }
+
+    @PostMapping("/edit")
+    public String editMyPage(@ModelAttribute MyPageEditReqDto reqDto, RedirectAttributes redirectAttributes) {
+        try {
+            myPageService.editUser(reqDto);
+        }
+        catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 존재하는 닉네임이나 이메일을 입력하였습니다.");
+            return "redirect:/mypage/editform";
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "입력한 내용을 다시 확인해주세요.");
+            return "redirect:/mypage/editform";
+        }
+        return "redirect:/mypage";
     }
 
     @GetMapping("/board/{userId}")
