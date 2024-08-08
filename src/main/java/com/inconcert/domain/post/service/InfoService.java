@@ -5,7 +5,7 @@ import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.crawling.service.PerformanceService;
-import com.inconcert.domain.notification.service.FcmService;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
@@ -27,7 +27,7 @@ public class InfoService {
     private final CategoryRepository categoryRepository;
     private final UserService userService;
     private final PerformanceService performanceService;
-    private final FcmService fcmService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
@@ -112,7 +112,7 @@ public class InfoService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         infoRepository.save(post);
-        fcmService.notifyKeywordSubscribers(post);
+        notificationService.notifyKeywordSubscribers(post);
     }
 
     @Transactional

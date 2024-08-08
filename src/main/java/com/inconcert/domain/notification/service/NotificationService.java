@@ -3,9 +3,6 @@ package com.inconcert.domain.notification.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.inconcert.domain.notification.entity.UserToken;
-import com.inconcert.domain.notification.repository.MessageRepository;
-import com.inconcert.domain.notification.repository.UserTokenRepository;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
@@ -18,12 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FcmService {
+public class NotificationService {
     private final UserRepository userRepository;
-    private final UserTokenRepository userTokenRepository;
-    private final MessageRepository messageRepository;
+    private final UserTokenService userTokenService;
+    private final MessageService messageService;
 
-    public void sendNotification(String token, String title, String body, User user, Post post) {
+    // 이건 실시간 푸쉬알림이라고 생각하면 됨(현재는 db를 이용해서 어떻게 이용할지 생각해보면 될듯 ?)
+    public void sendNotification(String token, String title, String body) {
         System.out.println("sendNotification 호출");
         try {
 
@@ -62,29 +60,15 @@ public class FcmService {
                     .filter(keyword -> post.getTitle().contains(keyword) || post.getContent().contains(keyword))
                     .collect(Collectors.toSet());
 
-            System.out.println("matchedKeywords의 길이:" + matchedKeywords.size());
-
             if (!matchedKeywords.isEmpty()) {
-                String token = getTokenByUserId(user.getId());
+                String token = userTokenService.getTokenByUserId(user.getId());
                 if (token != null) {
                     String keywordsStr = String.join(", ", matchedKeywords);
                     String messageBody = post.getTitle();
-                    sendNotification(token, String.format("[키워드 알림 - %s]", keywordsStr), messageBody, user, post);
-                    saveMessage(String.format("[키워드 알림 - %s]", keywordsStr), messageBody, user, post);
+                    sendNotification(token, String.format("[키워드 알림 - %s]", keywordsStr), messageBody);
+                    messageService.saveMessage(String.format("[키워드 알림 - %s]", keywordsStr), messageBody, user, post);
                 }
             }
         }
-    }
-
-    public String getTokenByUserId(Long userId) {
-        System.out.println("getTokenByUserId 호출");
-        UserToken userToken = userTokenRepository.findById(userId).orElse(null);
-        return userToken != null ? userToken.getToken() : null;
-    }
-
-    private void saveMessage(String title, String body, User user, Post post) {
-        System.out.println("saveMessage 호출");
-        com.inconcert.domain.notification.entity.Message message = new com.inconcert.domain.notification.entity.Message(title, body, user, post);
-        messageRepository.save(message);
     }
 }

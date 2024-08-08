@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.notification.service.FcmService;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
@@ -25,7 +25,7 @@ public class ReviewService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
-    private final FcmService fcmService;
+    private final NotificationService notificationService;
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
@@ -96,7 +96,7 @@ public class ReviewService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         reviewRepository.save(post);
-        fcmService.notifyKeywordSubscribers(post);
+        notificationService.notifyKeywordSubscribers(post);
     }
 
     @Transactional

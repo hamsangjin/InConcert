@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.notification.service.FcmService;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
@@ -25,7 +25,7 @@ public class TransferService {
     private final CategoryRepository categoryRepository;
     private final PostCategoryRepository postCategoryRepository;
     private final UserService userService;
-    private final FcmService fcmService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
@@ -110,7 +110,7 @@ public class TransferService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         transferRepository.save(post);
-        fcmService.notifyKeywordSubscribers(post);
+        notificationService.notifyKeywordSubscribers(post);
     }
 
     @Transactional
