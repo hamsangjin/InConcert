@@ -39,7 +39,7 @@
                         <textarea name="content" th:text="${comment.content}" placeholder="댓글을 작성하세요."
                                   class="comment-textarea"></textarea>
                         <div>
-                            <input type="checkbox" th:field="*{isSecret}" id="isSecret-edit" name="isSecret">
+                            <input type="checkbox" th:checked="${comment.isSecret}" id="isSecret-edit" name="isSecret">
                             <label for="isSecret-edit">비밀 댓글</label>
                         </div>
                         <div class="comment-form-actions">
