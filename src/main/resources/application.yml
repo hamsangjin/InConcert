@@ -72,3 +72,6 @@ image:
 # chromedriver 경로
 chrome:
   driver: ${drivePath}
+
+firebase:
+  service-account-path: ${firebaseKeyPath}

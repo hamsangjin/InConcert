@@ -9,6 +9,7 @@ import com.inconcert.global.auth.CustomUserDetails;
 import com.inconcert.global.auth.jwt.token.entity.Token;
 import com.inconcert.global.auth.jwt.token.service.TokenService;
 import com.inconcert.global.auth.jwt.util.JwtTokenizer;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.UserNotFoundException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
@@ -27,6 +28,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -204,5 +208,38 @@ public class UserApiController {
         catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
         }
+    }
+
+    @PostMapping("/api/user/keywords")
+    public Set<String> addKeyword(@RequestBody String keyword) {
+        System.out.println("키워드 추가 요청 받음: " + keyword);
+        userService.addKeyword(keyword);
+        return getKeywords();
+    }
+
+    @GetMapping("/api/user/keywords")
+    public Set<String> getKeywords() {
+        Set<String> keywords = userService.getKeywords();
+        System.out.println("현재 저장된 키워드: " + keywords);
+        return keywords;
+    }
+
+    @GetMapping("/api/user/current")
+    public ResponseEntity<Map<String, Long>> getCurrentUserId() {
+        System.out.println("/api/user/current 호출");
+
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("userId", user.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/api/user/keywords/delete")
+    public Set<String> deleteKeyword(@RequestBody String keyword) {
+        System.out.println("키워드 삭제 요청 받음: " + keyword);
+        userService.deleteKeyword(keyword.replaceAll("\"", ""));
+        return getKeywords();
     }
 }

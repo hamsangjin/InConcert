@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -242,5 +243,37 @@ public class UserService {
     public void deleteUser(){
         User user = getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         userRepository.deleteById(user.getId());
+    }
+
+    @Transactional
+    public void addKeyword(String keyword) {
+        User user = getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        keyword = keyword.replaceAll("\"", "");
+        System.out.println("현재 키워드: " + user.getKeywords());
+
+        if (!user.getKeywords().contains(keyword)) {
+            user.getKeywords().add(keyword);
+            userRepository.save(user);
+            System.out.println("새 키워드 추가됨: " + keyword);
+        } else {
+            System.out.println("키워드가 이미 존재함: " + keyword);
+        }
+    }
+
+    public Set<String> getKeywords() {
+        User user = getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return user.getKeywords();
+    }
+
+    @Transactional
+    public void deleteKeyword(String keyword) {
+        User user = getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        user.getKeywords().remove(keyword);
+        userRepository.save(user);
     }
 }

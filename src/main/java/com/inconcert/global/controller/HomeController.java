@@ -1,6 +1,10 @@
 package com.inconcert.global.controller;
 
+import com.inconcert.domain.notification.entity.Message;
+import com.inconcert.domain.notification.service.MessageService;
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.user.entity.User;
+import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.service.CrawlingService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
     private final HomeService homeService;
     private final CrawlingService crawlingService;
+    private final UserService userService;
+    private final MessageService messageService;
 
     @GetMapping("/home")
     public String home(Model model) {
@@ -49,5 +56,17 @@ public class HomeController {
         model.addAttribute("posts", homeService.findByKeyword(keyword));
         model.addAttribute("headerKeyword", keyword);
         return "search-result";
+    }
+
+    @GetMapping("/notification")
+    public String notification(Model model) {
+        // 현재 사용자 ID를 가져옴
+        Optional<User> user = userService.getAuthenticatedUser();
+        if (user.isPresent()) {
+            List<Message> messages = messageService.getMessagesByUserId(user.get().getId());
+            model.addAttribute("messages", messages);
+        }
+
+        return "user/notification";
     }
 }

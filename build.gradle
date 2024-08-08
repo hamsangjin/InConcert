@@ -36,6 +36,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
+
 	// jwts
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
@@ -48,6 +49,9 @@ dependencies {
 
 	// Selenium
 	implementation 'org.seleniumhq.selenium:selenium-java:4.1.0'
+
+	// firebase
+	implementation 'com.google.firebase:firebase-admin:7.1.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

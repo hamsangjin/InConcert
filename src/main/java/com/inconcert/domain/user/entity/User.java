@@ -96,6 +96,8 @@ public class User {
     @OneToMany(mappedBy = "guestUser")
     private Set<Chat> guestChattings;
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    private Set<String> keywords = new HashSet<>();
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,

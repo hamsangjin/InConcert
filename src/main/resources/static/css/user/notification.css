@@ -1,0 +1,196 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 900px);
+    max-width: calc(100% - 900px);
+    margin: 0 auto;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+
+/* login 설정 */
+header {
+    display: flex;
+    min-width: 808px;
+    max-width: 808px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+.title-container{
+    min-width: 828px;
+    max-width: 828px;
+    margin: 0 auto 50px;
+}
+
+.title-container > h1{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00A885;
+    color: #00A885;
+}
+
+.notification-container{
+    align-items: center;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    background-color: #ccc;
+    padding: 20px;
+    min-width: 708px;
+    max-width: 708px;
+    margin: 0 auto;
+}
+
+.notification-title{
+    display: flex;
+    align-items: center;
+    color: white;
+    text-align: left;
+}
+
+.notification-title > h3:nth-child(2){
+    color: #00A885;
+    margin-left: 10px;
+}
+
+.notification-title > h3{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#keywordsList{
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.keyword-tag {
+    display: inline-block;
+    background-color: #f8f8f8;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin: 5px;
+    font-size: 14px;
+    color: #6f6f6f;
+    border: 1px solid #6f6f6f;
+}
+
+.keyword-tag:hover {
+    background-color: #00A885;
+    color: white;
+    cursor: pointer;
+}
+
+#keywordInput{
+    width: 250px;
+    height: 10px;
+    padding: 10px;
+    border: #6f6f6f 1px solid;
+    border-radius: 10px;
+    margin-bottom: 60px;
+    outline: none;
+}
+
+
+
+.messages-container{
+}
+
+.message{
+    padding: 15px;
+    background-color: white;
+    text-align: left;
+    border: 1px #6f6f6f solid;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.message-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message-header-left{
+    display: flex;
+    align-items: center;
+}
+
+.message-header-left > img{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.message-header > button{
+    background-color: transparent;
+    color: #6f6f6f;
+    border: none;
+    font-size: 16px;
+}
+
+.message-header > button:hover{
+    cursor: pointer;
+    color: black;
+}

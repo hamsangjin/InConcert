@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 폼</title>
+    <link rel="stylesheet" href="/css/user/notification.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-messaging.js"></script>
+    <script src="/js/fcm.js"></script>
+    <script src="/js/keywords.js"></script>
+    <script src="/js/messages.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(function(err) {
+                console.log('Service Worker registration failed:', err);
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
+
+    <div class="title-container">
+        <h1> 알림 </h1>
+    </div>
+
+    <div class="notification-container">
+        <div class="notification-title">
+            <h3>알림 받을 키워드</h3>
+            <h3 id="keywordCount"></h3>
+            <h3> /30</h3>
+        </div>
+        <div id="keywordsList">
+            <div id="keywords" class="keywords-container"></div>
+        </div>
+        <form id="keywordForm">
+            <input type="text" id="keywordInput" name="keyword" placeholder="키워드를 입력해주세요. (예: 뮤지컬)" required>
+            <button type="submit">추가</button>
+        </form>
+
+        <div class="messages-container">
+            <div th:each="message : ${messages}" th:id="'message-' + ${message.id}" class="message" th:style="${message.read} ? 'background-color: #ccc;' : ''">
+                <div class="message-content" th:attr="data-message-id=${message.id}">
+                    <a th:href="@{'/' + ${message.post.postCategory.category.title} + '/' + ${message.post.postCategory.title} + '/' + ${message.post.id}}" style="text-decoration: none; color: inherit;">
+                        <div class="message-header">
+                            <div class="message-header-left">
+                                <img src="/images/logo.png" alt="No Posts"/>
+                                <p th:text="${message.title}"></p>
+                                <p th:text="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
+                            </div>
+                            <button class="delete-button" th:attr="data-message-id=${message.id}">삭제</button>
+                        </div>
+                        <p th:text="${message.body}"></p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
