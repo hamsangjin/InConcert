@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit MyPage</title>
+    <link rel="stylesheet" href="/css/user/editform.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="mypage-container">
+        <form th:action="@{/mypage/edit}" method="post" enctype="multipart/form-data">
+            <div class="top-container">
+
+                <img id="profileImagePreview" class="profile-img2" th:src="${user.profileImage}" alt="No Posts"
+                     onclick="triggerFileInput()"/>
+                <input type="file" id="profileImageInput" name="profileImage" style="display: none;"
+                       onchange="previewImage(event)">
+
+                <div class="profile-container">
+                    <div class="name-container">
+                        <label for="nickname">닉네임</label>
+                        <input type="text" id="nickname" name="nickname" th:value="${user.nickname}" required
+                               oninput="enableCheckNicknameBtn()">
+                        <button class="check-btn" type="button" id="checkNicknameBtn" onclick="checkNickname()"
+                                disabled>중복 확인
+                        </button>
+                    </div>
+                    <div>
+                        <label for="password">비밀번호</label>
+                        <input type="password" id="password" name="password" th:value="${user.password}" required>
+                    </div>
+                    <div>
+                        <label for="email">이메일</label>
+                        <input type="email" id="email" name="email" th:value="${user.email}" required
+                               oninput="enableCheckEmailBtn()">
+                        <button class="check-btn" type="button" id="checkEmailBtn" onclick="checkEmail()" disabled>중복
+                            확인
+                        </button>
+                    </div>
+                    <div>
+                        <label for="phoneNumber">전화번호</label>
+                        <input type="text" id="phoneNumber" name="phoneNumber" th:value="${user.phoneNumber}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mbti">MBTI</label>
+                        <select class="mbti-select" id="mbti" name="mbti" required>
+                            <option value="">선택하세요</option>
+                            <option th:each="type : ${mbtiValues}"
+                                    th:value="${type}"
+                                    th:text="${type}"
+                                    th:selected="${type == user.mbti}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <textarea id="intro" name="intro" required th:text="${user.intro}"></textarea>
+            </div>
+            <div class="submit-btn-container">
+                <button type="submit" class="submit-btn">수정</button>
+            </div>
+        </form>
+    </div>
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message" style="display:none;"></div>
+
+<script>
+    window.onload = function() {
+        var errorMessageElement = document.querySelector('.error-message');
+        if (errorMessageElement && errorMessageElement.textContent.trim() !== "") {
+            alert(errorMessageElement.textContent);
+        }
+    };
+
+    function triggerFileInput() {
+        document.getElementById('profileImageInput').click();
+    }
+
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function () {
+            var output = document.getElementById('profileImagePreview');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function enableCheckNicknameBtn() {
+        var nickname = document.getElementById('nickname').value;
+        document.getElementById('checkNicknameBtn').disabled = nickname.trim() === "";
+    }
+
+    function enableCheckEmailBtn() {
+        var email = document.getElementById('email').value;
+        document.getElementById('checkEmailBtn').disabled = email.trim() === "";
+    }
+
+    function checkNickname() {
+        let nickname = document.getElementById('nickname').value;
+        fetch('/user/nickname-check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({nickname: nickname}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('사용 가능한 닉네임입니다.');
+                } else {
+                    alert('이미 존재하는 닉네임입니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function checkEmail() {
+        let email = document.getElementById('email').value;
+        fetch('/user/email-check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({email: email}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === "SU") {
+                    alert('사용 가능한 이메일입니다.');
+                } else {
+                    alert('이미 존재하는 이메일입니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+</body>
+</html>

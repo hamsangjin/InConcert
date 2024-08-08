@@ -18,7 +18,7 @@
 
     <div class="mypage-container">
         <div class="top-container">
-            <img class="profile-img2" src="/images/profile.png" alt="No Posts"/>
+            <img class="profile-img2" th:src="${user.profileImage}" alt="No Posts"/>
             <div>
                 <div class="name-container">
                     <h3 th:text="${user.name}"></h3>

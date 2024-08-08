@@ -67,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // user 테이블 컬럼에서 not null인 요소 기본값으로 지정 후 회원가입 되도록 처리
         User user = User.builder()
                 .username(username)
-                .password("")   // 소셜 로그인 시 비밀번호 필요하지 않음
+                .password("password")   // 소셜 로그인 시 비밀번호 필요하지 않음 (임의로 비밀번호 지정)
                 .email(email)
                 .name(name)
                 .nickname(username)
