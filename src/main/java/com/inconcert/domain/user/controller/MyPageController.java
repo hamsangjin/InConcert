@@ -8,10 +8,12 @@ import com.inconcert.domain.user.service.MyPageService;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -40,8 +42,18 @@ public class MyPageController {
     }
 
     @PostMapping("/edit")
-    public String editMyPage(@ModelAttribute("user") User user, MyPageEditReqDto reqDto) {
-        myPageService.editUser(reqDto);
+    public String editMyPage(@ModelAttribute MyPageEditReqDto reqDto, RedirectAttributes redirectAttributes) {
+        try {
+            myPageService.editUser(reqDto);
+        }
+        catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "이미 존재하는 닉네임이나 이메일을 입력하였습니다.");
+            return "redirect:/mypage/editform";
+        }
+        catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "입력한 내용을 다시 확인해주세요.");
+            return "redirect:/mypage/editform";
+        }
         return "redirect:/mypage";
     }
 

@@ -66,7 +66,17 @@
     <div id='wrapper'></div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message" style="display:none;"></div>
+
 <script>
+    window.onload = function() {
+        var errorMessageElement = document.querySelector('.error-message');
+        if (errorMessageElement && errorMessageElement.textContent.trim() !== "") {
+            alert(errorMessageElement.textContent);
+        }
+    };
+
     function triggerFileInput() {
         document.getElementById('profileImageInput').click();
     }
