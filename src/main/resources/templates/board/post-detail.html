@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script defer src="/js/board/post-detail.js"></script>
     <script defer src="/js/comment.js"></script>
+    <script defer src="/js/profile.js"></script>
 </head>
 <body>
 <div class="container">
@@ -51,7 +52,7 @@
         </div>
 
         <div class="post-info">
-            <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+            <img id="profileImage" th:src="${post.user.profileImage}" class="profile-img" alt="프로필 이미지">
             <div>
                 <div class="author-row">
                     <span class="author" th:text="${post.nickname}"></span>
@@ -113,6 +114,40 @@
         </div>
     </div>
     <div id='wrapper'></div>
+    <div class="popup" id="profilePopup">
+        <div class="popup-content">
+            <div class="card" id="profileCard">
+                <span class="close" id="closePopup">&times;</span>
+                <img th:src="${post.user.profileImage}" alt="Profile Picture" class="profile-img3">
+                <p class="nickname" th:text="${post.user.nickname}"></p>
+                <div class="info">
+                    <p class="space"><strong>성별</strong>
+                        <span class="popup-span" th:if="${post.user.gender.name()} == 'FEMALE'">여성</span>
+                        <span class="popup-span" th:if="${post.user.gender.name()} == 'MALE'">남성</span>
+                    </p>
+                    <div class="user-birth">
+                        <label for="birthdate-post"><strong>나이</strong></label>
+                        <input type="text" id="birthdate-post" th:value="${post.user.birth}" readonly hidden>
+                        <span class="user-age" id="age"><span id="age-value-post"></span>세</span>
+                    </div>
+                    <p class="space-mail"><strong>메일</strong>
+                        <span class="popup-span" th:text="${post.user.email}"></span>
+                    </p>
+                    <p class="space-mbti"><strong>MBTI</strong>
+                        <span class="popup-mbti" th:text="${post.user.mbti}"></span>
+                    </p>
+                    <p class="manner"><strong>매너 점수</strong>
+                        <span class="popup-score" th:text="${post.user.mannerPoint}"></span>
+                    </p>
+                </div>
+                <button class="chat-btn">1:1 채팅</button>
+                <div class="intro">
+                    <p class="introduce"><strong>한줄 소개</strong></p>
+                    <p class="intro-p" th:text="${post.user.intro}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
