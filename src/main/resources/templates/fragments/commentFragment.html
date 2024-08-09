@@ -5,9 +5,17 @@
                 <div class="comment-header">
                     <div class="comment-author-info">
                         <!-- user의 이미지로 변경 -->
-                        <img src="/images/logo.png" class="profile-img" alt="프로필 이미지">
+                        <img class="profile-img profile-img-comment" th:src="${comment.user.profileImage}"
+                             alt="프로필 이미지"
+                             th:data-nickname="${comment.user.nickname}"
+                             th:data-gender="${comment.user.gender.name()}"
+                             th:data-birth="${comment.user.birth}"
+                             th:data-email="${comment.user.email}"
+                             th:data-mbti="${comment.user.mbti}"
+                             th:data-manner="${comment.user.mannerPoint}"
+                             th:data-intro="${comment.user.intro}">
                         <div>
-                            <p class="author" th:text="${comment.user.nickname}">송민형</p>
+                            <p class="author" th:text="${comment.user.nickname}">댓글 작성한 유저</p>
                             <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                         </div>
                     </div>
@@ -39,7 +47,7 @@
                         <textarea name="content" th:text="${comment.content}" placeholder="댓글을 작성하세요."
                                   class="comment-textarea"></textarea>
                         <div>
-                            <input type="checkbox" th:field="*{isSecret}" id="isSecret-edit" name="isSecret">
+                            <input type="checkbox" th:checked="${comment.isSecret}" id="isSecret-edit" name="isSecret">
                             <label for="isSecret-edit">비밀 댓글</label>
                         </div>
                         <div class="comment-form-actions">
@@ -73,7 +81,38 @@
                     </form>
                 </div>
             </div>
-
+            <div class="popup" id="profilePopup-comment">
+                <div class="popup-content">
+                    <div class="card" id="profileCard-comment">
+                        <span class="close" id="closePopup-comment">&times;</span>
+                        <img src="" alt="Profile Picture" class="profile-img3">
+                        <p class="nickname"></p>
+                        <div class="info">
+                            <p class="space"><strong>성별</strong>
+                                <span class="popup-span gender"></span>
+                            </p>
+                            <div class="user-birth">
+                                <label><strong>나이</strong></label>
+                                <span class="user-age" id="age"><span id="age-value"></span>세</span>
+                            </div>
+                            <p class="space-mail"><strong>메일</strong>
+                                <span class="popup-span email"></span>
+                            </p>
+                            <p class="space-mbti"><strong>MBTI</strong>
+                                <span class="popup-mbti"></span>
+                            </p>
+                            <p class="manner"><strong>매너 점수</strong>
+                                <span class="popup-score"></span>
+                            </p>
+                        </div>
+                        <button class="chat-btn">1:1 채팅</button>
+                        <div class="intro">
+                            <p class="introduce"><strong>한줄 소개</strong></p>
+                            <p class="intro-p"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="replies" th:id="'replies-' + ${comment.id}" style="display:none;">
                 <div th:each="reply : ${comment.replies}">
                     <div th:insert="~{fragments/commentFragment :: commentFragment(comment=${reply})}"></div>
