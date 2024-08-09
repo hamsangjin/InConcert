@@ -1,6 +1,7 @@
 package com.inconcert.domain.user.entity;
 
-import com.inconcert.domain.chat.entity.Chat;
+import com.inconcert.domain.chat.entity.ChatMessage;
+import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.post.entity.Post;
@@ -90,11 +91,11 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "hostUser")
-    private Set<Chat> hostChattings;
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> sentMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "guestUser")
-    private Set<Chat> guestChattings;
+    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> hostedRooms = new ArrayList<>();
 
 
     @Builder

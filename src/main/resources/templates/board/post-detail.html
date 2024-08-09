@@ -56,6 +56,10 @@
                 <div class="author-row">
                     <span class="author" th:text="${post.nickname}"></span>
                     <button class="chat-button">1:1 채팅</button>
+                    <button class="chat-button" th:data-chat-room-id="${post.chatRoomId}" onclick="requestJoinChatRoom(this)">동행 요청</button>
+
+
+
                     <button class="chat-button" th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}"
                             th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
                             onclick="location.href=this.getAttribute('href');">

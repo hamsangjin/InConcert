@@ -1,6 +1,8 @@
 package com.inconcert.domain.post.entity;
 
 import com.inconcert.domain.category.entity.PostCategory;
+import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.user.entity.User;
@@ -52,6 +54,9 @@ public class Post extends BaseEntity {
     @Column(name = "view_count")
     private int viewCount = 0;
 
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
+    private ChatRoom chatRoom;
+
     @ManyToOne
     @JoinColumn(name = "post_category_id", nullable = false)
     private PostCategory postCategory;
@@ -62,5 +67,9 @@ public class Post extends BaseEntity {
 
     public void addComment(Comment comment) {
         comments.add(comment);
+    }
+
+    public void assignChatRoom(ChatRoom chatRoom) {
+
     }
 }

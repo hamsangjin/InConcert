@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${chatRoom.roomName}">Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script th:src="@{/js/chat.js}"></script>
+</head>
+<body>
+<h1 th:text="${chatRoom.roomName}">Chat Room</h1>
+<ul id="chat">
+    <li th:each="message : ${messages}">
+        <span th:text="${message.senderId}">User</span>:
+        <span th:text="${message.message}">Message</span>
+        (<span th:text="${message.timestamp}">Time</span>)
+    </li>
+</ul>
+
+<form onsubmit="sendMessage(); return false;">
+    <input type="text" id="message" placeholder="Enter your message" required/>
+    <button type="submit">Send</button>
+</form>
+<input type="hidden" id="userId" th:value="${chatRoom.hostUserId}"/>
+<input type="hidden" id="chatRoomId" th:value="${chatRoom.id}"/>
+
+<script>
+    var stompClient = null;
+
+    function connect(userId, chatRoomId) {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Connected: ' + frame);
+
+            // 메시지 구독 (특정 채팅방의 메시지 구독)
+            stompClient.subscribe('/topic', function (message) {
+                console.log("subscribe")
+                showMessage(JSON.parse(message.body));
+
+            });
+            console.log("----")
+
+            // 승인 요청 구독 (호스트에게 승인 요청이 도착했을 때 처리)
+            stompClient.subscribe('/topic/chat/room/' + chatRoomId + '/requests', function (message) {
+                console.log("----------")
+                handleJoinRequest(JSON.parse(message.body));
+                console.log("-------")
+            });
+
+            // 유저 입장 메시지 보내기
+            stompClient.send("/app/chat/enterUser",
+                {},
+                JSON.stringify({ 'senderId': userId, 'chatRoomId': chatRoomId, 'message': userId+ '님이 입장하셨습니다.' })
+            );
+        });
+    }
+
+    function sendMessage() {
+        const userId = document.getElementById('userId').value;
+        const chatRoomId = document.getElementById('chatRoomId').value;
+        const message = document.getElementById('message').value;
+        stompClient.send("/app/chat/" + chatRoomId + "/send", {}, JSON.stringify({ 'senderId': userId, 'chatRoomId': chatRoomId, 'message': message }));
+        document.getElementById('message').value = '';
+    }
+
+    function handleJoinRequest(request) {
+        console.log('Join request received:', request);
+
+        const userId = request.user.id;
+        const chatRoomId = request.chatRoomId;
+
+        if (!userId || !chatRoomId) {
+            console.error('Invalid join request data:', request);
+            return; // 유효하지 않은 데이터면 중단
+        }
+
+        // 사용자로부터 승인 여부를 확인하는 알림
+        const isConfirmed = confirm(`${request.user.name || '알 수 없는 사용자'}님이 채팅방에 입장 요청을 했습니다. 승인하시겠습니까?`);
+
+        // 사용자가 확인을 눌렀다면 승인 요청을 처리
+        if (isConfirmed) {
+            approveJoinRequest(chatRoomId, userId);
+        } else {
+            console.log('사용자가 요청을 거부했습니다.');
+        }
+    }
+
+    function approveJoinRequest(chatRoomId, userId) {
+        fetch(`/api/chat/approve-join/${chatRoomId}/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('승인 요청 실패: ' + response.statusText);
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert("사용자의 입장 요청을 승인했습니다.");
+            })
+            .catch(error => {
+                console.error('승인 요청 중 문제가 발생했습니다:', error);
+            });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        console.log("Disconnected");
+    }
+
+    function showMessage(message) {
+        const messageElement = document.createElement('li');
+        messageElement.className = 'chat-message';
+        messageElement.innerText = `${message.senderId}: ${message.message} (${message.timestamp})`;
+        document.getElementById('chat').appendChild(messageElement);
+    }
+
+    window.addEventListener('load', function () {
+        const userId = document.getElementById('userId').value;
+        const chatRoomId = document.getElementById('chatRoomId').value;
+        connect(userId, chatRoomId);
+    });
+
+    window.addEventListener('beforeunload', function () {
+        disconnect();
+    });
+</script>
+
+</body>
+</html>

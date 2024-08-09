@@ -4,6 +4,10 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.repository.ChatRoomRepository;
+import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -24,6 +28,8 @@ public class MatchService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final ChatService chatService;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllMatchPostsByPostCategory(String postCategoryTitle) {
@@ -58,6 +64,7 @@ public class MatchService {
                 .viewCount(post.getViewCount())
                 .matchCount(post.getMatchCount())
                 .endDate(post.getEndDate())
+                .chatRoomId(post.getChatRoom().getId())
                 .commentCount(post.getComments().size())
                 .comments(post.getComments())
                 .likeCount(post.getLikes().size())
@@ -106,7 +113,16 @@ public class MatchService {
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
-        matchRepository.save(post);
+        Post savedPost = matchRepository.save(post); //id 값 만들어 냄
+
+        ChatRoomDto chatRoomDto = chatService.createChatRoom(post.getTitle());
+
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomDto.getId()).orElseThrow(()->new NoSuchElementException("chatroom 찾을수 없음."));
+
+        savedPost.assignChatRoom(chatRoom);
+        chatRoom.assignPost(savedPost);
+
+        matchRepository.save(savedPost);
     }
 
     @Transactional

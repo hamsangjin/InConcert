@@ -36,7 +36,7 @@ public class CrawlingService {
             performCrawling();
         }
         // 마지막으로 크롤링한 지 24시간이 지났을 때 다시 크롤링 (현재는 테스트 중이므로 1시간으로 설정함)
-        else if(ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 1){
+        else if(ChronoUnit.HOURS.between(lastCrawl.getUpdatedAt(), now) >= 24){
             performanceRepository.delete(lastCrawl);    // 이전 크롤링 지우기
             infoRepository.afterCrawling();
             performCrawling();

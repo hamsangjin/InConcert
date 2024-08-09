@@ -71,3 +71,29 @@ function validateSearch() {
     }
     return true;
 }
+
+function requestJoinChatRoom(button) {
+    // 버튼의 data-chat-room-id 속성 값을 가져옵니다.
+    const chatRoomId = button.getAttribute("data-chat-room-id");
+    console.log(chatRoomId);
+
+    fetch(`/api/chat/request-join/${chatRoomId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            alert("요청을 성공적으로 전송하였습니다.");
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
