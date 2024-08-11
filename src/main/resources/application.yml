@@ -72,3 +72,7 @@ image:
 # chromedriver 경로
 chrome:
   driver: ${drivePath}
+
+redis:
+  host: localhost
+  port: 6379

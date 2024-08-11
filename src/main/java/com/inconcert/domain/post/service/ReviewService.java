@@ -4,6 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
@@ -11,6 +12,7 @@ import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +21,13 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
@@ -49,7 +53,6 @@ public class ReviewService {
                 .likeCount(post.getLikes().size())
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
-                .user(post.getUser())
                 .build();
     }
 
@@ -95,6 +98,9 @@ public class ReviewService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         reviewRepository.save(post);
+
+        // 알림 생성 로직 추가
+        notificationService.publishNotification(post.getTitle(), post.getUser());
     }
 
     @Transactional

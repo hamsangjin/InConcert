@@ -4,6 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -24,6 +25,7 @@ public class MatchService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllMatchPostsByPostCategory(String postCategoryTitle) {
@@ -63,7 +65,6 @@ public class MatchService {
                 .likeCount(post.getLikes().size())
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
-                .user(post.getUser())
                 .build();
     }
 
@@ -108,6 +109,9 @@ public class MatchService {
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
         matchRepository.save(post);
+
+        // 알림 생성 로직 추가
+        notificationService.publishNotification(post.getTitle(), post.getUser());
     }
 
     @Transactional

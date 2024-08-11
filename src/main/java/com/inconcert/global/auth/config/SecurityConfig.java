@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll()
                         .requestMatchers("/user/**", "/idform", "/findpw", "/findpwform").permitAll()
                         .requestMatchers("/info/**", "/review/**", "/match/**", "/transfer/**").permitAll()
+                        .requestMatchers("/notifications/stream").permitAll() // SSE 경로는 인증 없이 접근 가능
                         .requestMatchers("/search").permitAll()
                         .requestMatchers("/api/**","/css/**", "/js/**", "/images/**", "/images/uploads/**", "/uploads/images/**").permitAll()
                         .anyRequest().authenticated()
@@ -65,7 +66,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> configurationSource())
+                .cors(cors -> cors.configurationSource(configurationSource()))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
