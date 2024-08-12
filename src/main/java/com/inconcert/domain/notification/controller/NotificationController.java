@@ -52,19 +52,9 @@ public class NotificationController {
                 .orElseThrow(() -> new UserNotFoundException("인증된 사용자가 아닙니다."));
         List<Notification> notifications = notificationService.getUnreadNotifications(user);
         List<NotificationDto> notificationDtos = notifications.stream()
-                .map(this::convertToDto)
+                .map(notificationService::convertToDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(notificationDtos);
-    }
-
-    private NotificationDto convertToDto(Notification notification) {
-        return new NotificationDto(
-                notification.getId(),
-                notification.getKeyword(),
-                notification.getMessage(),
-                notification.isRead(),
-                notification.getCreatedAt()
-        );
     }
 
     @GetMapping("/current-keywords")
@@ -87,5 +77,26 @@ public class NotificationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("키워드 제거 실패: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/{id}/read")
+    public ResponseEntity<?> markAsRead(@PathVariable Long id) {
+        try {
+            notificationService.markAsRead(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("알림 상태 변경 실패: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<NotificationDto>> getAllNotifications() {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException("인증된 사용자가 아닙니다."));
+        List<Notification> notifications = notificationService.getAllNotifications(user);
+        List<NotificationDto> notificationDtos = notifications.stream()
+                .map(notificationService::convertToDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(notificationDtos);
     }
 }

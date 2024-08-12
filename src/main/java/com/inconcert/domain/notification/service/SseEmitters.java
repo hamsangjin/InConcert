@@ -1,5 +1,6 @@
 package com.inconcert.domain.notification.service;
 
+import com.inconcert.domain.notification.dto.NotificationDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -28,13 +29,13 @@ public class SseEmitters {
         return emitter;
     }
 
-    public void sendToUser(Long userId, String message) {
-        SseEmitter emitter = emitters.get(userId);
+    public void sendToUser(Long userId, NotificationDto notification) {
+        SseEmitter emitter = this.emitters.get(userId);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().name("notification").data(message));
+                emitter.send(SseEmitter.event().name("notification").data(notification));
             } catch (IOException e) {
-                emitters.remove(userId);
+                this.emitters.remove(userId);
             }
         }
     }

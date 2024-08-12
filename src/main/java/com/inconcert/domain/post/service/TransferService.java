@@ -112,7 +112,7 @@ public class TransferService {
         transferRepository.save(post);
 
         // 알림 생성 로직 추가
-        notificationService.publishNotification(post.getTitle(), post.getUser());
+        notificationService.publishNotification(post);
     }
 
     @Transactional
