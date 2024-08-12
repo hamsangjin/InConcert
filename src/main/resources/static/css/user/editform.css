@@ -249,6 +249,14 @@ label {
     color: #00A885;
 }
 
+.intro-edit-p {
+    font-weight: bold;
+    font-size: 20px;
+    margin-left: 35px;
+    color: #00a885;
+    text-decoration: underline;
+}
+
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -265,7 +273,7 @@ textarea {
     width: 1208px;
     height: 200px;
     padding: 15px;
-    margin: 30px 20px 20px 20px;
+    margin: 10px 20px 20px 20px;
     border: 1px solid #6f6f6f;
     border-radius: 5px;
     font-size: 16px;

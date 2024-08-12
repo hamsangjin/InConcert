@@ -1,6 +1,7 @@
 <div th:fragment="commentFragment(comment)">
     <div class="comment-wrapper" th:attr="data-comment-id=${comment.id}">
-        <div class="comment" th:class="${comment.parent != null} ? 'reply' : ''" th:attr="data-comment-id=${comment.id}">
+        <div class="comment" th:class="${comment.parent != null} ? 'reply' : ''"
+             th:attr="data-comment-id=${comment.id}">
             <div class="comment-content">
                 <div class="comment-header">
                     <div class="comment-author-info">
@@ -19,7 +20,8 @@
                             <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                         </div>
                     </div>
-                    <div class="comment-options" th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}">
+                    <div class="comment-options"
+                         th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}">
                         <!-- 댓글 수정/삭제 링크 -->
                         <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.nickname != null and (#authentication.name == post.nickname))}"
                               th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
@@ -33,9 +35,11 @@
                         </form>
                     </div>
                 </div>
-                <p class="comment-p" th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}"
+                <p class="comment-p"
+                   th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}"
                    th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}">댓글 내용</p>
-                <p class="comment-p secret" th:if="${comment.isSecret and (#authentication.name != comment.user.username) and (#authentication.name != post.nickname)}">
+                <p class="comment-p secret"
+                   th:if="${comment.isSecret and (#authentication.name != comment.user.username) and (#authentication.name != post.nickname)}">
                     비밀 댓글입니다.</p>
 
                 <!-- 댓글 수정 폼 -->
@@ -51,7 +55,9 @@
                             <label for="isSecret-edit">비밀 댓글</label>
                         </div>
                         <div class="comment-form-actions">
-                            <button type="button" class="cancel-btn" th:onclick="'cancelEdit(' + ${comment.id} + ');'">취소</button>
+                            <button type="button" class="cancel-btn" th:onclick="'cancelEdit(' + ${comment.id} + ');'">
+                                취소
+                            </button>
                             <button type="submit" class="submit-btn">등록</button>
                         </div>
                     </form>
@@ -59,7 +65,9 @@
 
                 <div class="comment-actions-reply">
                     <section>
-                        <a class="reply-btn" th:if="${comment.replies.size() > 0}" th:text="${comment.replies.size()} + '개의 답글'" th:onclick="'toggleReplies(' + ${comment.id} + ');'">답글 보기</a>
+                        <a class="reply-btn" th:if="${comment.replies.size() > 0}"
+                           th:text="${comment.replies.size()} + '개의 답글'"
+                           th:onclick="'toggleReplies(' + ${comment.id} + ');'">답글 보기</a>
                         <a class="reply-btn" th:onclick="'toggleReplyForm(' + ${comment.id} + ');'">답글 달기</a>
                     </section>
                 </div>
@@ -75,7 +83,9 @@
                             <label for="isSecret-edit">비밀 댓글</label>
                         </div>
                         <div class="comment-form-actions">
-                            <button type="button" class="cancel-btn" th:onclick="'hideReplyForm(' + ${comment.id} + ');'">취소</button>
+                            <button type="button" class="cancel-btn"
+                                    th:onclick="'hideReplyForm(' + ${comment.id} + ');'">취소
+                            </button>
                             <button type="submit" class="submit-btn">등록</button>
                         </div>
                     </form>
@@ -85,25 +95,29 @@
                 <div class="popup-content">
                     <div class="card" id="profileCard-comment">
                         <span class="close" id="closePopup-comment">&times;</span>
-                        <img src="" alt="Profile Picture" class="profile-img3">
-                        <p class="nickname"></p>
-                        <div class="info">
-                            <p class="space"><strong>성별</strong>
-                                <span class="popup-span gender"></span>
-                            </p>
-                            <div class="user-birth">
-                                <label><strong>나이</strong></label>
-                                <span class="user-age" id="age"><span id="age-value"></span>세</span>
+                        <div class="profile-container">
+                            <div class="profile-left">
+                                <img src="" alt="Profile Picture" class="profile-img3">
+                                <p class="nickname"></p>
                             </div>
-                            <p class="space-mail"><strong>메일</strong>
-                                <span class="popup-span email"></span>
-                            </p>
-                            <p class="space-mbti"><strong>MBTI</strong>
-                                <span class="popup-mbti"></span>
-                            </p>
-                            <p class="manner"><strong>매너 점수</strong>
-                                <span class="popup-score"></span>
-                            </p>
+                            <div class="profile-right">
+                                <p class="space"><strong>성별</strong>
+                                    <span class="popup-span gender"></span>
+                                </p>
+                                <div class="user-birth">
+                                    <label><strong>나이</strong></label>
+                                    <span class="user-age" id="age"><span id="age-value"></span>세</span>
+                                </div>
+                                <p class="space-mail"><strong>메일</strong>
+                                    <span class="popup-span email"></span>
+                                </p>
+                                <p class="space-mbti"><strong>MBTI</strong>
+                                    <span class="popup-mbti"></span>
+                                </p>
+                                <p class="manner"><strong>매너 점수</strong>
+                                    <span class="popup-score"></span>
+                                </p>
+                            </div>
                         </div>
                         <button class="chat-btn">1:1 채팅</button>
                         <div class="intro">
@@ -113,11 +127,12 @@
                     </div>
                 </div>
             </div>
-            <div class="replies" th:id="'replies-' + ${comment.id}" style="display:none;">
-                <div th:each="reply : ${comment.replies}">
-                    <div th:insert="~{fragments/commentFragment :: commentFragment(comment=${reply})}"></div>
-                </div>
-            </div>
+
+        </div>
+    </div>
+    <div class="replies" th:id="'replies-' + ${comment.id}" style="display:none;">
+        <div th:each="reply : ${comment.replies}">
+            <div th:insert="~{fragments/commentFragment :: commentFragment(comment=${reply})}"></div>
         </div>
     </div>
 </div>

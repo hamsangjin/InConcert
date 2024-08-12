@@ -62,22 +62,6 @@ document.addEventListener("DOMContentLoaded", function() {
             profilePopupComment.style.display = "none";
         }, 0); // 카드 애니메이션이 끝난 후 팝업을 숨김 (0ms for smooth transition)
     }
-
-    window.onclick = function(event) {
-        if (event.target == profilePopup) {
-            profileCard.classList.remove("show");
-            setTimeout(() => {
-                profilePopup.style.display = "none";
-            }, 0); // 카드 애니메이션이 끝난 후 팝업을 숨김 (0ms for smooth transition)
-        }
-
-        if (event.target == profilePopupComment) {
-            profileCardComment.classList.remove("show");
-            setTimeout(() => {
-                profilePopupComment.style.display = "none";
-            }, 0); // 카드 애니메이션이 끝난 후 팝업을 숨김 (0ms for smooth transition)
-        }
-    };
 });
 
 function calculateAge(birthdate) {
@@ -92,3 +76,51 @@ function calculateAge(birthdate) {
 
     return age;
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 기존 프로필 팝업 관련 요소
+    const profilePopup = document.getElementById("profilePopup");
+    const profileCard = document.getElementById("profileCard");
+    const profilePopupComment = document.getElementById("profilePopup-comment");
+    const profileCardComment = document.getElementById("profileCard-comment");
+
+    // 팝업 닫기 버튼
+    const closePopup = document.getElementById("closePopup");
+    const closePopupComment = document.getElementById("closePopup-comment");
+
+    // 팝업 닫기 기능
+    if (closePopup) {
+        closePopup.onclick = function() {
+            profileCard.classList.remove("show");
+            setTimeout(() => {
+                profilePopup.style.display = "none";
+            }, 0);
+        };
+    }
+
+    if (closePopupComment) {
+        closePopupComment.onclick = function() {
+            profileCardComment.classList.remove("show");
+            setTimeout(() => {
+                profilePopupComment.style.display = "none";
+            }, 0);
+        };
+    }
+
+    // window.onclick에 여러 이벤트를 설정할 수 있도록 개선
+    window.addEventListener("click", function(event) {
+        if (profilePopup && event.target == profilePopup) {
+            profileCard.classList.remove("show");
+            setTimeout(() => {
+                profilePopup.style.display = "none";
+            }, 0);
+        }
+
+        if (profilePopupComment && event.target == profilePopupComment) {
+            profileCardComment.classList.remove("show");
+            setTimeout(() => {
+                profilePopupComment.style.display = "none";
+            }, 0);
+        }
+    });
+});

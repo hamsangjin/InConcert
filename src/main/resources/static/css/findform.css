@@ -1,0 +1,145 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+p{
+    margin: 5px;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    min-width: calc(100% - 900px);
+    max-width: calc(100% - 900px);
+    margin: 0 auto;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+
+/* login 설정 */
+header {
+    display: flex;
+    min-width: 808px;
+    max-width: 808px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+.find-container{
+    align-items: center;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    padding: 60px;
+    min-width: 708px;
+    max-width: 708px;
+    margin: 0 auto;
+}
+
+.find-container label {
+    display: inline-block;
+    width: 55px; /* 필요에 따라 너비 조정 */
+    height: 20px; /* 필요에 따라 높이 조정 */
+    vertical-align: middle; /* 텍스트와 인풋이 수직으로 정렬 */
+}
+
+#name, #email, #username{
+    border: 1px solid #00A885;
+    max-width: calc(30%);
+    min-width: calc(30%);
+    margin: 15px;
+    font-size: 16px;
+    outline: none;
+    padding: 5px;
+    height: 20px; /* 인풋 필드의 고정된 높이 */
+    line-height: 30px; /* 인풋 필드의 line-height를 높이와 동일하게 설정 */
+    font-family: Arial, sans-serif; /* 글꼴 설정 */
+    vertical-align: middle; /* input 필드와 label이 수직으로 정렬 */
+}
+
+#username:focus, #email:focus {
+    background-color: transparent;
+}
+
+.default-find {
+    background-color: #00A885;
+    opacity: 0.6;
+    color: white;
+    border-radius: 10px;
+    max-width: calc(20% - 20px);
+    min-width: calc(20% - 20px);
+    margin: 20px auto 20px;
+    padding: 10px;
+    align-items: center;
+}
+
+.default-find > button {
+    background-color: #00A885;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.default-find > button:hover {
+    cursor: pointer;
+}
+
+.find-username {
+    /*margin-left: 16px;*/
+}

@@ -636,8 +636,6 @@ header {
     width: 160px;
     height: 160px;
     object-fit: cover;
-    float: left;
-    padding: 15px 5px 20px 10px;
 }
 
 .info {
@@ -648,12 +646,8 @@ header {
 .nickname {
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 10px;
-    position: absolute;
-    top: 200px;
-    left: 78px;
-    text-align: center;
     color: #00a885;
+    margin-top: 15px; /* 프로필 이미지와 닉네임 사이의 간격 */
 }
 
 .popup-mbti, .popup-score {
@@ -676,20 +670,16 @@ header {
 }
 
 .intro {
+    margin-top: 15px;
     border: 1px solid #ddd;
-    height: 120px;
     border-radius: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-top: 20px;
+    padding: 5px 10px 10px 10px;
     background-color: #f9f9f9;
-    clear: both;
 }
 
 .space {
     padding-left: 37px;
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 6px;
 }
 
@@ -699,28 +689,28 @@ header {
 
 .user-birth {
     padding-left: 42px;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 6px;
 }
 
 .space-mail {
     padding-left: 37px;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 6px;
 }
 
 .space-mbti {
     padding-left: 30px;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 .manner {
-    margin: 10px 0 20px 6px;
+    margin: 7px 0 20px 6px;
 }
 
 .introduce {
-    padding-top: 5px;
     color: #00a885;
+    font-weight: bold;
 }
 
 .info strong {
@@ -728,9 +718,35 @@ header {
 }
 
 .intro-p {
-    padding-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 50px;
+    color: #333;
 }
 
 .popup-span, .popup-mbti, .popup-score {
     margin-left: 8px;
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* 프로필 이미지와 개인정보 사이의 간격 */
+}
+
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* 닉네임이 이미지 아래 중앙에 위치하도록 */
+    padding: 20px 0 0 10px;
+}
+
+.profile-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 개인정보가 이미지와 같은 높이에 정렬되도록 */
+}
+
+.profile-right strong {
+    color: #00a885;
 }
