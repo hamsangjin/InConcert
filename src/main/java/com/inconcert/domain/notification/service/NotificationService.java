@@ -39,10 +39,6 @@ public class NotificationService {
         redisTemplate.opsForSet().remove(key, keyword);
     }
 
-    public SseEmitter createEmitter(Long userId) {
-        return sseEmitters.createForUser(userId);
-    }
-
     //  Redis 에 저장된 키워드를 가진 사용자만을 대상으로 알림을 생성
     public void publishNotification(String title, User author) {
         try {
