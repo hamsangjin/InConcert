@@ -43,7 +43,7 @@ public class InfoController {
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
 
-        model.addAttribute("post", infoService.getPostById(postId));
+        model.addAttribute("post", infoService.getPostDtoByPostId(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "info");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
@@ -78,7 +78,7 @@ public class InfoController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = infoService.getPostById(postId);
+        PostDto postDto = infoService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);

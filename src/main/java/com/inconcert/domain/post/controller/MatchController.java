@@ -42,7 +42,7 @@ public class MatchController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", matchService.getPostById(postId));
+        model.addAttribute("post", matchService.getPostDtoByPostId(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
@@ -77,7 +77,7 @@ public class MatchController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = matchService.getPostById(postId);
+        PostDto postDto = matchService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);

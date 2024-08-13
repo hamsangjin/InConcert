@@ -3,8 +3,16 @@ package com.inconcert.domain.comment.controller;
 import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.comment.dto.CommentDto;
 import com.inconcert.domain.comment.service.CommentService;
+import com.inconcert.domain.notification.service.NotificationService;
+import com.inconcert.domain.post.entity.Post;
+import com.inconcert.domain.post.service.InfoService;
+import com.inconcert.domain.post.service.MatchService;
+import com.inconcert.domain.post.service.ReviewService;
+import com.inconcert.domain.post.service.TransferService;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.exception.CategoryNotFoundException;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +35,20 @@ import java.util.Map;
 public class CommentController {
     private final Map<String, CommentService> commentServices;
     private final UserService userService;
+    private final NotificationService notificationService;
+    private final InfoService infoService;
+    private final ReviewService reviewService;
+    private final MatchService matchService;
+    private final TransferService transferService;
 
     @Autowired
     public CommentController(@Qualifier("infoCommentService") CommentService infoCommentService,
                              @Qualifier("matchCommentService") CommentService matchCommentService,
                              @Qualifier("reviewCommentService") CommentService reviewCommentService,
                              @Qualifier("transferCommentService") CommentService transferCommentService,
-                             UserService userService) {
+                             UserService userService, NotificationService notificationService,
+                             InfoService infoService, ReviewService reviewService, MatchService matchService,
+                             TransferService transferService) {
         this.commentServices = new HashMap<>();
         this.commentServices.put("info", infoCommentService);
         this.commentServices.put("match", matchCommentService);
@@ -44,6 +59,11 @@ public class CommentController {
         this.commentServices.put("theater", infoCommentService);
         this.commentServices.put("etc", infoCommentService);
         this.userService = userService;
+        this.notificationService = notificationService;
+        this.infoService = infoService;
+        this.reviewService = reviewService;
+        this.matchService = matchService;
+        this.transferService = transferService;
     }
 
     private CommentService getService(String postCategoryTitle) {
@@ -120,6 +140,15 @@ public class CommentController {
         User user = userService.findByUsername(principal.getName());
 
         getService(postCategoryTitle).saveComment(postCategoryTitle, postId, user, commentForm);
+
+        Post post = switch (categoryTitle) {
+            case "info" -> infoService.getPostByPostId(postId);
+            case "review" -> reviewService.getPostByPostId(postId);
+            case "match" -> matchService.getPostByPostId(postId);
+            case "transfer" -> transferService.getPostByPostId(postId);
+            default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
+        };
+        notificationService.commentsNotification(post, commentForm.getContent());
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
 

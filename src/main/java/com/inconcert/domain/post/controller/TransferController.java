@@ -42,7 +42,7 @@ public class TransferController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", transferService.getPostById(postId));
+        model.addAttribute("post", transferService.getPostDtoByPostId(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
@@ -78,7 +78,7 @@ public class TransferController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = transferService.getPostById(postId);
+        PostDto postDto = transferService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);

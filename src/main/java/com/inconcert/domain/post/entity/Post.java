@@ -3,6 +3,7 @@ package com.inconcert.domain.post.entity;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
+import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -51,6 +52,9 @@ public class Post extends BaseEntity {
 
     @Column(name = "view_count")
     private int viewCount = 0;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "post_category_id", nullable = false)

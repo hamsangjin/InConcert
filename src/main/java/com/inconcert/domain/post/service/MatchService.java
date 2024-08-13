@@ -37,13 +37,18 @@ public class MatchService {
             default -> throw new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage());
         };
 
-        List<PostDto> postDtos = getPostDtos(posts);
-        return postDtos;
+        return getPostDtos(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public Post getPostByPostId(Long postId) {
+        Optional<Post> post = matchRepository.findById(postId);
+        return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
-    public PostDto getPostById(Long postId) {
+    public PostDto getPostDtoByPostId(Long postId) {
         Post findPost = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -76,9 +81,7 @@ public class MatchService {
 
         // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
         List<Post> posts = matchRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type);
-        List<PostDto> postDtos = getPostDtos(posts);
-
-        return postDtos;
+        return getPostDtos(posts);
     }
 
     @Transactional
@@ -112,7 +115,7 @@ public class MatchService {
         matchRepository.save(post);
 
         // 알림 생성 로직 추가
-        notificationService.publishNotification(post);
+        notificationService.keywordsNotification(post);
     }
 
     @Transactional
