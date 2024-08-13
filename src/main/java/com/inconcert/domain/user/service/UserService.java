@@ -122,7 +122,6 @@ public class UserService {
     }
 
     // 인증 번호 확인
-    @Transactional(readOnly = true)
     public ResponseEntity<? super CheckCertificationRspDto> checkCertification(CheckCertificationReqDto reqDto) {
         try {
             String username = reqDto.getUsername();

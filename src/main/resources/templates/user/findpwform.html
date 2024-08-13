@@ -20,6 +20,7 @@
                     if (xhr.readyState === 4) { // 요청 완료
                         if (xhr.status === 200) {   // 요청 성공
                             alert(xhr.responseText);
+                            window.location.href = '/loginform';
                         } else {
                             alert(xhr.responseText);
                         }
