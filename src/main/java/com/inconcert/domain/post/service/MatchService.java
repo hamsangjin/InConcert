@@ -85,7 +85,7 @@ public class MatchService {
     }
 
     @Transactional
-    public void save(PostDto postDto){
+    public Post save(PostDto postDto){
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
@@ -112,10 +112,12 @@ public class MatchService {
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
-        matchRepository.save(post);
+        Post savePost = matchRepository.save(post);
 
         // 알림 생성 로직 추가
         notificationService.keywordsNotification(post);
+
+        return savePost;
     }
 
     @Transactional

@@ -2,6 +2,7 @@ package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.MatchService;
 import com.inconcert.domain.user.service.UserService;
@@ -97,7 +98,7 @@ public class MatchController {
 
     @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
-        matchService.save(postDto);
-        return "redirect:/match";
+        Post post = matchService.save(postDto);
+        return "redirect:/match/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 }
