@@ -150,7 +150,7 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.code === "SU") {
-                                alert('인증 번호가 전송되었습니다.');
+                                console.log('인증 번호가 전송되었습니다.');
                             } else {
                                 alert('인증 번호 전송에 실패했습니다.');
                             }
