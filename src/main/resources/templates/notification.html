@@ -196,9 +196,31 @@
     }
 
     function addNotificationToList(notification) {
-        const listType = notification.type === 'keyword' ? 'keywordNotificationList' : 'allNotificationList';
+        let listType;
+
+        // 알림 타입에 따라 해당 리스트 선택
+        switch (notification.type) {
+            case 'keyword':
+                listType = 'keywordNotificationList';
+                break;
+            case 'likes':
+                listType = 'likesNotificationList';
+                break;
+            case 'comment':
+                listType = 'commentNotificationList';
+                break;
+            default:
+                listType = 'allNotificationList';
+                break;
+        }
+
         const list = document.getElementById(listType);
-        list.insertBefore(createNotificationElement(notification), list.firstChild);
+
+        if (list) {
+            list.insertBefore(createNotificationElement(notification), list.firstChild);
+        } else {
+            console.error(`Notification list element not found for type: ${notification.type}`);
+        }
     }
 
     function markAsRead(element) {

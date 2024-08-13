@@ -2,6 +2,7 @@ package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
 import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.TransferService;
 import com.inconcert.domain.user.service.UserService;
@@ -98,7 +99,7 @@ public class TransferController {
 
     @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
-        transferService.save(postDto);
-        return "redirect:/transfer";
+        Post post = transferService.save(postDto);
+        return "redirect:/transfer/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 }
