@@ -677,8 +677,8 @@ header {
     display: flex;
     flex-direction: column;
     justify-content: center; /* 개인정보가 이미지와 같은 높이에 정렬되도록 */
-    min-width: calc(55%);
-    max-width: calc(55%);
+    min-width: calc(60%);
+    max-width: calc(60%);
 }
 
 .profile-right strong {
