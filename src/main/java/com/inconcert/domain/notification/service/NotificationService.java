@@ -128,7 +128,7 @@ public class NotificationService {
     // 좋아요 알림 생성
     @Transactional
     public void likesNotification(Post post, User user, boolean liked) {
-        User postOwner = userRepository.findById(post.getUser().getId()).get();
+        User postOwner = post.getUser();
 
         if(liked){
             String message = "[좋아요 알림] " + user.getNickname() + "님이 좋아요를 눌렀습니다.";
