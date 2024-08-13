@@ -14,6 +14,7 @@ import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
+import com.inconcert.global.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,13 +24,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// @Qualifier 어노테이션은 의존성 주입 시 어떤 Bean을 주입할지 지정하는 용도로 사용
-// 같은 타입의 여러 Bean이 있기 때문에 특정 Bean을 선택하기 위해서 사용
 @Controller
 @RequestMapping("/{categoryTitle}/{postCategoryTitle}/{postId}/comments")
 public class CommentController {
@@ -83,7 +81,6 @@ public class CommentController {
         return ResponseEntity.ok(comments);
     }
 
-
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/edit/{commentId}")
     public String editComment(@PathVariable("categoryTitle") String categoryTitle,
@@ -91,12 +88,12 @@ public class CommentController {
                               @PathVariable("postId") Long postId,
                               @PathVariable("commentId") Long commentId,
                               @Valid @ModelAttribute("commentForm") CommentCreateForm commentForm,
-                              BindingResult bindingResult, Principal principal) {
+                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         CommentDto existingComment = getService(postCategoryTitle).findComment(postCategoryTitle, commentId);
 
         if (!existingComment.getUser().getUsername().equals(user.getUsername())) {
@@ -112,12 +109,26 @@ public class CommentController {
     public String deleteComment(@PathVariable("categoryTitle") String categoryTitle,
                                 @PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId,
-                                @PathVariable("commentId") Long id,
-                                Principal principal) {
+                                @PathVariable("commentId") Long id) {
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         CommentDto dto = getService(postCategoryTitle).findComment(postCategoryTitle, id);
-        User user = userService.findByUsername(principal.getName());
 
-        if (!dto.getUser().getUsername().equals(user.getUsername())) {
+        // 현재 사용자와 댓글 작성자가 일치하는지 확인
+        boolean isCommentAuthor = dto.getUser().getUsername().equals(user.getUsername());
+
+        // 게시글 작성자 확인
+        Post post = switch (categoryTitle) {
+            case "info" -> infoService.getPostByPostId(postId);
+            case "review" -> reviewService.getPostByPostId(postId);
+            case "match" -> matchService.getPostByPostId(postId);
+            case "transfer" -> transferService.getPostByPostId(postId);
+            default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
+        };
+
+        boolean isPostAuthor = post.getUser().getUsername().equals(user.getUsername());
+
+        // 댓글 작성자나 게시글 작성자만 댓글 삭제 가능
+        if (!isCommentAuthor && !isPostAuthor) {
             throw new SecurityException("이 댓글을 삭제할 권한이 없습니다.");
         }
 
@@ -131,13 +142,12 @@ public class CommentController {
                                 @PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId,
                                 @Valid @ModelAttribute("createForm") CommentCreateForm commentForm,
-                                BindingResult bindingResult,
-                                Principal principal) {
+                                BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         getService(postCategoryTitle).saveComment(postCategoryTitle, postId, user, commentForm);
 
@@ -159,13 +169,12 @@ public class CommentController {
                               @PathVariable("postId") Long postId,
                               @PathVariable("parentId") Long parentId,
                               @Valid @ModelAttribute("commentForm") CommentCreateForm commentForm,
-                              BindingResult bindingResult,
-                              Principal principal) {
+                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.findByUsername(principal.getName());
+        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         commentForm.setParent(parentId); // 부모 댓글 ID 설정
         getService(postCategoryTitle).reSaveComment(postCategoryTitle, postId, parentId, user, commentForm);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
