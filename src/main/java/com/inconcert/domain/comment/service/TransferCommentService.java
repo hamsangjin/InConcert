@@ -26,7 +26,7 @@ public class TransferCommentService implements CommentService {
     @Transactional(readOnly = true)
     public List<CommentDto> findByPostId(String boardType, Long id, String sort) {
         List<Comment> byPostId;
-        if ("recent".equals(sort)) {
+        if ("desc".equals(sort)) {
             byPostId = commentRepository.findByPostIdOrderByCreatedAtDesc(id);
         } else {
             byPostId = commentRepository.findByPostIdOrderByCreatedAtAsc(id);
@@ -54,6 +54,12 @@ public class TransferCommentService implements CommentService {
         comment.setPost(post);
         comment.setUser(user);
 
+        // parentId가 있는 경우 부모 댓글 설정
+        if (dto.getParent() != null) {
+            Comment parentComment = commentRepository.findById(dto.getParent()).orElseThrow(() -> new CommentNotFoundException("ID = " + dto.getParent() + " 의 해당 부모 댓글이 존재하지 않습니다."));
+            comment.confirmParent(parentComment);
+        }
+
         commentRepository.save(comment);
 
         return comment.getId();
@@ -65,9 +71,14 @@ public class TransferCommentService implements CommentService {
         dto.setUser(user);
         Comment comment = dto.toEntity();
 
+        // Post를 설정합니다.
         comment.confirmPost(transferRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("ID = " + postId + " 의 해당 게시글이 존재하지 않습니다.")));
 
-        comment.confirmParent(commentRepository.findById(parentId).orElseThrow(() -> new CommentNotFoundException("ID = " + postId + " 의 해당 부모 댓글이 존재하지 않습니다.")));
+        // parentId가 null이 아닌 경우에만 부모 댓글을 설정합니다.
+        if (parentId != null) {
+            Comment parentComment = commentRepository.findById(parentId).orElseThrow(() -> new CommentNotFoundException("ID = " + parentId + " 의 해당 부모 댓글이 존재하지 않습니다."));
+            comment.confirmParent(parentComment);
+        }
 
         commentRepository.save(comment);
     }
