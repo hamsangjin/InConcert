@@ -53,6 +53,7 @@ public class ReviewService {
                 .likeCount(post.getLikes().size())
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
+                .user(post.getUser())
                 .build();
     }
 
