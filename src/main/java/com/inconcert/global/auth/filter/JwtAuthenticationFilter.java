@@ -33,34 +33,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // accessToken 가져오기
-        String token = getToken(request);
-
-        // header 에 값이 있는지 확인
-        if(StringUtils.hasText(token)) {
-            try{
+        try {
+            // accessToken 가져오기
+            String token = getToken(request);
+            if (StringUtils.hasText(token)) {
                 getAuthentication(token);
-            }catch (ExpiredJwtException e){
-                log.error("Expired Token : {}",token,e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Expired token");
-                return;
-            }catch (UnsupportedJwtException e){
-                log.error("Unsupported Token: {}", token, e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unsupported token");
-                return;
-            } catch (MalformedJwtException e) {
-                log.error("Invalid Token: {}", token, e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
-                return;
-            } catch (IllegalArgumentException e) {
-                log.error("Token not found: {}", token, e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token not found");
-                return;
-            } catch (Exception e) {
-                log.error("JWT Filter - Internal Error: {}", token, e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT filter internal error");
-                return;
             }
+        } catch (ExpiredJwtException e) {
+            log.error("Expired Token : {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"토큰이 만료되었습니다.\"}");
+            return;
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported Token: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"유효하지 않은 토큰입니다.\"}");
+            return;
+        } catch (MalformedJwtException e) {
+            log.error("Invalid Token: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"유효하지 않은 토큰입니다.\"}");
+            return;
+        } catch (IllegalArgumentException e) {
+            log.error("Token not found: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\": \"토큰이 없습니다.\"}");
+            return;
+        } catch (Exception e) {
+            log.error("JWT Filter - Internal Error: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"내부 서버 오류가 발생했습니다.\"}");
+            return;
         }
         filterChain.doFilter(request, response);
     }
