@@ -117,7 +117,22 @@ public class CommentController {
         CommentDto dto = getService(postCategoryTitle).findComment(postCategoryTitle, id);
         User user = userService.findByUsername(principal.getName());
 
-        if (!dto.getUser().getUsername().equals(user.getUsername())) {
+        // 현재 사용자와 댓글 작성자가 일치하는지 확인
+        boolean isCommentAuthor = dto.getUser().getUsername().equals(user.getUsername());
+
+        // 게시글 작성자 확인
+        Post post = switch (categoryTitle) {
+            case "info" -> infoService.getPostByPostId(postId);
+            case "review" -> reviewService.getPostByPostId(postId);
+            case "match" -> matchService.getPostByPostId(postId);
+            case "transfer" -> transferService.getPostByPostId(postId);
+            default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
+        };
+
+        boolean isPostAuthor = post.getUser().getUsername().equals(user.getUsername());
+
+        // 댓글 작성자나 게시글 작성자만 댓글 삭제 가능
+        if (!isCommentAuthor && !isPostAuthor) {
             throw new SecurityException("이 댓글을 삭제할 권한이 없습니다.");
         }
 
