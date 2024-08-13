@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>알림 설정</title>
-    <link rel="stylesheet" href="/css/user/notification.css">
+    <link rel="stylesheet" href="/css/notification.css">
 </head>
 <body>
 <div class="container">
-    <h1>알림</h1>
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
 
+    <div class="title-container">
+        <h1> 알림 </h1>
+    </div>
     <div class="tab-container">
         <div class="tab active" data-tab="all">전체</div>
         <div class="tab" data-tab="keyword">키워드 알림</div>
         <div class="tab" data-tab="comment">댓글 알림</div>
-        <div class="tab" data-tab="like">좋아요 알림</div>
+        <div class="tab" data-tab="likes">좋아요 알림</div>
     </div>
 
     <div id="all" class="tab-content active">
@@ -21,46 +28,65 @@
     </div>
 
     <div id="keyword" class="tab-content">
-        <!-- 키워드 설정 폼 -->
+        <div id="registeredKeyword">
+            <ul id="keywordList"></ul>
+        </div>
+
         <form id="keywordForm">
             <input type="text" id="keywordInput" placeholder="키워드 입력..." required>
             <button type="submit">키워드 설정</button>
         </form>
-
-        <!-- 등록된 키워드 표시 -->
-        <div id="registeredKeyword">
-            <h3>등록된 키워드:</h3>
-            <ul id="keywordList"></ul>
-        </div>
-
         <ul id="keywordNotificationList"></ul>
     </div>
 
     <div id="comment" class="tab-content">
-        <h2>댓글 알림</h2>
-        <p>댓글 알림 기능은 아직 구현되지 않았습니다.</p>
+        <ul id="commentNotificationList"></ul>
+
     </div>
 
-    <div id="like" class="tab-content">
-        <h2>좋아요 알림</h2>
-        <p>좋아요 알림 기능은 아직 구현되지 않았습니다.</p>
+    <div id="likes" class="tab-content">
+        <ul id="likesNotificationList"></ul>
+
     </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
-    let eventSource;
+    window.addEventListener('load', function () {
+        console.log("Page loaded, initializing...");
 
-    // 탭 전환 기능
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById(tab.dataset.tab).classList.add('active');
+        // 탭 이벤트 리스너 설정
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                this.classList.add('active');
+                const type = this.dataset.tab;
+                document.getElementById(type).classList.add('active');
+
+                const list = document.getElementById(`${type}NotificationList`);
+                if (list) {
+                    fetch(`/notifications/${type}`)
+                        .then(response => response.json())
+                        .then(notifications => {
+                            list.innerHTML = ''; // 리스트 초기화
+                            notifications.forEach(notification => {
+                                list.appendChild(createNotificationElement(notification));
+                            });
+                        })
+                        .catch(error => console.error('Error loading notifications:', error));
+                }
+            });
         });
+
+        loadKeywords();                     // 키워드 불러오기
+        loadExistingNotifications();        // 알림 불러오기
+        connectSSE();                       // sse 연결하기
     });
+
+    let eventSource;
 
     // SSE 연결, 이벤트 수신
     function connectSSE() {
@@ -88,56 +114,108 @@
         });
     }
 
-    // 수신한 알림을 알림 목록에 추가
-    function addNotificationToList(notification) {
-        function createNotificationElement(notification) {
-            const listItem = document.createElement('li');
-            listItem.className = 'notification';
-            if (notification.read) {
-                listItem.classList.add('read');
-            }
-            listItem.innerHTML = `
-            <img class="logo-img" src="/images/logo.png" alt="Logo">
-            <div class="notification-content">
-                <div class="notification-type">[${notification.keyword}]</div>
-                <div class="notification-message">${notification.message}</div>
-            </div>
-        `;
-            listItem.dataset.id = notification.id;
-            listItem.dataset.url = notification.postId ? `/${notification.categoryTitle}/${notification.postCategoryTitle}/${notification.postId}` : '#';
-            listItem.onclick = function() {
-                markAsRead(this);
-                if (this.dataset.url !== '#') {
-                    window.location.href = this.dataset.url;
+    // 이 함수는 전체 알림 리스트를 로드할 때 사용됩니다.
+    function loadExistingNotifications() {
+        console.log("Loading existing notifications...");
+        fetch('/notifications/all')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            };
-            return listItem;
+                return response.json();
+            })
+            .then(notifications => {
+                console.log("Existing notifications loaded:", notifications);
+                const allList = document.getElementById('allNotificationList');
+                allList.innerHTML = '';
+                notifications.forEach(notification => {
+                    allList.appendChild(createNotificationElement(notification));
+                });
+            })
+            .catch(error => console.error('Error loading notifications:', error));
+    }
+
+    function createNotificationElement(notification) {
+        const listItem = document.createElement('li');
+        listItem.className = 'notification';
+        listItem.classList.toggle('read', notification.read);
+
+        let typeContent = '';
+        if (notification.type === 'keyword') {
+            typeContent = `<div class="notification-type">[${notification.keyword}]</div>`;
         }
 
-        const allList = document.getElementById('allNotificationList');
-        allList.insertBefore(createNotificationElement(notification), allList.firstChild);
+        listItem.innerHTML = `
+        <img class="logo-img" src="/images/logo.png" alt="Logo">
+        <div class="notification-content">
+            ${typeContent}
+            <div class="notification-message">${notification.message}</div>
+        </div>
+    `;
 
-        const keywordList = document.getElementById('keywordNotificationList');
-        keywordList.insertBefore(createNotificationElement(notification), keywordList.firstChild);
+        // 삭제 버튼 추가
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = '삭제';
+        deleteButton.className = 'delete-button';
+        deleteButton.onclick = function(event) {
+            event.stopPropagation(); // 클릭 이벤트가 부모 요소로 전파되는 것을 막음
+            deleteNotification(notification.id, listItem);
+        };
+
+        listItem.appendChild(deleteButton);
+
+        listItem.dataset.id = notification.id;
+        listItem.dataset.url = notification.postId ? `/${notification.categoryTitle}/${notification.postCategoryTitle}/${notification.postId}` : '#';
+        listItem.onclick = function() {
+            markAsRead(this);
+            if (this.dataset.url !== '#') {
+                window.location.href = this.dataset.url;
+            }
+        };
+
+        return listItem;
+    }
+
+    function deleteNotification(notificationId, listItem) {
+        // 사용자에게 삭제를 확인
+        if (confirm('알림을 삭제하시겠습니까?')) {
+            fetch(`/notifications/${notificationId}/delete`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.ok) {
+                        listItem.remove(); // UI에서 알림 항목 제거
+                        console.log("Notification deleted successfully");
+                    } else {
+                        throw new Error('Failed to delete notification'); // 서버 응답 오류 처리
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting notification:', error);
+                    alert('알림 삭제 중 문제가 발생했습니다: ' + error.message); // 사용자에게 오류 알림
+                });
+        }
+    }
+
+    function addNotificationToList(notification) {
+        const listType = notification.type === 'keyword' ? 'keywordNotificationList' : 'allNotificationList';
+        const list = document.getElementById(listType);
+        list.insertBefore(createNotificationElement(notification), list.firstChild);
     }
 
     function markAsRead(element) {
+        const notificationId = element.dataset.id;
         if (!element.classList.contains('read')) {
-            const notificationId = element.dataset.id;
             fetch(`/notifications/${notificationId}/read`, { method: 'POST' })
                 .then(response => {
                     if (response.ok) {
-                        const allNotifications = document.querySelectorAll(`.notification[data-id="${notificationId}"]`);
-                        allNotifications.forEach(notification => {
-                            notification.classList.add('read');
-                        });
+                        element.classList.add('read');
                     }
                 })
                 .catch(error => console.error('Error marking notification as read:', error));
         }
     }
 
-    // 사용자가 설정한 키워드를 화면에 표시
+    // ------------------------------------- 키워드 -----------------------------------------
+
     function loadKeywords() {
         fetch('/notifications/current-keywords')
             .then(response => {
@@ -149,38 +227,20 @@
             .then(keywords => {
                 console.log("Keywords loaded:", keywords);
                 const keywordList = document.getElementById('keywordList');
-                keywordList.innerHTML = '';
+                keywordList.innerHTML = ''; // 기존 키워드 목록을 비웁니다.
                 keywords.forEach(keyword => {
-                    const li = document.createElement('li');
-                    li.textContent = keyword;
-                    const removeButton = document.createElement('button');
-                    removeButton.textContent = '삭제';
-                    removeButton.onclick = () => removeKeyword(keyword);
-                    li.appendChild(removeButton);
-                    keywordList.appendChild(li);
+                    const keywordButton = document.createElement('button');
+                    keywordButton.textContent = keyword;
+                    keywordButton.className = 'keyword-button'; // 스타일을 위한 클래스 추가
+                    keywordButton.onclick = () => {
+                        if (confirm(`'${keyword}' 키워드를 삭제하시겠습니까?`)) {
+                            removeKeyword(keyword);
+                        }
+                    };
+                    keywordList.appendChild(keywordButton);
                 });
             })
             .catch(error => console.error('Error loading keywords:', error));
-    }
-
-    // 특정 키워드를 삭제
-    function removeKeyword(keyword) {
-        console.log(`Removing keyword: ${keyword}`);
-        fetch(`/notifications/keyword?keyword=${encodeURIComponent(keyword)}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(result => {
-                console.log("Keyword removed:", result);
-                alert(result);
-                loadKeywords();
-            })
-            .catch(error => console.error('Error removing keyword:', error));
     }
 
     // 사용자가 키워드 설정
@@ -211,32 +271,27 @@
             .catch(error => console.error('Error setting keyword:', error));
     });
 
-    function loadExistingNotifications() {
-        console.log("Loading existing notifications...");
-        fetch('/notifications/all')  // 모든 알림을 가져오는 새로운 엔드포인트
+    // 특정 키워드를 삭제
+    function removeKeyword(keyword) {
+        console.log(`Removing keyword: ${keyword}`);
+        fetch(`/notifications/keyword?keyword=${encodeURIComponent(keyword)}`, {
+            method: 'DELETE'
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
+                return response.text();
             })
-            .then(notifications => {
-                console.log("Existing notifications loaded:", notifications);
-                document.getElementById('allNotificationList').innerHTML = '';
-                document.getElementById('keywordNotificationList').innerHTML = '';
-                notifications.forEach(notification => {
-                    addNotificationToList(notification);
-                });
+            .then(result => {
+                console.log("Keyword removed:", result);
+                alert(result);
+                loadKeywords();
             })
-            .catch(error => console.error('Error loading notifications:', error));
+            .catch(error => console.error('Error removing keyword:', error));
     }
 
-    window.addEventListener('load', function () {
-        console.log("Page loaded, initializing...");
-        loadKeywords();
-        loadExistingNotifications();
-        connectSSE();
-    });
+    // ---------------------------------------------------------------------------------
 </script>
 </body>
 </html>

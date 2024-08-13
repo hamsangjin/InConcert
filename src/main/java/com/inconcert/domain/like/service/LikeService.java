@@ -2,6 +2,7 @@ package com.inconcert.domain.like.service;
 
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.like.repository.LikeRepository;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.*;
 import com.inconcert.domain.user.entity.User;
@@ -24,6 +25,7 @@ public class LikeService {
     private final TransferRepository transferRepository;
     private final LikeRepository likeRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Transactional
     public boolean toggleLike(Long postId, String categoryTitle) {
@@ -41,8 +43,10 @@ public class LikeService {
                     .post(post)
                     .user(user)
                     .build();
+            if(post.getUser().getId() != user.getId())  notificationService.likesNotification(post, user, true);
             likeRepository.save(like);
         } else {
+            if(post.getUser().getId() != user.getId())   notificationService.likesNotification(post, user, false);
             // 이미 좋아요를 누른 경우, 좋아요 취소
             likeRepository.delete(findLike.get());
         }
@@ -60,7 +64,7 @@ public class LikeService {
 
     // 카테고리 제목에 맞는 repository에서 post 찾는 메소드
     private Post getPost(Long postId, String categoryTitle) {
-        Post post = switch (categoryTitle) {
+        return switch (categoryTitle) {
             case "info" -> infoRepository.findById(postId)
                     .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
             case "match" -> matchRepository.findById(postId)
@@ -71,14 +75,12 @@ public class LikeService {
                     .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
             default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
         };
-        return post;
     }
 
     private User getUser() {
         Optional<User> optionalUser = userService.getAuthenticatedUser();
         if (optionalUser.isEmpty()) return null;
 
-        User user = optionalUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-        return user;
+        return optionalUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
     }
 }

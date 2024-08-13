@@ -23,7 +23,7 @@
                     <div class="comment-options"
                          th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}">
                         <!-- 댓글 수정/삭제 링크 -->
-                        <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.nickname != null and (#authentication.name == post.nickname))}"
+                        <form th:if="${(comment.user != null and (#authentication.name == comment.user.username))}"
                               th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
                             <button type="button" class="comment-options-btn">수정</button>
                         </form>

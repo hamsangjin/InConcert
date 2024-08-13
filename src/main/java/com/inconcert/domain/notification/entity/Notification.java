@@ -18,11 +18,14 @@ public class Notification extends BaseEntity {
     @Column
     private String keyword;
 
-    @Column
+    @Column(nullable = false)
     private String message;
 
-    @Column
+    @Column(name = "is_read")
     private boolean isRead;
+
+    @Column(nullable = false)
+    private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -33,12 +36,13 @@ public class Notification extends BaseEntity {
     private Post post;
 
     @Builder
-    public Notification(String keyword, String message, boolean isRead, User user, Post post) {
+    public Notification(String keyword, String message, boolean isRead, User user, Post post, String type) {
         this.keyword = keyword;
         this.message = message;
         this.isRead = isRead;
         this.user = user;
         this.post = post;
+        this.type = type;
     }
 
     public void setIsRead(boolean isRead) {

@@ -121,6 +121,7 @@
     <div class="popup" id="profilePopup">
         <div class="popup-content">
             <div class="card" id="profileCard">
+                <button class="chat-btn">1:1 채팅</button>
                 <span class="close" id="closePopup">&times;</span>
                 <div class="profile-container">
                     <div class="profile-left">
@@ -128,29 +129,52 @@
                         <p class="nickname" th:text="${post.user.nickname}"></p>
                     </div>
                     <div class="profile-right">
-                        <p class="space"><strong>성별</strong>
-                            <span class="popup-span" th:if="${post.user.gender.name()} == 'FEMALE'">여성</span>
-                            <span class="popup-span" th:if="${post.user.gender.name()} == 'MALE'">남성</span>
-                        </p>
-                        <div class="user-birth">
-                            <label for="birthdate-post"><strong>나이</strong></label>
-                            <input type="text" id="birthdate-post" th:value="${post.user.birth}" readonly hidden>
-                            <span class="user-age" id="age"><span id="age-value-post"></span>세</span>
+                        <div class="space">
+                            <div>
+                                <p>성별</p>
+                            </div>
+                            <div>
+                                <p th:if="${post.user.gender.name()} == 'FEMALE'">여성</p>
+                                <p th:if="${post.user.gender.name()} == 'MALE'">남성</p>
+                            </div>
                         </div>
-                        <p class="space-mail"><strong>메일</strong>
-                            <span class="popup-span" th:text="${post.user.email}"></span>
-                        </p>
-                        <p class="space-mbti"><strong>MBTI</strong>
-                            <span class="popup-mbti" th:text="${post.user.mbti}"></span>
-                        </p>
-                        <p class="manner"><strong>매너 점수</strong>
-                            <span class="popup-score" th:text="${post.user.mannerPoint}"></span>
-                        </p>
+                        <div class="user-birth">
+                            <div>
+                                <p>나이</p>
+                            </div>
+                            <div>
+                                <input type="text" id="birthdate-post" th:value="${post.user.birth}" readonly hidden>
+                                <p id="age"><span id="age-value-post"></span>세</p>
+                            </div>
+                        </div>
+                        <div class="space-mail">
+                            <div>
+                                <p>메일</p>
+                            </div>
+                            <div>
+                                <p th:text="${post.user.email}"></p>
+                            </div>
+                        </div>
+                        <div class="space-mbti">
+                            <div>
+                                <p>MBTI</p>
+                            </div>
+                            <div>
+                                <p th:text="${post.user.mbti}"></p>
+                            </div>
+                        </div>
+                        <div class="manner">
+                            <div>
+                                <p>매너 점수</p>
+                            </div>
+                            <div>
+                                <p th:text="${post.user.mannerPoint}"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button class="chat-btn">1:1 채팅</button>
                 <div class="intro">
-                    <p class="introduce"><strong>한줄 소개</strong></p>
+                    <p class="introduce">한줄 소개</p>
                     <p class="intro-p" th:text="${post.user.intro}"></p>
                 </div>
             </div>

@@ -95,6 +95,7 @@ header {
     width: 55px; /* 필요에 따라 너비 조정 */
     height: 20px; /* 필요에 따라 높이 조정 */
     vertical-align: middle; /* 텍스트와 인풋이 수직으로 정렬 */
+    text-align: right;
 }
 
 #name, #email, #username{

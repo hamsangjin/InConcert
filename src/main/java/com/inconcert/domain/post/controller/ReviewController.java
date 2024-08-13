@@ -33,7 +33,7 @@ public class ReviewController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", reviewService.getPostById(postId));
+        model.addAttribute("post", reviewService.getPostDtoByPostId(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "review");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
@@ -68,7 +68,7 @@ public class ReviewController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = reviewService.getPostById(postId);
+        PostDto postDto = reviewService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);

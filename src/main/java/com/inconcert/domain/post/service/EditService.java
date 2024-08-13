@@ -63,6 +63,7 @@ public class EditService {
                 .user(currentPost.getUser())
                 .comments(new ArrayList<>(currentPost.getComments()))
                 .likes(new ArrayList<>(currentPost.getLikes()))
+                .notifications(new ArrayList<>(currentPost.getNotifications()))
                 .viewCount(currentPost.getViewCount())
                 .postCategory(postCategory)
                 .build();

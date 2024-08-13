@@ -595,22 +595,6 @@ header {
     position: relative;
 }
 
-.close {
-    color: #aaa;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
 .card {
     background-color: white;
     border-radius: 10px;
@@ -631,29 +615,6 @@ header {
     display: block;
 }
 
-.profile-img3 {
-    border-radius: 50%;
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
-}
-
-.info {
-    margin-top: 25px;
-    overflow: hidden;
-}
-
-.nickname {
-    font-size: 1.2em;
-    font-weight: bold;
-    color: #00a885;
-    margin-top: 15px; /* 프로필 이미지와 닉네임 사이의 간격 */
-}
-
-.popup-mbti, .popup-score {
-    color: #00aaff;
-}
-
 .chat-btn {
     position: absolute;
     top: 20px;
@@ -669,68 +630,25 @@ header {
     background-color: #ccc;
 }
 
-.intro {
-    margin-top: 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 5px 10px 10px 10px;
-    background-color: #f9f9f9;
-}
-
-.space {
-    padding-left: 37px;
-    margin-top: 15px;
-    margin-bottom: 6px;
-}
-
-.user-age {
-    margin-left: 9px;
-}
-
-.user-birth {
-    padding-left: 42px;
-    margin-top: 5px;
-    margin-bottom: 6px;
-}
-
-.space-mail {
-    padding-left: 37px;
-    margin-top: 5px;
-    margin-bottom: 6px;
-}
-
-.space-mbti {
-    padding-left: 30px;
-    margin-top: 8px;
-}
-
-.manner {
-    margin: 7px 0 20px 6px;
-}
-
-.introduce {
-    color: #00a885;
+.close {
+    color: #aaa;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
     font-weight: bold;
 }
 
-.info strong {
-    color: #00a885;
-}
-
-.intro-p {
-    margin-top: 15px;
-    margin-bottom: 50px;
-    color: #333;
-}
-
-.popup-span, .popup-mbti, .popup-score {
-    margin-left: 8px;
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .profile-container {
     display: flex;
     align-items: center;
-    gap: 15px; /* 프로필 이미지와 개인정보 사이의 간격 */
 }
 
 .profile-left {
@@ -741,12 +659,94 @@ header {
     padding: 20px 0 0 10px;
 }
 
+.profile-img3 {
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+}
+
+.nickname {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #00a885;
+    margin-top: 15px; /* 프로필 이미지와 닉네임 사이의 간격 */
+}
+
 .profile-right {
     display: flex;
     flex-direction: column;
     justify-content: center; /* 개인정보가 이미지와 같은 높이에 정렬되도록 */
+    min-width: calc(55%);
+    max-width: calc(55%);
 }
 
 .profile-right strong {
     color: #00a885;
+}
+
+.space {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.user-birth,
+.space-mail,
+.space-mbti,
+.manner{
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.space > div:first-child,
+.user-birth > div:first-child,
+.space-mail > div:first-child,
+.space-mbti > div:first-child,
+.manner > div:first-child{
+    flex: 3;
+    text-align: right;
+}
+
+.space > div:first-child > p,
+.user-birth > div:first-child > p,
+.space-mail > div:first-child > p,
+.space-mbti > div:first-child > p,
+.manner > div:first-child > p{
+    color: #00a885;
+    font-weight: bold;
+}
+
+.space > div:nth-child(2),
+.user-birth > div:nth-child(2),
+.space-mail > div:nth-child(2),
+.space-mbti > div:nth-child(2),
+.manner > div:nth-child(2){
+    flex: 7;
+}
+
+.space-mbti > div:nth-child(2),
+.manner > div:nth-child(2){
+    color: #00aaff;
+}
+
+.intro {
+    margin-top: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 5px 10px 10px 10px;
+    background-color: #f9f9f9;
+}
+
+.intro > p:first-child {
+    color: #00a885;
+    font-weight: bold;
+}
+
+.intro > p:nth-child(2){
+    margin-top: 15px;
+    margin-bottom: 50px;
+    color: #333;
 }

@@ -3,6 +3,7 @@ package com.inconcert.domain.user.entity;
 import com.inconcert.domain.chat.entity.Chat;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
+import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.role.entity.Role;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
@@ -81,6 +82,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
