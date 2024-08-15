@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>메인 화면</title>
@@ -26,7 +26,7 @@
             <div class="dropdowns">
                 <select id="categoryTitle" name="categoryTitle" required>
                     <option disabled selected value="default">게시판 선택</option>
-                    <option value="info">공연 소식</option>
+                    <option sec:authorize="hasRole('ROLE_ADMIN')" value="info">공연 소식</option>
                     <option value="review">공연 후기</option>
                     <option value="match">동행</option>
                     <option value="transfer">양도</option>

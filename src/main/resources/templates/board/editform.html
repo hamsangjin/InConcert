@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>게시글 수정</title>
@@ -18,7 +18,7 @@
         <div class="write-container">
             <div class="dropdowns">
                 <select id="categoryTitle" name="newCategoryTitle" required>
-                    <option value="info" th:selected="${categoryTitle == 'info'}">공연 소식</option>
+                    <option value="info" sec:authorize="hasRole('ROLE_ADMIN')" th:selected="${categoryTitle == 'info'}">공연 소식</option>
                     <option value="review" th:selected="${categoryTitle == 'review'}">공연 후기</option>
                     <option value="match" th:selected="${categoryTitle == 'match'}">동행</option>
                     <option value="transfer" th:selected="${categoryTitle == 'transfer'}">양도</option>
@@ -33,7 +33,7 @@
             </div>
 
             <div class="dropdowns">
-                <select id="matchCount" name="matchCount" th:field="*{matchCount}" required>
+                <select id="matchCount" name="matchCount" th:field="${post.matchCount}" required>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -41,7 +41,7 @@
                 </select>
                 <div class="date-container">
                     <label for="endDate">종료 날짜 지정</label>
-                    <input type="date" id="endDate" name="endDate" th:field="*{endDate}" required>
+                    <input type="date" id="endDate" name="endDate" th:value="${post.endDate}" required>
                 </div>
             </div>
 
