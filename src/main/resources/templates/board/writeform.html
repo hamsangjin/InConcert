@@ -15,6 +15,28 @@
             }
             return true;
         }
+
+        function toggleMatchAndDateFields() {
+            const categoryTitle = document.getElementById("categoryTitle");
+            const matchCount = document.getElementById("matchCount");
+            const dateContainer = document.querySelector(".date-container");
+
+            if (categoryTitle.value === "match") {
+                matchCount.style.display = "block";
+                dateContainer.style.display = "flex";
+            } else {
+                matchCount.style.display = "none";
+                dateContainer.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const categoryTitle = document.getElementById("categoryTitle");
+            categoryTitle.addEventListener("change", toggleMatchAndDateFields);
+
+            // 페이지 로드 시 초기 상태 설정
+            toggleMatchAndDateFields();
+        });
     </script>
 </head>
 <body>
@@ -42,16 +64,16 @@
             </div>
 
             <div class="dropdowns">
-                <select id="matchCount" name="matchCount" required>
+                <select id="matchCount" name="matchCount" style="display:none;">
                     <option disabled selected value="default">모집인원 선택</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                 </select>
-                <div class="date-container">
+                <div class="date-container" style="display:none;">
                     <label for="endDate">종료 날짜 지정</label>
-                    <input type="date" id="endDate" name="endDate" required>
+                    <input type="date" id="endDate" name="endDate">
                 </div>
             </div>
 
@@ -127,8 +149,7 @@
         if (
             categoryTitle.value === 'default' ||
             postCategoryTitle.value === 'default' ||
-            matchCount.value === 'default' ||
-            !endDate.value ||
+            (categoryTitle.value === 'match' && (matchCount.value === 'default' || !endDate.value)) ||
             !title.value.trim() ||
             !content.value.trim()
         ) {

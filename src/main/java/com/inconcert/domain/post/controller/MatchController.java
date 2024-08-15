@@ -5,6 +5,7 @@ import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.MatchService;
+import com.inconcert.domain.post.service.WriteService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class MatchController {
     private final MatchService matchService;
     private final UserService userService;
     private final EditService editService;
+    private final WriteService writeService;
 
     @GetMapping
     public String match(Model model) {
@@ -98,7 +100,7 @@ public class MatchController {
 
     @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
-        Post post = matchService.save(postDto);
+        Post post = writeService.save(postDto);
         return "redirect:/match/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 }

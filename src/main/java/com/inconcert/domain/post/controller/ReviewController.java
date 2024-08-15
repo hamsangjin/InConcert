@@ -5,6 +5,7 @@ import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.ReviewService;
+import com.inconcert.domain.post.service.WriteService;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ReviewController {
     private final HomeService homeService;
     private final UserService userService;
     private final EditService editService;
+    private final WriteService writeService;
 
     @GetMapping
     public String review(Model model) {
@@ -89,7 +91,7 @@ public class ReviewController {
 
     @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
-        Post post = reviewService.save(postDto);
+        Post post = writeService.save(postDto);
         return "redirect:/review/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 }
