@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org/" lang="ko">
+<html xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>메인 화면</title>
@@ -15,6 +15,28 @@
             }
             return true;
         }
+
+        function toggleMatchAndDateFields() {
+            const categoryTitle = document.getElementById("categoryTitle");
+            const matchCount = document.getElementById("matchCount");
+            const dateContainer = document.querySelector(".date-container");
+
+            if (categoryTitle.value === "match") {
+                matchCount.style.display = "block";
+                dateContainer.style.display = "flex";
+            } else {
+                matchCount.style.display = "none";
+                dateContainer.style.display = "none";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const categoryTitle = document.getElementById("categoryTitle");
+            categoryTitle.addEventListener("change", toggleMatchAndDateFields);
+
+            // 페이지 로드 시 초기 상태 설정
+            toggleMatchAndDateFields();
+        });
     </script>
 </head>
 <body>
@@ -26,7 +48,7 @@
             <div class="dropdowns">
                 <select id="categoryTitle" name="categoryTitle" required>
                     <option disabled selected value="default">게시판 선택</option>
-                    <option value="info">공연 소식</option>
+                    <option sec:authorize="hasRole('ROLE_ADMIN')" value="info">공연 소식</option>
                     <option value="review">공연 후기</option>
                     <option value="match">동행</option>
                     <option value="transfer">양도</option>
@@ -42,16 +64,16 @@
             </div>
 
             <div class="dropdowns">
-                <select id="matchCount" name="matchCount" required>
+                <select id="matchCount" name="matchCount" style="display:none;">
                     <option disabled selected value="default">모집인원 선택</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                 </select>
-                <div class="date-container">
+                <div class="date-container" style="display:none;">
                     <label for="endDate">종료 날짜 지정</label>
-                    <input type="date" id="endDate" name="endDate" required>
+                    <input type="date" id="endDate" name="endDate">
                 </div>
             </div>
 
@@ -127,8 +149,7 @@
         if (
             categoryTitle.value === 'default' ||
             postCategoryTitle.value === 'default' ||
-            matchCount.value === 'default' ||
-            !endDate.value ||
+            (categoryTitle.value === 'match' && (matchCount.value === 'default' || !endDate.value)) ||
             !title.value.trim() ||
             !content.value.trim()
         ) {

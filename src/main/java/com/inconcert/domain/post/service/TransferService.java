@@ -1,15 +1,9 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.category.entity.Category;
-import com.inconcert.domain.category.entity.PostCategory;
-import com.inconcert.domain.category.repository.CategoryRepository;
-import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.domain.post.util.DateUtil;
-import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,14 +14,9 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TransferService {
     private final TransferRepository transferRepository;
-    private final CategoryRepository categoryRepository;
-    private final PostCategoryRepository postCategoryRepository;
-    private final UserService userService;
-    private final NotificationService notificationService;
-
-    @Transactional(readOnly = true)
     public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
         List<Post> posts = switch (postCategoryTitle) {
             case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical");
@@ -40,7 +29,6 @@ public class TransferService {
         return getPostDtos(posts);
     }
 
-    @Transactional(readOnly = true)
     public Post getPostByPostId(Long postId) {
         Optional<Post> post = transferRepository.findById(postId);
         return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
@@ -83,43 +71,6 @@ public class TransferService {
         List<Post> posts = transferRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type);
 
         return getPostDtos(posts);
-    }
-
-    @Transactional
-    public Post save(PostDto postDto){
-
-        // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
-        List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
-
-        // 게시물 작성 폼에서 가져온 Category 제목으로 조회해서 Category 객체 생성
-        Category category = categoryRepository.findByTitle(postDto.getCategoryTitle())
-                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
-
-        // 적절한 PostCategory 찾기
-        PostCategory postCategory = postCategories.stream()
-                .filter(pc -> pc.getCategory().equals(category))
-                .findFirst()
-                .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
-
-        // 생성한 Category를 builder를 통해 연관관계 주입
-        PostCategory updatedPostCategory = postCategory.builder()
-                .id(postCategory.getId())
-                .title(postCategory.getTitle())
-                .category(category)
-                .build();
-
-        postDto.setUser(userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
-
-        // 주입된 PostCategory를 Post에 저장
-        Post post = PostDto.toEntity(postDto, updatedPostCategory);
-
-        Post savePost = transferRepository.save(post);
-
-        // 알림 생성 로직 추가
-        notificationService.keywordsNotification(post);
-
-        return savePost;
     }
 
     @Transactional

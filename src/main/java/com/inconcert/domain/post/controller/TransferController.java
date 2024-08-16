@@ -5,6 +5,7 @@ import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.TransferService;
+import com.inconcert.domain.post.service.WriteService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ public class TransferController {
     private final TransferService transferService;
     private final UserService userService;
     private final EditService editService;
+    private final WriteService writeService;
 
     @GetMapping
     public String transfer(Model model) {
@@ -99,7 +101,7 @@ public class TransferController {
 
     @PostMapping("/write")
     public String write(@ModelAttribute PostDto postDto) {
-        Post post = transferService.save(postDto);
+        Post post = writeService.save(postDto);
         return "redirect:/transfer/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 }

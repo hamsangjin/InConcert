@@ -31,10 +31,10 @@ public class Post extends BaseEntity {
     @Column(nullable = false, columnDefinition = "longtext")
     private String content;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "match_count", nullable = false)
+    @Column(name = "match_count")
     private int matchCount;
 
     @Column(name = "thumbnail_url")

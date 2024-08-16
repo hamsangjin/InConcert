@@ -1,18 +1,11 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.category.entity.Category;
-import com.inconcert.domain.category.entity.PostCategory;
-import com.inconcert.domain.category.repository.CategoryRepository;
-import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.util.DateUtil;
-import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +14,10 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Transactional(readOnly = true)
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final PostCategoryRepository postCategoryRepository;
-    private final CategoryRepository categoryRepository;
-    private final UserService userService;
-    private final NotificationService notificationService;
 
-    @Transactional(readOnly = true)
     public Post getPostByPostId(Long postId) {
         Optional<Post> post = reviewRepository.findById(postId);
         return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
@@ -63,7 +51,6 @@ public class ReviewService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
     public List<PostDto> findByKeywordAndFilters(String keyword, String period, String type) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
@@ -72,43 +59,6 @@ public class ReviewService {
         List<Post> posts = reviewRepository.findByKeywordAndFilters(keyword, startDate, endDate, type);
 
         return getPostDtos(posts);
-    }
-
-    @Transactional
-    public Post save(PostDto postDto){
-
-        // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
-        List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
-
-        // 게시물 작성 폼에서 가져온 Category 제목으로 조회해서 Category 객체 생성
-        Category category = categoryRepository.findByTitle(postDto.getCategoryTitle())
-                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
-
-        // 적절한 PostCategory 찾기
-        PostCategory postCategory = postCategories.stream()
-                .filter(pc -> pc.getCategory().equals(category))
-                .findFirst()
-                .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
-
-        // 생성한 Category를 builder를 통해 연관관계 주입
-        PostCategory updatedPostCategory = postCategory.builder()
-                .id(postCategory.getId())
-                .title(postCategory.getTitle())
-                .category(category)
-                .build();
-
-        postDto.setUser(userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
-
-        // 주입된 PostCategory를 Post에 저장
-        Post post = PostDto.toEntity(postDto, updatedPostCategory);
-
-        Post savePost = reviewRepository.save(post);
-
-        // 알림 생성 로직 추가
-        notificationService.keywordsNotification(post);
-
-        return savePost;
     }
 
     @Transactional
