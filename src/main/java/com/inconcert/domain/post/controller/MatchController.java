@@ -65,10 +65,7 @@ public class MatchController {
                          @RequestParam(name = "mbti", required = false, defaultValue = "all") String mbti,
                          Model model) {
 
-        Gender newGender = gender.equals("all") ? null : Gender.valueOf(gender);
-        Mbti newMbti = mbti.equals("all") ? null : Mbti.valueOf(mbti);
-
-        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, newGender, newMbti);
+        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, gender, mbti);
         model.addAttribute("posts", searchResults);
         model.addAttribute("categoryTitle", "match");
 

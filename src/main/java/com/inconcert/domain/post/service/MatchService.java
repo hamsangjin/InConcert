@@ -65,12 +65,15 @@ public class MatchService {
                 .build();
     }
 
-    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, Gender gender, Mbti mbti) {
+    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
 
+        Gender enumGender = gender.equals("all") ? null : Gender.valueOf(gender);
+        Mbti enumMbti = mbti.equals("all") ? null : Mbti.valueOf(mbti);
+
         // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
-        List<Post> posts = matchRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type, gender, mbti);
+        List<Post> posts = matchRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type, enumGender, enumMbti);
         return getPostDtos(posts);
     }
 
