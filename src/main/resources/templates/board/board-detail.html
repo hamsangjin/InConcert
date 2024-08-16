@@ -51,8 +51,53 @@
 
     <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
 
-    <div class="filters-container" th:if="${categoryTitle} != 'review'">
+    <div class="filters-container" th:if="${categoryTitle != 'review' && categoryTitle != 'match'}">
         <form class="filters" onsubmit="return validateDetailSearch()" th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/search'}" method="get">
+            <select id="search-period" name="period">
+                <option value="all" th:selected="${searchInfo != null && searchInfo['period'] == 'all'}">전체 기간</option>
+                <option value="1day" th:selected="${searchInfo != null && searchInfo['period'] == '1day'}">1일</option>
+                <option value="1week" th:selected="${searchInfo != null && searchInfo['period'] == '1week'}">1주</option>
+                <option value="1month" th:selected="${searchInfo != null && searchInfo['period'] == '1month'}">1개월</option>
+                <option value="6months" th:selected="${searchInfo != null && searchInfo['period'] == '6months'}">6개월</option>
+                <option value="1year" th:selected="${searchInfo != null && searchInfo['period'] == '1year'}">1년</option>
+            </select>
+            <select id="search-type" name="type">
+                <option value="title+content" th:selected="${searchInfo != null && searchInfo['type'] == 'title+content'}">제목 + 내용</option>
+                <option value="title" th:selected="${searchInfo != null && searchInfo['type'] == 'title'}">제목만</option>
+                <option value="content" th:selected="${searchInfo != null && searchInfo['type'] == 'content'}">내용만</option>
+                <option value="author" th:selected="${searchInfo != null && searchInfo['type'] == 'author'}">글 작성자</option>
+            </select>
+            <input id="search-detail-input" type="text" name="keyword" placeholder="검색어를 입력해주세요" th:value="${searchInfo != null ? searchInfo['keyword'] : ''}">
+            <button type="submit">검색</button>
+        </form>
+    </div>
+
+    <div class="filters-container" th:if="${categoryTitle} == 'match'">
+        <form class="filters" onsubmit="return validateDetailSearch()" th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/search'}" method="get">
+            <select id="search-gender" name="gender">
+                <option value="all" th:selected="${searchInfo != null && searchInfo['gender'] == 'all'}">모든 성별</option>
+                <option value="MALE" th:selected="${searchInfo != null && searchInfo['gender'] == 'MALE'}">남자</option>
+                <option value="FEMALE" th:selected="${searchInfo != null && searchInfo['gender'] == 'FEMALE'}">여자</option>
+            </select>
+            <select id="search-mbti" name="mbti">
+                <option value="all" th:selected="${searchInfo != null && searchInfo['mbti'] == 'all'}">모든 MBTI</option>
+                <option value="INTJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'INTJ'}">INTJ</option>
+                <option value="INTP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'INTP'}">INTP</option>
+                <option value="ENTJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ENTJ'}">ENTJ</option>
+                <option value="ENTP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ENTP'}">ENTP</option>
+                <option value="INFJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'INFJ'}">INFJ</option>
+                <option value="INFP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'INFP'}">INFP</option>
+                <option value="ENFJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ENFJ'}">ENFJ</option>
+                <option value="ENFP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ENFP'}">ENFP</option>
+                <option value="ISTJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ISTJ'}">ISTJ</option>
+                <option value="ISFJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ISFJ'}">ISFJ</option>
+                <option value="ESTJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ESTJ'}">ESTJ</option>
+                <option value="ESFJ" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ESFJ'}">ESFJ</option>
+                <option value="ISTP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ISTP'}">ISTP</option>
+                <option value="ISFP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ISFP'}">ISFP</option>
+                <option value="ESTP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ESTP'}">ESTP</option>
+                <option value="ESFP" th:selected="${searchInfo != null && searchInfo['mbti'] == 'ESFP'}">ESFP</option>
+            </select>
             <select id="search-period" name="period">
                 <option value="all" th:selected="${searchInfo != null && searchInfo['period'] == 'all'}">전체 기간</option>
                 <option value="1day" th:selected="${searchInfo != null && searchInfo['period'] == '1day'}">1일</option>

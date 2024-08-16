@@ -6,6 +6,8 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.MatchService;
 import com.inconcert.domain.post.service.WriteService;
+import com.inconcert.domain.user.entity.Gender;
+import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -39,6 +41,7 @@ public class MatchController {
         model.addAttribute("posts", matchService.getAllMatchPostsByPostCategory(postCategoryTitle));
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
+
         return "board/board-detail";
     }
 
@@ -58,15 +61,25 @@ public class MatchController {
                          @RequestParam(name = "keyword") String keyword,
                          @RequestParam(name = "period", required = false, defaultValue = "all") String period,
                          @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         @RequestParam(name = "gender", required = false, defaultValue = "all") String gender,
+                         @RequestParam(name = "mbti", required = false, defaultValue = "all") String mbti,
                          Model model) {
-        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type);
+
+        Gender newGender = gender.equals("all") ? null : Gender.valueOf(gender);
+        Mbti newMbti = mbti.equals("all") ? null : Mbti.valueOf(mbti);
+
+        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, newGender, newMbti);
         model.addAttribute("posts", searchResults);
         model.addAttribute("categoryTitle", "match");
+
         Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("keyword", keyword);
         searchInfo.put("period", period);
         searchInfo.put("type", type);
-        searchInfo.put("keyword", keyword);
+        searchInfo.put("gender", gender);
+        searchInfo.put("mbti", mbti);
         model.addAttribute("searchInfo", searchInfo);
+
         return "board/board-detail";
     }
 
