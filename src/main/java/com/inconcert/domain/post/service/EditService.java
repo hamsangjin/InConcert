@@ -53,7 +53,7 @@ public class EditService {
         postDto.setThumbnailUrl(extractURL(postDto.getContent()));
 
         // 동행을 제외한 카테고리들은 모집인원, 마감 날짜 제거
-        if(!category.equals("match")){
+        if(!category.getTitle().equals("match")){
             postDto.setMatchCount(0);
             postDto.setEndDate(null);
         }
