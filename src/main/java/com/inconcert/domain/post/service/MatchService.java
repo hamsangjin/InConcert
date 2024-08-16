@@ -4,6 +4,8 @@ import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.util.DateUtil;
+import com.inconcert.domain.user.entity.Gender;
+import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,12 +65,15 @@ public class MatchService {
                 .build();
     }
 
-    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type) {
+    public List<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
 
+        Gender enumGender = gender.equals("all") ? null : Gender.valueOf(gender);
+        Mbti enumMbti = mbti.equals("all") ? null : Mbti.valueOf(mbti);
+
         // 검색 로직 구현 (기간 필터링, 타입 필터링 등)
-        List<Post> posts = matchRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type);
+        List<Post> posts = matchRepository.findByKeywordAndFilters(postCategoryTitle, keyword, startDate, endDate, type, enumGender, enumMbti);
         return getPostDtos(posts);
     }
 

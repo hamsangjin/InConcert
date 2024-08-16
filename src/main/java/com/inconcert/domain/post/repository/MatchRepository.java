@@ -1,6 +1,8 @@
 package com.inconcert.domain.post.repository;
 
 import com.inconcert.domain.post.entity.Post;
+import com.inconcert.domain.user.entity.Gender;
+import com.inconcert.domain.user.entity.Mbti;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,10 +34,14 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
             "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
-            "AND p.createdAt BETWEEN :startDate AND :endDate")
+            "AND p.createdAt BETWEEN :startDate AND :endDate " +
+            "AND (:gender IS NULL OR u.gender = :gender) " +
+            "AND (:mbti IS NULL OR u.mbti = :mbti)")
     List<Post> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                        @Param("keyword") String keyword,
                                        @Param("startDate") LocalDateTime startDate,
                                        @Param("endDate") LocalDateTime endDate,
-                                       @Param("type") String type);
+                                       @Param("type") String type,
+                                       @Param("gender") Gender gender,
+                                       @Param("mbti") Mbti mbti);
 }
