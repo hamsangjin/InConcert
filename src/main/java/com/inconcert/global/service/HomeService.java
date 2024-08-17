@@ -22,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class HomeService {
     private final InfoRepository infoRepository;
     private final ReviewRepository reviewRepository;
@@ -29,7 +30,6 @@ public class HomeService {
     private final TransferRepository transferRepository;
     private final HomeRepository homeRepository;
 
-    @Transactional(readOnly = true)
     public List<PostDto> getAllCategoryPosts(String categoryTitle) {
         PageRequest pageable = PageRequest.of(0, 8);
         LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
@@ -44,7 +44,6 @@ public class HomeService {
         return posts;
     }
 
-    @Transactional(readOnly = true)
     public List<PostDto> findByKeyword(String keyword) {
         List<Post> posts = homeRepository.findByKeyword(keyword);
 
@@ -53,7 +52,6 @@ public class HomeService {
         return postDtos;
     }
 
-    @Transactional(readOnly = true)
     public List<PostDto> findLatestPostsByPostCategory(){
         return infoRepository.findLatestPostsByPostCategory();
     }
