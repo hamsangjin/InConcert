@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <title>Edit MyPage</title>
     <link rel="stylesheet" href="/css/user/editform.css">
+    <script>
+        function validateSearch() {
+            let keyword = document.getElementById("search-input").value.trim();
+            if (keyword.length < 2) {
+                alert("검색어를 2자 이상 입력하세요.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body>
 <div class="container">

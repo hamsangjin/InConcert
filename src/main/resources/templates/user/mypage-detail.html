@@ -25,10 +25,10 @@
         <h1 th:case="'board'">내 글 보기</h1>
         <h1 th:case="'comment'">댓글을 작성한 글 보기</h1>
         <h1 th:case="'like'">좋아요한 글 보기</h1>
-        <p th:text="${posts.size() + '개의 게시물을 찾았습니다.'}"> </p>
+        <p th:text="${postsPage.getTotalElements() + '개의 게시물을 찾았습니다.'}"> </p>
     </div>
 
-    <div class="post-header" th:if="${posts.size() > 0}">
+    <div class="post-header" th:if="${postsPage.getTotalElements() > 0}">
         <span class="header-title">제목</span>
         <span class="header-author">작성자</span>
         <span class="header-date">작성일</span>
@@ -36,19 +36,19 @@
         <span class="header-likes">좋아요</span>
     </div>
 
-    <div class="post-list" th:each="post : ${posts}">
+    <div class="post-list" th:each="post : ${postsPage.content}">
         <div class="post">
-            <div class="post-thumbnail" th:if="${post.thumbnailUrl != ''}">
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl != null}">
                 <img th:src="@{${post.thumbnailUrl}}">
             </div>
-            <div class="post-thumbnail" th:if="${post.thumbnailUrl == ''}">
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl == null}">
                 <img src="/images/logo.png" alt="No Posts"/>
             </div>
 
             <div class="post-content">
                 <div class="post-title">
-                    <a th:href="@{'/' + ${post.postCategory.category.title}}">
-                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.postCategory.category.title}">
+                    <a th:href="@{'/' + ${post.categoryTitle}}">
+                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.categoryTitle}">
                             <span th:case="'info'">공연 소식</span>
                             <span th:case="'review'">공연 후기</span>
                             <span th:case="'match'">동행</span>
@@ -56,8 +56,8 @@
                         </span>
                     </a>
 
-                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a th:href="@{'/' + ${post.categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
@@ -78,6 +78,33 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <ul>
+            <!-- 이전 페이지 -->
+            <li th:classappend="${currentPage == 0} ? 'disabled'">
+                <a th:if="${currentPage > 0}"
+                   th:href="@{|/mypage/${title}/${userId}?page=${currentPage - 1}&size=${postsPage.size}|}">
+                    이전</a>
+                <span th:if="${currentPage == 0}">이전</span>
+            </li>
+
+            <!-- 페이지 번호 -->
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${i >= (currentPage / 10) * 10 && i < ((currentPage / 10) + 1) * 10}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a th:href="@{|/mypage/${title}/${userId}?page=${i}&size=${postsPage.size}|}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- 다음 페이지 -->
+            <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a th:if="${currentPage + 1 < totalPages}"
+                   th:href="@{|/mypage/${title}/${userId}?page=${currentPage + 1}&size=${postsPage.size}|}">
+                    다음</a>
+                <span th:if="${currentPage + 1 >= totalPages}">다음</span>
+            </li>
+        </ul>
     </div>
     <div id='wrapper'></div>
 </div>

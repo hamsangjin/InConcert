@@ -9,6 +9,7 @@ import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,39 +59,66 @@ public class MyPageController {
     }
 
     @GetMapping("/board/{userId}")
-    public String mypageBoard(Model model, @PathVariable("userId") Long userId) {
-        List<PostDto> posts = myPageService.mypageBoard(userId);
-        model.addAttribute("posts", posts);
+    public String mypageBoard(Model model,
+                              @PathVariable("userId") Long userId,
+                              @RequestParam(name = "page", defaultValue = "0") int page,
+                              @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        Page<PostDto> postPage = myPageService.mypageBoard(userId, page, size);
+
+        model.addAttribute("postsPage", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "board");
+
         return "/user/mypage-detail";
     }
 
     @GetMapping("/comment/{userId}")
-    public String mypageComment(Model model, @PathVariable("userId") Long userId) {
-        List<PostDto> posts = myPageService.mypageComment(userId);
-        model.addAttribute("posts", posts);
+    public String mypageComment(Model model,
+                                @PathVariable("userId") Long userId,
+                                @RequestParam(name = "page", defaultValue = "0") int page,
+                                @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        Page<PostDto> postPage = myPageService.mypageComment(userId, page, size);
+
+        model.addAttribute("postsPage", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "comment");
 
         return "/user/mypage-detail";
     }
 
     @GetMapping("/like/{userId}")
-    public String mypageLike(Model model, @PathVariable("userId") Long userId) {
-        List<PostDto> posts = myPageService.mypageLike(userId);
-        model.addAttribute("posts", posts);
+    public String mypageLike(Model model,
+                             @PathVariable("userId") Long userId,
+                             @RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<PostDto> postPage = myPageService.mypageLike(userId, page, size);
+        model.addAttribute("postsPage", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "like");
         return "/user/mypage-detail";
     }
 
+    // 이건 그냥 작성해놓은 거임
     @GetMapping("/with/{userId}")
-    public String mypageWith(Model model, @PathVariable("userId") Long userId) {
-        List<PostDto> posts = myPageService.mypageBoard(userId);
-        model.addAttribute("posts", posts);
+    public String mypageWith(Model model,
+                             @PathVariable("userId") Long userId,
+                             @RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<PostDto> postPage = myPageService.mypageBoard(userId, page, size);
+        model.addAttribute("postsPage", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("title", "with");
         return "/user/mypage-detail";
     }
 
     @PostMapping("/bye")
-    public String mypageBye(Model model){
+    public String mypageBye(){
         userService.deleteUser();
         return "redirect:/logout";
     }

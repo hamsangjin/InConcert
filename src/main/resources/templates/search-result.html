@@ -23,10 +23,10 @@
 
     <div class="title-container">
         <h1> 검색 결과</h1>
-        <p th:text="${posts.size() + '개의 게시물을 찾았습니다.'}"> </p>
+        <p th:text="${postsPage.getTotalElements() + '개의 게시물을 찾았습니다.'}"> </p>
     </div>
 
-    <div class="post-header" th:if="${posts.size() > 0}">
+    <div class="post-header" th:if="${postsPage.getTotalElements() > 0}">
         <span class="header-title">제목</span>
         <span class="header-author">작성자</span>
         <span class="header-date">작성일</span>
@@ -34,7 +34,7 @@
         <span class="header-likes">좋아요</span>
     </div>
 
-    <div class="post-list" th:each="post : ${posts}">
+    <div class="post-list" th:each="post : ${postsPage.content}">
         <div class="post">
             <div class="post-thumbnail" th:if="${post.thumbnailUrl != null}">
                 <img th:src="@{${post.thumbnailUrl}}">
@@ -76,6 +76,33 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <ul>
+            <!-- 이전 페이지 -->
+            <li th:classappend="${currentPage == 0} ? 'disabled'">
+                <a th:if="${currentPage > 0}"
+                   th:href="@{|/search?keyword=${headerKeyword}&page=${currentPage - 1}&size=${postsPage.size}|}">
+                    이전</a>
+                <span th:if="${currentPage == 0}">이전</span>
+            </li>
+
+            <!-- 페이지 번호 -->
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:if="${i >= (currentPage / 10) * 10 && i < ((currentPage / 10) + 1) * 10}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a th:href="@{|/search?keyword=${headerKeyword}&page=${i}&size=${postsPage.size}|}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- 다음 페이지 -->
+            <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a th:if="${currentPage + 1 < totalPages}"
+                   th:href="@{|/search?keyword=${headerKeyword}&page=${currentPage + 1}&size=${postsPage.size}|}">
+                    다음</a>
+                <span th:if="${currentPage + 1 >= totalPages}">다음</span>
+            </li>
+        </ul>
     </div>
     <div id='wrapper'></div>
 </div>

@@ -31,42 +31,57 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // /home에서 공연 소식 게시물 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN p.createdAt > :yesterday THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' ")
-    List<PostDto> findPostsByCategoryTitle(Pageable pageable, @Param("yesterday") LocalDateTime yesterday);
+    List<PostDto> findPostsByCategoryTitle(Pageable pageable);
 
     // /info에서 게시물들 카테고리에 맞게 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN p.createdAt > :yesterday THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' AND pc.title = :postCategoryTitle")
-    List<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
-                                               @Param("yesterday") LocalDateTime yesterday);
+    List<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
+
+    // /info/categoryTitle에서 게시물들 알맞게 불러오기
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "FROM Post p " +
+            "JOIN p.postCategory pc " +
+            "JOIN pc.category c " +
+            "JOIN p.user u " +
+            "WHERE c.title = 'info' AND pc.title = :postCategoryTitle")
+    Page<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
+                                               Pageable pageable);
 
     // /info/categoryTitle에서 검색한 경우 검색 결과 불러오기
-    @Query("SELECT p FROM Post p " +
-            "JOIN FETCH p.postCategory pc " +
-            "JOIN FETCH pc.category c " +
-            "JOIN FETCH p.user u " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "FROM Post p " +
+            "JOIN p.postCategory pc " +
+            "JOIN pc.category c " +
+            "JOIN p.user u " +
             "WHERE c.title = 'info' AND pc.title = :postCategoryTitle " +
-            "AND ((:type = 'title+content' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)) " +
+            "AND ((:type = 'titleContent' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)) " +
             "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
             "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
             "AND p.createdAt BETWEEN :startDate AND :endDate")
-    List<Post> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
-                                       @Param("keyword") String keyword,
-                                       @Param("startDate") LocalDateTime startDate,
-                                       @Param("endDate") LocalDateTime endDate,
-                                       @Param("type") String type);
+    Page<PostDto> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
+                                          @Param("keyword") String keyword,
+                                          @Param("startDate") LocalDateTime startDate,
+                                          @Param("endDate") LocalDateTime endDate,
+                                          @Param("type") String type,
+                                          Pageable pageable);
 
     // 크롤링 후 post category의 1~4번까지 지우기
     @Modifying
