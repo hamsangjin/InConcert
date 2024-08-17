@@ -36,17 +36,17 @@
 
     <div class="post-list" th:each="post : ${posts}">
         <div class="post">
-            <div class="post-thumbnail" th:if="${post.thumbnailUrl != ''}">
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl != null}">
                 <img th:src="@{${post.thumbnailUrl}}">
             </div>
-            <div class="post-thumbnail" th:if="${post.thumbnailUrl == ''}">
+            <div class="post-thumbnail" th:if="${post.thumbnailUrl == null}">
                 <img src="/images/logo.png" alt="No Posts"/>
             </div>
 
             <div class="post-content">
                 <div class="post-title">
-                    <a th:href="@{'/' + ${post.postCategory.category.title}}">
-                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.postCategory.category.title}">
+                    <a th:href="@{${'/' + post.categoryTitle}}" >
+                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.categoryTitle}">
                             <span th:case="'info'">공연 소식</span>
                             <span th:case="'review'">공연 후기</span>
                             <span th:case="'match'">동행</span>
@@ -54,8 +54,8 @@
                         </span>
                     </a>
 
-                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a th:href="@{'/info/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
