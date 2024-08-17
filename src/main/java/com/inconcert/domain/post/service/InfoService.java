@@ -7,6 +7,9 @@ import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,19 +24,19 @@ public class InfoService {
     private final PerformanceService performanceService;
 
     public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts = switch (postCategoryTitle) {
-            case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical");
-            case "concert" -> infoRepository.findPostsByPostCategoryTitle("concert");
-            case "theater" -> infoRepository.findPostsByPostCategoryTitle("theater");
-            case "etc" -> infoRepository.findPostsByPostCategoryTitle("etc");
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+        return switch (postCategoryTitle) {
+            case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical", yesterday);
+            case "concert" -> infoRepository.findPostsByPostCategoryTitle("concert", yesterday);
+            case "theater" -> infoRepository.findPostsByPostCategoryTitle("theater", yesterday);
+            case "etc" -> infoRepository.findPostsByPostCategoryTitle("etc", yesterday);
             default -> throw new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage());
         };
-        return getPostDtos(posts);
     }
 
     public Post getPostByPostId(Long postId) {
-        Optional<Post> post = infoRepository.findById(postId);
-        return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        return infoRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드

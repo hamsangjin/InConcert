@@ -17,16 +17,17 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class TransferService {
     private final TransferRepository transferRepository;
+    
     public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts = switch (postCategoryTitle) {
-            case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical");
-            case "concert" -> transferRepository.findPostsByPostCategoryTitle("concert");
-            case "theater" -> transferRepository.findPostsByPostCategoryTitle("theater");
-            case "etc" -> transferRepository.findPostsByPostCategoryTitle("etc");
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+
+        return switch (postCategoryTitle) {
+            case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical", yesterday);
+            case "concert" -> transferRepository.findPostsByPostCategoryTitle("concert", yesterday);
+            case "theater" -> transferRepository.findPostsByPostCategoryTitle("theater", yesterday);
+            case "etc" -> transferRepository.findPostsByPostCategoryTitle("etc", yesterday);
             default -> throw new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage());
         };
-
-        return getPostDtos(posts);
     }
 
     public Post getPostByPostId(Long postId) {

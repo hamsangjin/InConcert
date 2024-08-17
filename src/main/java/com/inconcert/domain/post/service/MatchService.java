@@ -21,15 +21,15 @@ public class MatchService {
     private final MatchRepository matchRepository;
 
     public List<PostDto> getAllMatchPostsByPostCategory(String postCategoryTitle) {
-        List<Post> posts = switch (postCategoryTitle) {
-            case "musical" -> matchRepository.findPostsByPostCategoryTitle("musical");
-            case "concert" -> matchRepository.findPostsByPostCategoryTitle("concert");
-            case "theater" -> matchRepository.findPostsByPostCategoryTitle("theater");
-            case "etc" -> matchRepository.findPostsByPostCategoryTitle("etc");
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+
+        return switch (postCategoryTitle) {
+            case "musical" -> matchRepository.findPostsByPostCategoryTitle("musical", yesterday);
+            case "concert" -> matchRepository.findPostsByPostCategoryTitle("concert", yesterday);
+            case "theater" -> matchRepository.findPostsByPostCategoryTitle("theater", yesterday);
+            case "etc" -> matchRepository.findPostsByPostCategoryTitle("etc", yesterday);
             default -> throw new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage());
         };
-
-        return getPostDtos(posts);
     }
 
     public Post getPostByPostId(Long postId) {

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface HomeRepository extends JpaRepository<Post, Long> {
+
+    // 전체 검색할 때 게시물 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN p.createdAt > :yesterday THEN true ELSE false END, p.createdAt) " +

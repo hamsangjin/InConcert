@@ -157,16 +157,7 @@
 
             <div class="post-content">
                 <div class="post-title">
-                    <a th:if="${categoryTitle} != 'review'" th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <a th:if="${categoryTitle} == 'review'" th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                    <a th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
@@ -189,6 +180,7 @@
             </div>
         </div>
     </div>
+
     <div id='wrapper'></div>
 </div>
 

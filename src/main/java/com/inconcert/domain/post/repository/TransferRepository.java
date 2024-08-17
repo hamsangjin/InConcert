@@ -13,12 +13,7 @@ import java.util.List;
 
 @Repository
 public interface TransferRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p " +
-            "JOIN FETCH p.postCategory pc " +
-            "JOIN FETCH pc.category c " +
-            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle")
-    List<Post> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
-
+    // /home에서 양도 정보 게시물 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN p.createdAt > :yesterday THEN true ELSE false END, p.createdAt) " +
@@ -29,6 +24,19 @@ public interface TransferRepository extends JpaRepository<Post, Long> {
             "WHERE c.title = 'transfer' " +
             "ORDER BY p.createdAt DESC")
     List<PostDto> findPostsByCategoryTitle(Pageable pageable, @Param("yesterday") LocalDateTime yesterday);
+
+    // /transfer 게시물들 카테고리에 맞게 불러오기
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
+            "CASE WHEN p.createdAt > :yesterday THEN true ELSE false END, p.createdAt) " +
+            "FROM Post p " +
+            "JOIN p.postCategory pc " +
+            "JOIN pc.category c " +
+            "JOIN p.user u " +
+            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle")
+    List<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
+                                               @Param("yesterday") LocalDateTime yesterday);
+
 
     @Query("SELECT p FROM Post p " +
             "JOIN FETCH p.postCategory pc " +
