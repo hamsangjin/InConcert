@@ -86,6 +86,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
+    @OneToMany(mappedBy = "hostUser")
+    private Set<Chat> hostChattings;
+
+    @OneToMany(mappedBy = "guestUser")
+    private Set<Chat> guestChattings;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -93,13 +99,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
-
-    @OneToMany(mappedBy = "hostUser")
-    private Set<Chat> hostChattings;
-
-    @OneToMany(mappedBy = "guestUser")
-    private Set<Chat> guestChattings;
-
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,

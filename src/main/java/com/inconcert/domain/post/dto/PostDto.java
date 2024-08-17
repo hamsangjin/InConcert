@@ -49,4 +49,25 @@ public class PostDto {
                 .user(postDto.getUser())
                 .build();
     }
+
+    public PostDto(Long id, String title, String categoryTitle, String postCategoryTitle, String thumbnailUrl,
+                   String nickname, int viewCount, int likeCount, int commentCount, boolean isNew, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.categoryTitle = categoryTitle;
+        this.postCategoryTitle = postCategoryTitle;
+        this.thumbnailUrl = thumbnailUrl;
+        this.nickname = nickname;
+        this.viewCount = viewCount;
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
+        this.isNew = isNew;
+        this.createdAt = createdAt;
+    }
+
+    public PostDto(Long id, String postCategoryTitle, String thumbnailUrl) {
+        this.id = id;
+        this.postCategoryTitle = postCategoryTitle;
+        this.thumbnailUrl = thumbnailUrl;
+    }
 }

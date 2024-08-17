@@ -11,6 +11,7 @@ import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.global.exception.CategoryNotFoundException;
 import com.inconcert.global.repository.HomeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +31,17 @@ public class HomeService {
 
     @Transactional(readOnly = true)
     public List<PostDto> getAllCategoryPosts(String categoryTitle) {
-        List<Post> posts = switch (categoryTitle) {
-            case "info" -> infoRepository.findPostsByCategoryTitleInfo();
-            case "review" -> reviewRepository.findPostsByCategoryTitleReview();
-            case "match" -> matchRepository.findPostsByCategoryTitleMatch();
-            case "transfer" -> transferRepository.findPostsByCategoryTitleTransfer();
+        PageRequest pageable = PageRequest.of(0, 8);
+        LocalDateTime yesterday = LocalDateTime.now().minusDays(1);
+        List<PostDto> posts = switch (categoryTitle) {
+            case "info" -> infoRepository.findPostsByCategoryTitle(pageable, yesterday);
+            case "review" -> reviewRepository.findPostsByCategoryTitle(pageable, yesterday);
+            case "match" -> matchRepository.findPostsByCategoryTitle(pageable, yesterday);
+            case "transfer" -> transferRepository.findPostsByCategoryTitle(pageable, yesterday);
             default -> throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
         };
 
-        List<PostDto> postDtos = getPostDtos(posts);
-        return postDtos;
+        return posts;
     }
 
     @Transactional(readOnly = true)
@@ -53,9 +55,7 @@ public class HomeService {
 
     @Transactional(readOnly = true)
     public List<PostDto> findLatestPostsByPostCategory(){
-        List<Post> posts = infoRepository.findLatestPostsByPostCategory();
-        List<PostDto> postDtos = getPostDtos(posts);
-        return postDtos;
+        return infoRepository.findLatestPostsByPostCategory();
     }
 
     private static List<PostDto> getPostDtos(List<Post> posts) {
