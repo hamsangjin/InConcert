@@ -58,6 +58,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    // 채팅방을 찾을 수 없을 때
+    @ExceptionHandler(ChatNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleChatNotFoundException(ChatNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    // 채팅방 알림을 찾을 수 없을 때
+    @ExceptionHandler(ChatNotificationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleChatNotificationNotFoundException(ChatNotificationNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
         return new ResponseEntity<>(ExceptionMessage.USER_NOT_FOUND.getMessage(), HttpStatus.UNAUTHORIZED);

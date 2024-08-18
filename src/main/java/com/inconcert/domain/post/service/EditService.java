@@ -4,16 +4,15 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
-import com.inconcert.global.exception.CategoryNotFoundException;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.PostNotFoundException;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -33,6 +32,7 @@ public class EditService {
     private final TransferRepository transferRepository;
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public Long updatePost(Long postId, PostDto postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
@@ -58,6 +58,13 @@ public class EditService {
             postDto.setEndDate(null);
         }
 
+        // 채팅방 찾기 (match 카테고리인 경우에만 처리)
+        ChatRoom chatRoom = null;
+        if (currentPost.getChatRoom() != null && currentCategoryTitle.equals("match")) {
+            chatRoom = chatRoomRepository.findById(currentPost.getChatRoom().getId())
+                    .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+        }
+
         // 새로운 레포지토리에 저장
         Post updatedPost = Post.builder()
                 .id(currentPost.getId())
@@ -65,6 +72,7 @@ public class EditService {
                 .thumbnailUrl(postDto.getThumbnailUrl())
                 .content(postDto.getContent())
                 .endDate(postDto.getEndDate())
+                .chatRoom(chatRoom)
                 .matchCount(postDto.getMatchCount())
                 .user(currentPost.getUser())
                 .comments(new ArrayList<>(currentPost.getComments()))

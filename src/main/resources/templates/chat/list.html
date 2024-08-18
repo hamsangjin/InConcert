@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+</head>
+<body>
+<h1>채팅방 목록</h1>
+<ul>
+    <li th:each="chatRoom : ${chatRooms}">
+        <!-- 채팅방 이름과 참여 인원 표시 -->
+        <a th:href="@{/chat/{chatRoomId}(chatRoomId=${chatRoom.id})}">
+            <span th:text="${chatRoom.roomName}">채팅방 이름</span>
+        </a>
+        (참여 인원: <span th:text="${chatRoom.userCount}">0</span>)
+    </li>
+</ul>
+<a th:href="@{/chat/request}">요청 목록 확인</a>
+<!--<a th:href="@{/chat/{userId}/newform(userId=${userId})}">새 채팅방 생성</a>-->
+</body>
+</html>

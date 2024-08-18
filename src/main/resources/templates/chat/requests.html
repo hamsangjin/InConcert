@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅 요청 목록</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        .request-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .request-item span {
+            margin-right: 10px;
+        }
+        .request-item button {
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>채팅 요청 목록</h1>
+
+<ul id="notificationList" class="request-list"></ul>
+<ul id="requestList" class="request-list"></ul>
+
+<input id="userId" type="hidden" th:value="${user.id}">
+
+<script th:src="@{/js/chat/request.js}"></script>
+</body>
+</html>

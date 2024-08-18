@@ -4,6 +4,10 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.repository.ChatRoomRepository;
+import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.domain.post.entity.Post;
@@ -12,10 +16,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.CategoryNotFoundException;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +28,14 @@ import java.util.List;
 public class WriteService {
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
     private final InfoRepository infoRepository;
     private final MatchRepository matchRepository;
     private final ReviewRepository reviewRepository;
     private final TransferRepository transferRepository;
     private final NotificationService notificationService;
+    private final ChatService chatService;
 
     @Transactional
     public Post save(PostDto postDto){
@@ -71,10 +74,26 @@ public class WriteService {
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 
+        // Post 저장
         Post savePost = switch (category.getTitle()) {
             case "info" -> infoRepository.save(post);
             case "review" -> reviewRepository.save(post);
-            case "match" -> matchRepository.save(post);
+            case "match" -> {
+                // match일 때만 채팅방 생성
+                Post savedMatchPost = matchRepository.save(post); // Post를 저장하여 ID 생성
+
+                // 채팅방 생성 및 Post와 연결
+                ChatRoomDto chatRoomDto = chatService.createChatRoom(post.getTitle());
+                ChatRoom chatRoom = chatRoomRepository.findById(chatRoomDto.getId())
+                        .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+
+                // Post와 채팅방 연결
+                savedMatchPost.assignChatRoom(chatRoom);
+                chatRoom.assignPost(savedMatchPost);
+
+                // 채팅방이 연결된 Post 저장
+                yield matchRepository.save(savedMatchPost);
+            }
             case "transfer" -> transferRepository.save(post);
             default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
         };

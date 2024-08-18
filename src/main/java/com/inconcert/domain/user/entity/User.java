@@ -1,6 +1,7 @@
 package com.inconcert.domain.user.entity;
 
-import com.inconcert.domain.chat.entity.Chat;
+import com.inconcert.domain.chat.entity.ChatMessage;
+import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
@@ -86,12 +87,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "hostUser")
-    private Set<Chat> hostChattings;
-
-    @OneToMany(mappedBy = "guestUser")
-    private Set<Chat> guestChattings;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
@@ -99,6 +94,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> hostedRooms = new ArrayList<>();
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,

@@ -68,6 +68,7 @@ public class MatchService {
                 .viewCount(post.getViewCount())
                 .matchCount(post.getMatchCount())
                 .endDate(post.getEndDate())
+                .chatRoomId(post.getChatRoom().getId())
                 .commentCount(post.getComments().size())
                 .comments(post.getComments())
                 .likeCount(post.getLikes().size())
@@ -84,9 +85,38 @@ public class MatchService {
 
     @Transactional
     public void deletePost(Long postId) {
-
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        if (post.hasChatRoom()) {
+            throw new IllegalStateException("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
+        }
         matchRepository.delete(post);
+    }
+
+    // 연결된 채팅방이 있는지 확인
+    public boolean checkPostHasChatRoom(Long postId) {
+        Post post = matchRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        return post.hasChatRoom();
+    }
+
+    private static List<PostDto> getPostDtos(List<Post> posts) {
+        List<PostDto> postDtos = new ArrayList<>();
+        for (Post post : posts) {
+            PostDto postDto = PostDto.builder()
+                    .id(post.getId())
+                    .title(post.getTitle())
+                    .thumbnailUrl(post.getThumbnailUrl())
+                    .postCategory(post.getPostCategory())
+                    .nickname(post.getUser().getNickname())
+                    .viewCount(post.getViewCount())
+                    .commentCount(post.getComments().size())
+                    .likeCount(post.getLikes().size())
+                    .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
+                    .createdAt(post.getCreatedAt())
+                    .build();
+            postDtos.add(postDto);
+        }
+        return postDtos;
     }
 }
