@@ -23,12 +23,12 @@ public class PostCategory {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "postCategory")
-    private List<Post> posts;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "postCategory")
+    private List<Post> posts;
 
     public PostCategory(String title, Category category) {
         this.title = title;

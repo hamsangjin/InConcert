@@ -356,3 +356,35 @@ header {
     color: #6f6f6f;
     white-space: nowrap;
 }
+
+.pagination > ul{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.pagination > ul > li{
+    list-style-type: none;
+}
+
+.pagination > ul > li a{
+    color: #6f6f6f;
+    text-decoration: none;
+    align-items: center;
+}
+
+.pagination > ul > li.active a {
+    color: #0BA885;
+    font-weight: bold;
+}
+
+.pagination > ul > li.disabled a {
+    color: #ccc;
+    pointer-events: none;
+    cursor: default;
+}
+
+.pagination > ul > li.disabled span {
+    color: #ccc;
+}

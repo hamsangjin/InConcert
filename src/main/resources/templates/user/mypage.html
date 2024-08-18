@@ -10,6 +10,15 @@
                 document.getElementById("deleteForm").submit();
             }
         }
+
+        function validateSearch() {
+            let keyword = document.getElementById("search-input").value.trim();
+            if (keyword.length < 2) {
+                alert("검색어를 2자 이상 입력하세요.");
+                return false;
+            }
+            return true;
+        }
     </script>
 </head>
 <body>

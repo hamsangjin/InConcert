@@ -26,14 +26,14 @@
         <div class="popular-info-img-container">
             <div th:each="post : ${popularPosts}">
                 <div class="popular-info">
-                    <span th:switch="${post.postCategory.title}">
+                    <span th:switch="${post.postCategoryTitle}">
                         <span th:case="'musical'">뮤지컬</span>
                         <span th:case="'concert'">콘서트</span>
                         <span th:case="'theater'">연극</span>
                         <span th:case="'etc'">기타</span>
                     </span>
                     <img class="popular-info-img" th:src="@{${post.thumbnailUrl}}">
-                    <a th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
+                    <a th:href="@{'/info/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
                         <span> 자세히 보기 </span>
                     </a>
                 </div>
@@ -49,10 +49,10 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${infoPosts}">
+            <div class="post-list" th:each="post : ${infoPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
@@ -79,10 +79,10 @@
                 </a>
             </div>
 
-            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${reviewPosts}">
+            <div class="post-list"th:each="post : ${reviewPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/review/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a class="post-title"  th:href="@{'/review/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
@@ -113,10 +113,10 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${matchPosts}">
+            <div class="post-list" th:each="post : ${matchPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/match/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a class="post-title"  th:href="@{'/match/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
@@ -144,10 +144,10 @@
                     <p> + 더보기</p>
                 </a>
             </div>
-            <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${transferPosts}">
+            <div class="post-list" th:each="post : ${transferPosts}">
                 <div class="post-left">
-                    <a class="post-title"  th:href="@{'/transfer/' + ${post.postCategory.title} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategory.title}">
+                    <a class="post-title"  th:href="@{'/transfer/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>

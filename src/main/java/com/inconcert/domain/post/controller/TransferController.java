@@ -8,11 +8,11 @@ import com.inconcert.domain.post.service.TransferService;
 import com.inconcert.domain.post.service.WriteService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -35,10 +35,44 @@ public class TransferController {
     }
 
     @GetMapping("/{postCategoryTitle}")
-    public String transferDetail(@PathVariable("postCategoryTitle") String postCategoryTitle, Model model) {
-        model.addAttribute("posts", transferService.getAllTransferPostsByPostCategory(postCategoryTitle));
+    public String transferDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                             @RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "size", defaultValue = "10") int size,
+                             Model model) {
+
+        Page<PostDto> postsPage = transferService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
+
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
+
+        return "board/board-detail";
+    }
+
+    @GetMapping("/{postCategoryTitle}/search")
+    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                         @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+                         Model model) {
+
+        Page<PostDto> postsPage = transferService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
+
+        Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("period", period);
+        searchInfo.put("type", type);
+        searchInfo.put("keyword", keyword);
+        model.addAttribute("searchInfo", searchInfo);
+
+        model.addAttribute("categoryTitle", "transfer");
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
+
         return "board/board-detail";
     }
 
@@ -52,23 +86,6 @@ public class TransferController {
         model.addAttribute("createForm", new CommentCreateForm());
 
         return "board/post-detail";
-    }
-
-    @GetMapping("/{postCategoryTitle}/search")
-    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                         @RequestParam(name = "keyword") String keyword,
-                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
-                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
-                         Model model) {
-        List<PostDto> searchResults = transferService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type);
-        model.addAttribute("posts", searchResults);
-        model.addAttribute("categoryTitle", "transfer");
-        Map<String, String> searchInfo = new HashMap<>();
-        searchInfo.put("period", period);
-        searchInfo.put("type", type);
-        searchInfo.put("keyword", keyword);
-        model.addAttribute("searchInfo", searchInfo);
-        return "board/board-detail";
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/delete")

@@ -4,6 +4,7 @@ import com.inconcert.domain.post.dto.PostDto;
 import com.inconcert.global.service.CrawlingService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,16 +39,25 @@ public class HomeController {
         return "home";
     }
 
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword", required = false) String keyword,
+                         @RequestParam(name = "page", defaultValue = "0") int page,
+                         @RequestParam(name = "size", defaultValue = "10") int size,
+                         Model model) {
+
+        Page<PostDto> postPage = homeService.findByKeyword(keyword, page, size);
+
+        model.addAttribute("postsPage", postPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postPage.getTotalPages());
+        model.addAttribute("headerKeyword", keyword);
+
+        return "search-result";
+    }
+
     @GetMapping("/write")
     public String write(Model model) {
         model.addAttribute("postDto", new PostDto());
         return "board/writeform";
-    }
-
-    @GetMapping("/search")
-    public String search(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        model.addAttribute("posts", homeService.findByKeyword(keyword));
-        model.addAttribute("headerKeyword", keyword);
-        return "search-result";
     }
 }

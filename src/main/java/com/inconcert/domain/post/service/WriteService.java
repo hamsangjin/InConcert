@@ -66,6 +66,8 @@ public class WriteService {
             postDto.setEndDate(null);
         }
 
+        if(postDto.getThumbnailUrl().equals(""))    postDto.setThumbnailUrl(null);
+
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDto.toEntity(postDto, updatedPostCategory);
 

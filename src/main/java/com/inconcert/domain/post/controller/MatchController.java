@@ -6,15 +6,13 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.MatchService;
 import com.inconcert.domain.post.service.WriteService;
-import com.inconcert.domain.user.entity.Gender;
-import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -37,10 +35,47 @@ public class MatchController {
     }
 
     @GetMapping("/{postCategoryTitle}")
-    public String matchDetail(@PathVariable("postCategoryTitle") String postCategoryTitle, Model model) {
-        model.addAttribute("posts", matchService.getAllMatchPostsByPostCategory(postCategoryTitle));
+    public String matchDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                              @RequestParam(name = "page", defaultValue = "0") int page,
+                              @RequestParam(name = "size", defaultValue = "10") int size,
+                              Model model) {
+
+        Page<PostDto> postsPage = matchService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
+
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
+
+        return "board/board-detail";
+    }
+
+    @GetMapping("/{postCategoryTitle}/search")
+    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         @RequestParam(name = "gender", required = false, defaultValue = "all") String gender,
+                         @RequestParam(name = "mbti", required = false, defaultValue = "all") String mbti,
+                         @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                         @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+                         Model model) {
+
+        Page<PostDto> postsPage = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, gender, mbti, page, size);
+
+        Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("period", period);
+        searchInfo.put("type", type);
+        searchInfo.put("keyword", keyword);
+        searchInfo.put("gender", gender);
+        searchInfo.put("mbti", mbti);
+        model.addAttribute("searchInfo", searchInfo);
+
+        model.addAttribute("categoryTitle", "match");
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
 
         return "board/board-detail";
     }
@@ -54,30 +89,6 @@ public class MatchController {
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         model.addAttribute("createForm", new CommentCreateForm());
         return "board/post-detail";
-    }
-
-    @GetMapping("/{postCategoryTitle}/search")
-    public String search(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                         @RequestParam(name = "keyword") String keyword,
-                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
-                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
-                         @RequestParam(name = "gender", required = false, defaultValue = "all") String gender,
-                         @RequestParam(name = "mbti", required = false, defaultValue = "all") String mbti,
-                         Model model) {
-
-        List<PostDto> searchResults = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, gender, mbti);
-        model.addAttribute("posts", searchResults);
-        model.addAttribute("categoryTitle", "match");
-
-        Map<String, String> searchInfo = new HashMap<>();
-        searchInfo.put("keyword", keyword);
-        searchInfo.put("period", period);
-        searchInfo.put("type", type);
-        searchInfo.put("gender", gender);
-        searchInfo.put("mbti", mbti);
-        model.addAttribute("searchInfo", searchInfo);
-
-        return "board/board-detail";
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/delete")

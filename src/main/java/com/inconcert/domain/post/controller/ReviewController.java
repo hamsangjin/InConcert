@@ -7,13 +7,13 @@ import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.ReviewService;
 import com.inconcert.domain.post.service.WriteService;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -21,15 +21,45 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-    private final HomeService homeService;
     private final UserService userService;
     private final EditService editService;
     private final WriteService writeService;
 
     @GetMapping
-    public String review(Model model) {
-        model.addAttribute("posts", homeService.getAllCategoryPosts("review"));
+    public String review(Model model,
+                         @RequestParam(name = "page", defaultValue = "0") int page,
+                         @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        Page<PostDto> postsPage = reviewService.getAllInfoPostsByPostCategory(page, size);
+
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
         model.addAttribute("categoryTitle", "review");
+        return "board/board-detail";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(name = "keyword") String keyword,
+                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
+                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
+                         @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                         @RequestParam(name = "size", required = false, defaultValue = "10") int size,
+                         Model model) {
+
+        Page<PostDto> postsPage = reviewService.findByKeywordAndFilters(keyword, period, type, page, size);
+
+        Map<String, String> searchInfo = new HashMap<>();
+        searchInfo.put("period", period);
+        searchInfo.put("type", type);
+        searchInfo.put("keyword", keyword);
+        model.addAttribute("searchInfo", searchInfo);
+
+        model.addAttribute("categoryTitle", "review");
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
+
         return "board/board-detail";
     }
 
@@ -43,22 +73,6 @@ public class ReviewController {
         model.addAttribute("createForm", new CommentCreateForm());
 
         return "board/post-detail";
-    }
-
-    @GetMapping("/search")
-    public String search(@RequestParam(name = "keyword") String keyword,
-                         @RequestParam(name = "period", required = false, defaultValue = "all") String period,
-                         @RequestParam(name = "type", required = false, defaultValue = "title+content") String type,
-                         Model model) {
-        List<PostDto> searchResults = reviewService.findByKeywordAndFilters(keyword, period, type);
-        model.addAttribute("posts", searchResults);
-        model.addAttribute("categoryTitle", "review");
-        Map<String, String> searchInfo = new HashMap<>();
-        searchInfo.put("period", period);
-        searchInfo.put("type", type);
-        searchInfo.put("keyword", keyword);
-        model.addAttribute("searchInfo", searchInfo);
-        return "board/board-detail";
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/delete")
