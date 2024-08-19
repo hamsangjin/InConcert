@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +46,9 @@ public class ChatService {
     public List<ChatRoomDto> getChatRoomDtosByUserId() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+
         List<ChatRoom> chatRooms = chatRoomRepository.findAllByUserId(user.getId());
+
         return chatRooms.stream()
                 .map(this::convertToChatRoomDto)
                 .collect(Collectors.toList());
@@ -55,7 +58,13 @@ public class ChatService {
     public ChatRoomDto getChatRoomDto(Long chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
-        return convertToChatRoomDto(chatRoom);
+
+        return ChatRoomDto.builder()
+                .id(chatRoom.getId())
+                .roomName(chatRoom.getRoomName())
+                .hostUserId(chatRoom.getHostUser().getId())
+                .userCount(chatRoom.getUsers().size())
+                .build();
     }
 
     // 채팅방 생성
@@ -73,7 +82,12 @@ public class ChatService {
         chatRoom.addUser(user);
         chatRoom = chatRoomRepository.save(chatRoom);
 
-        return convertToChatRoomDto(chatRoom);
+        return ChatRoomDto.builder()
+                .id(chatRoom.getId())
+                .roomName(chatRoom.getRoomName())
+                .hostUserId(chatRoom.getHostUser().getId())
+                .userCount(chatRoom.getUsers().size())
+                .build();
     }
 
     // 동행 요청 Host에게 전송
@@ -208,12 +222,52 @@ public class ChatService {
     }
 
     private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
+        List<String> messageTime = getmessageTime(chatRoom);
+
         return ChatRoomDto.builder()
                 .id(chatRoom.getId())
                 .roomName(chatRoom.getRoomName())
                 .hostUserId(chatRoom.getHostUser().getId())
                 .userCount(chatRoom.getUsers().size())
+                .timeSince(messageTime != null ? messageTime.get(0) : "empty")
+                .diffTime(messageTime != null ? Integer.parseInt(messageTime.get(1)) : 0)
                 .build();
+    }
+
+    private static List<String> getmessageTime(ChatRoom chatRoom) {
+        if(chatRoom.getMessages().isEmpty())    return null;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(chatRoom.getMessages().get(chatRoom.getMessages().size()-1).getTimestamp(), formatter).truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+
+        String timeSince = "";
+        int diffTime = 0;
+
+        // dateTime 값이 현재 시각과 정확히 일치하는 경우
+        if (dateTime.isEqual(now)) {
+            timeSince = "now";
+        }
+        // dateTime 값이 현재 날짜보다 하루 이상 전인 경우
+        else if (dateTime.toLocalDate().isBefore(now.toLocalDate())) {
+            diffTime = (int) ChronoUnit.DAYS.between(dateTime.toLocalDate(), now.toLocalDate());
+            timeSince = "day";
+        }
+        // dateTime 값이 현재 시간보다 1~24시간 후인 경우
+        else if (dateTime.isAfter(now) && dateTime.isBefore(now.plusDays(1)) && dateTime.minusHours(1).isBefore(now)) {
+            diffTime = (int) ChronoUnit.HOURS.between(now, dateTime);
+            timeSince = "hour";
+        }
+        // dateTime 값이 현재 시간보다 1시간 이내인 경우
+        else if (dateTime.isBefore(now) && dateTime.isAfter(now.minusHours(1))) {
+            diffTime = (int) ChronoUnit.MINUTES.between(dateTime, now);
+            timeSince = "minute";
+        }
+
+        List<String> result = new ArrayList<>();
+        result.add(timeSince);
+        result.add(String.valueOf(diffTime));
+        return result;
     }
 
     private ChatMessageDto convertToChatMessageDto(ChatMessage chatMessage) {

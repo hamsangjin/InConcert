@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>채팅 요청 목록</title>
+    <title>채팅 요청 관리</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <style>
-        .request-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .request-item span {
-            margin-right: 10px;
-        }
-        .request-item button {
-            margin-left: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/chat/requests.css">
+
 </head>
 <body>
-<h1>채팅 요청 목록</h1>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
+    <div class="title-container">
+        <h1>채팅 요청 관리</h1>
+    </div>
+    <div class="button-container">
+        <a th:href="@{/chat/list}">내 채팅</a>
+    </div>
 
-<ul id="notificationList" class="request-list"></ul>
-<ul id="requestList" class="request-list"></ul>
+    <ul id="requestList" class="request-list"></ul>
 
-<input id="userId" type="hidden" th:value="${user.id}">
-
+    <input id="userId" type="hidden" th:value="${user.id}">
+</div>
 <script th:src="@{/js/chat/request.js}"></script>
 </body>
 </html>

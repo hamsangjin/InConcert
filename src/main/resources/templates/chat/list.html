@@ -3,19 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>채팅방 목록</title>
+    <link rel="stylesheet" href="/css/chat/list.css">
 </head>
 <body>
-<h1>채팅방 목록</h1>
-<ul>
-    <li th:each="chatRoom : ${chatRooms}">
-        <!-- 채팅방 이름과 참여 인원 표시 -->
-        <a th:href="@{/chat/{chatRoomId}(chatRoomId=${chatRoom.id})}">
-            <span th:text="${chatRoom.roomName}">채팅방 이름</span>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
         </a>
-        (참여 인원: <span th:text="${chatRoom.userCount}">0</span>)
-    </li>
-</ul>
-<a th:href="@{/chat/request}">요청 목록 확인</a>
-<!--<a th:href="@{/chat/{userId}/newform(userId=${userId})}">새 채팅방 생성</a>-->
+    </header>
+    <div class="title-container">
+        <h1>내 채팅</h1>
+    </div>
+    <div class="button-container">
+        <a th:href="@{/chat/request}">요청 목록</a>
+<!--        <a th:href="@{/chat/{userId}/newform(userId=${userId})}">새 채팅방 생성</a>-->
+    </div>
+
+    <div class="chat-container" th:each="chatRoom : ${chatRooms}">
+        <div>
+            <img th:if="${chatRoom.userCount <= 2}" src="/images/DirectChat.png" alt="No Posts"/>
+            <img th:if="${chatRoom.userCount > 2}" src="/images/GroupChat.png" alt="No Posts"/>
+            <a th:href="@{/chat/{chatRoomId}(chatRoomId=${chatRoom.id})}">
+                <span th:text="${chatRoom.roomName}">채팅방 이름</span>
+            </a>
+        </div>
+        <div>
+            <img src="/images/ChatMembers.png" alt="No Posts"/>
+            <span th:text="${chatRoom.userCount}"></span>
+            <span th:switch="${chatRoom.timeSince}">
+                <span th:case="'day'" th:text="${chatRoom.diffTime + '일 전'}"></span>
+                <span th:case="'hour'" th:text="${chatRoom.diffTime + '시간 전'}"></span>
+                <span th:case="'minute'" th:text="${chatRoom.diffTime + '분 전'}"></span>
+                <span th:case="'now'">방금 전</span>
+                <span th:case="'empty'"></span>
+            </span>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

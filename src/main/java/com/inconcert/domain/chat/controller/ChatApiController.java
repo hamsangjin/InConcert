@@ -24,7 +24,7 @@ public class ChatApiController {
 
     // host에게 동행 요청 전송
     @PostMapping("/request-join/{chatRoomId}")
-    public ResponseEntity<?> requestJoinChatRoom(@PathVariable Long chatRoomId) {
+    public ResponseEntity<?> requestJoinChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         User currentUser = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
@@ -40,7 +40,7 @@ public class ChatApiController {
 
     // 동행 요청 승인
     @PostMapping("/approve-join/{chatRoomId}/{notificationId}")
-    public ResponseEntity<?> approveJoinRequest(@PathVariable Long chatRoomId, @PathVariable Long notificationId) {
+    public ResponseEntity<?> approveJoinRequest(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("notificationId") Long notificationId) {
         chatService.approveJoinRequest(chatRoomId, notificationId);
         return ResponseEntity.ok("승인이 완료되었습니다.");
     }
@@ -52,14 +52,14 @@ public class ChatApiController {
 
     // 동행 요청 거절
     @PostMapping("/reject-join/{chatRoomId}/{notificationId}")
-    public ResponseEntity<?> rejectJoinRequest(@PathVariable Long chatRoomId, @PathVariable Long notificationId) {
+    public ResponseEntity<?> rejectJoinRequest(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("notificationId") Long notificationId) {
         chatService.rejectJoinRequest(chatRoomId, notificationId);
         return ResponseEntity.ok("채팅방 '" + chatService.findById(chatRoomId).getRoomName() + "'의 요청이 거절되었습니다.");
     }
 
     // 1:1 채팅
     @PostMapping("/request-one-to-one/{receiverId}")
-    public ResponseEntity<?> requestOneToOneChat(@PathVariable Long receiverId) {
+    public ResponseEntity<?> requestOneToOneChat(@PathVariable("receiverId") Long receiverId) {
         try {
             ChatRoom chatRoom = chatService.createOneToOneChatRoom(receiverId);
             return ResponseEntity.ok(chatRoom.getId()); // 채팅방 ID 반환
@@ -71,14 +71,14 @@ public class ChatApiController {
 
     // 알림 삭제
     @DeleteMapping("/notifications/{notificationId}")
-    public ResponseEntity<?> deleteNotification(@PathVariable Long notificationId) {
+    public ResponseEntity<?> deleteNotification(@PathVariable("notificationId") Long notificationId) {
         chatNotificationService.deleteNotification(notificationId);
         return ResponseEntity.ok("알림이 삭제되었습니다.");
     }
 
     // 알림 목록 가져오기 (거절 및 요청)
     @GetMapping("/notifications/requestlist")
-    public ResponseEntity<List<NotificationMessage>> getNotificationsForUser(@RequestParam Long userId) {
+    public ResponseEntity<List<NotificationMessage>> getNotificationsForUser(@RequestParam("userId") Long userId) {
         List<NotificationMessage> notifications = chatNotificationService.findRejectedNotificationsByUserId(userId);
         return ResponseEntity.ok(notifications);
     }

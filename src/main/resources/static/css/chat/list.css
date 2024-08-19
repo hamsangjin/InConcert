@@ -1,0 +1,331 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    width: 45%;
+    max-width: 45%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* chat 화면 */
+
+.title-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.title-container > h1{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00A885;
+    color: #00A885;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 auto 50px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.button-container > a{
+    text-decoration: none;
+    color: #00a885;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.button-container > a:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.chat-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.chat-container:last-child{
+    margin-bottom: 100px;
+}
+
+.chat-container > div{
+    display: flex;
+    align-items: center;
+}
+
+.chat-container > div:nth-child(2){
+    justify-content: flex-end;
+}
+
+.chat-container > div > a{
+    text-decoration: none;
+}
+
+.chat-container > div > a:hover{
+    cursor: pointer;
+}
+
+.chat-container > div > a > span{
+    color: black;
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.chat-container > div > a > span:hover{
+    cursor: pointer;
+    color: #00A885;
+}
+
+.chat-container > div:first-child > img{
+    width: 70px;
+    max-width: 70px;
+    height: 70px;
+    max-height: 70px;
+    margin-right: 10px;
+}
+
+.chat-container > div:nth-child(2) > img{
+    width: 20px;
+    max-width: 20px;
+    height: 20px;
+    max-height: 20px;
+}
+
+.chat-container > div:nth-child(2) > span{
+    color: black;
+    font-size: 16px;
+    font-weight: bolder;
+    margin-right: 10px;
+}
+
+.chat-container > span{
+    color: #00a885;
+    font-size: 14px;
+}
+
+
+
+
+
+
+
+
+
+.tab-container {
+    display: flex;
+    justify-content: space-around;
+    background-color: white;
+    min-width: 828px;
+    max-width: 828px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 20px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s;
+}
+
+.tab.active {
+    background-color: #0BA885;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    min-width: 808px;
+    max-width: 808px;
+    margin: 0 auto;
+    background-color: #ccc;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content > ul{
+    padding: 0;
+}
+
+.notification {
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
+}
+
+.notification-content {
+    flex-grow: 1;
+}
+
+.notification-type {
+    font-weight: bold;
+    color: #0BA885;
+}
+
+.read{
+    opacity: 0.5;
+}
+
+.delete-button {
+    padding: 5px 10px;
+    background-color: transparent;
+    color: red;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.delete-button:hover {
+    /*opacity: 0.8; !* 호버 시 투명도 변경 *!*/
+    font-weight: bolder;
+
+}
+
+#keywordForm {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#keywordInput {
+    width: 70%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #0BA885;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#keywordList {
+    background-color: transparent;
+    margin-bottom: 20px;
+    padding: 0;
+    margin-top: 0;
+}
+
+#keywordList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tab-content > ul > li:hover {
+    cursor: pointer;
+}
+
+#keywordList button {
+    background-color: white;
+    color: #00A885;
+    border: 1px solid #00A885;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin: 5px;
+    font-size: 18px;
+}
+
+#keywordList button:hover {
+    color: white;
+    background-color: #00A885;
+    cursor: pointer;
+}

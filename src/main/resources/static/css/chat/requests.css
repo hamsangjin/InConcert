@@ -1,0 +1,147 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    width: 45%;
+    max-width: 45%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* chat 화면 */
+
+.title-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.title-container > h1{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00A885;
+    color: #00A885;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 auto 50px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.button-container > a{
+    text-decoration: none;
+    color: #00a885;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.button-container > a:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.request-list {
+    list-style-type: none;
+    background-color: #ccc;
+    border-radius: 15px;
+    padding: 30px 20px 20px;
+}
+
+.request-list > li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #ccc;
+    background-color: white;
+    border-radius: 25px;
+    margin-bottom: 10px;
+}
+
+.request-list > li > div > button{
+    border: none;
+    background-color: transparent;
+    color: #00a885;
+
+    font-weight: bold;
+}
+
+.request-list > li > div > button:hover{
+    cursor: pointer;
+    color: #ccc;
+}
+
+.request-item span {
+    margin-right: 10px;
+}
+
+.request-item button {
+    margin-left: 5px;
+}

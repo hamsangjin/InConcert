@@ -21,7 +21,7 @@ public class ChatNotificationController {
 //        return chatNotificationService.getNotificationsByChatRoomId(chatRoomId);
 //    }
     @GetMapping("/requestlist")
-    public List<NotificationMessage> getRequestList(@RequestParam Long userId) {
+    public List<NotificationMessage> getRequestList(@RequestParam("userId") Long userId) {
         List<ChatNotification> notifications = chatNotificationService.findByUserId(userId);
         return notifications.stream()
                 .map(NotificationMessage::new)
