@@ -281,12 +281,13 @@
                     alert('회원가입이 완료되었습니다.');
                     window.location.href = '/home';
                 } else {
-                    throw new Error('회원가입에 실패했습니다. 다시 시도해주세요.');
+                    alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                    console.error('Error details:', data);
                 }
             })
             .catch(error => {
-                alert(error.message);
-                console.error('Error details:', error);
+                alert('회원가입 처리 중 오류가 발생했습니다.');
+                console.error('Error:', error);
             });
     });
 
