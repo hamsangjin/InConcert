@@ -217,13 +217,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.code === "SU") {
+                    alert('사용 가능한 이메일입니다. 인증 번호를 전송합니다.');
                     return fetch('/user/email-certification', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, username }),
                     });
                 } else {
-                    throw new Error('이미 존재하는 이메일입니다.');
+                    alert('이미 존재하는 이메일입니다.');
+                    throw new Error('이메일 중복');
                 }
             })
             .then(response => response.json())
@@ -231,10 +233,15 @@
                 if (data.code === "SU") {
                     alert('인증 번호가 전송되었습니다.');
                 } else {
-                    throw new Error('인증 번호 전송에 실패했습니다.');
+                    alert('인증 번호 전송에 실패했습니다.');
                 }
             })
-            .catch(error => alert(error.message));
+            .catch(error => {
+                if (error.message !== '이메일 중복') {
+                    console.error('Error:', error);
+                    alert('처리 중 오류가 발생했습니다.');
+                }
+            });
     });
 
     // 인증번호 확인
