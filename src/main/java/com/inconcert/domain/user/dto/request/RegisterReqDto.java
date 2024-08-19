@@ -2,8 +2,7 @@ package com.inconcert.domain.user.dto.request;
 
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,12 +11,15 @@ import java.time.LocalDate;
 @Setter
 public class RegisterReqDto {
     @NotBlank
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{5,}$")
     private String username;
 
     @NotBlank
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
     private String password;
 
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
@@ -30,14 +32,19 @@ public class RegisterReqDto {
     private String nickname;
 
     @NotBlank
+    @Pattern(regexp = "^\\d{10,11}$")
     private String phoneNumber;
 
     @NotNull
+    @Past
     private LocalDate birth;
 
-    @NotBlank
+    @NotNull
     private Gender gender;
 
-    @NotBlank
+    @NotNull
     private Mbti mbti;
+
+    @AssertTrue
+    private boolean agreeTerms;
 }
