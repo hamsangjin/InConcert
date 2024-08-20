@@ -253,6 +253,11 @@ public class UserService {
     }
 
     @Transactional
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Transactional
     public void deleteUser(){
         User user = getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         userRepository.deleteById(user.getId());

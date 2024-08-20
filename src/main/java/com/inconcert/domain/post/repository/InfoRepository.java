@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.repository;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface InfoRepository extends JpaRepository<Post, Long> {
     // /home에서 인기 공연 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, pc.title, p.thumbnailUrl) " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, pc.title, p.thumbnailUrl) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -24,12 +24,12 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "SELECT MIN(p2.createdAt) FROM Post p2 " +
             "JOIN p2.postCategory pc2 " +
             "JOIN pc2.category c2 " +
-            "WHERE c2.title = 'info' " +
+            "WHERE c2.title = 'info'" +
             "GROUP BY pc2.id) ")
-    List<PostDto> findLatestPostsByPostCategory();
+    List<PostDTO> findLatestPostsByPostCategory();
 
     // /home에서 공연 소식 게시물 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -37,10 +37,10 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' ")
-    List<PostDto> findPostsByCategoryTitle(Pageable pageable);
+    List<PostDTO> findPostsByCategoryTitle(Pageable pageable);
 
     // /info에서 게시물들 카테고리에 맞게 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -48,10 +48,10 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' AND pc.title = :postCategoryTitle")
-    List<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
+    List<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /info/categoryTitle에서 게시물들 알맞게 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -59,11 +59,11 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' AND pc.title = :postCategoryTitle")
-    Page<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
+    Page<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
                                                Pageable pageable);
 
     // /info/categoryTitle에서 검색한 경우 검색 결과 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -76,7 +76,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
             "AND p.createdAt BETWEEN :startDate AND :endDate")
-    Page<PostDto> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
+    Page<PostDTO> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                           @Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,
                                           @Param("endDate") LocalDateTime endDate,

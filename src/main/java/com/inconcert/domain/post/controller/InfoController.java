@@ -1,11 +1,13 @@
 package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.InfoService;
 import com.inconcert.domain.post.service.WriteService;
+import com.inconcert.domain.report.dto.ReportDTO;
+import com.inconcert.domain.report.service.ReportService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,7 @@ public class InfoController {
     private final UserService userService;
     private final EditService editService;
     private final WriteService writeService;
+    private final ReportService reportService;
 
     @GetMapping
     public String info(Model model) {
@@ -40,7 +43,7 @@ public class InfoController {
                              @RequestParam(name = "size", defaultValue = "10") int size,
                              Model model) {
 
-        Page<PostDto> postsPage = infoService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
+        Page<PostDTO> postsPage = infoService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
 
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("currentPage", page);
@@ -60,7 +63,7 @@ public class InfoController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDto> postsPage = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
+        Page<PostDTO> postsPage = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);
@@ -98,7 +101,7 @@ public class InfoController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = infoService.getPostDtoByPostId(postId);
+        PostDTO postDto = infoService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);
@@ -109,7 +112,7 @@ public class InfoController {
 
     @PostMapping("/{postCategoryTitle}/{postId}/edit")
     public String updatePost(@PathVariable("postId") Long postId,
-                             @ModelAttribute PostDto postDto,
+                             @ModelAttribute PostDTO postDto,
                              @RequestParam("newCategoryTitle") String newCategoryTitle,
                              @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
         Long updatedPostId = editService.updatePost(postId, postDto, "info", newCategoryTitle, newPostCategoryTitle);
@@ -117,8 +120,28 @@ public class InfoController {
     }
 
     @PostMapping("/write")
-    public String write(@ModelAttribute PostDto postDto){
+    public String write(@ModelAttribute PostDTO postDto){
         Post post = writeService.save(postDto);
         return "redirect:/info/" + post.getPostCategory().getTitle() + '/' + post.getId();
+    }
+
+    @GetMapping("/{postCategoryTitle}/{postId}/report")
+    public String reportForm(@PathVariable("postId") Long postId,
+                         Model model) {
+        model.addAttribute("reportDTO", new ReportDTO());
+        model.addAttribute("post", infoService.getPostDtoByPostId(postId));
+        model.addAttribute("user", userService.getAuthenticatedUser());
+        model.addAttribute("categoryTitle", "info");
+
+        return "report/reportform";
+    }
+
+    @PostMapping("/{postCategoryTitle}/{postId}/report")
+    public String report(@PathVariable("postId") Long postId,
+                         @PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @ModelAttribute ReportDTO reportDTO){
+        reportService.report(postId, "info", reportDTO.getType());
+
+        return "redirect:/info" + '/' + postCategoryTitle + '/' + postId;
     }
 }

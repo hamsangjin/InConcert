@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" href="/css/report/reportform.css">
+    <script>
+        function handleSubmit() {
+            alert('신고가 정상적으로 처리되었습니다.');
+            return true;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
+    <div class="title-container">
+        <h1>신고 처리</h1>
+    </div>
+    <div class="button-container">
+        <a th:href="@{/report}">신고 목록</a>
+    </div>
+
+    <div class="report-container">
+        <div class="report-title">
+                <div>
+                    <p> 작성자 </p>
+                    <p th:text="${report.reporter.nickname}"></p>
+                </div>
+                <div>
+                    <p> 제목 </p>
+                    <p th:text="${report.post.title}"></p>
+                </div>
+        </div>
+
+        <form class="report-content" method="post" th:object="${reportDTO}" th:action="@{'/report/' + ${report.id}}"
+              onsubmit="return handleSubmit()">
+            <p> 신고 처리 </p>
+            <div>
+                <p>
+                    <input type="radio" id="option1" name="result" value="deletePost" checked>
+                    <label for="option1">게시글 삭제</label>
+                </p>
+                <p>
+                    <input type="radio" id="option2" name="result" value="7day">
+                    <label for="option2">회원 정지 7일</label>
+                </p>
+                <p>
+                    <input type="radio" id="option3" name="result" value="30day">
+                    <label for="option3">회원 정지 30일</label>
+                </p>
+                <p>
+                    <input type="radio" id="option4" name="result" value="90day">
+                    <label for="option4">회원 정지 90일</label>
+                </p>
+                <p>
+                    <input type="radio" id="option5" name="result" value="1year">
+                    <label for="option5">회원 정지 1년</label>
+                </p>
+                <p>
+                    <input type="radio" id="option6" name="result" value="permanentBan">
+                    <label for="option6">회원 영구 정지</label>
+                </p>
+            </div>
+
+            <button type="submit">완료</button>
+        </form>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

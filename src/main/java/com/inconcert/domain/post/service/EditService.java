@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -35,7 +35,7 @@ public class EditService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Long updatePost(Long postId, PostDto postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
+    public Long updatePost(Long postId, PostDTO postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
         // 현재 카테고리에서 게시글 찾기
         Post currentPost = findPostByIdAndCategory(postId, currentCategoryTitle);
 

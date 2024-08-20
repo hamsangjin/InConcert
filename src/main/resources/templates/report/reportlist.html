@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" href="/css/report/reportlist.css">
+    <script>
+        function handleSubmit() {
+            alert('신고가 정상적으로 반려되었습니다.');
+            return true;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
+    <div class="title-container">
+        <h1>신고 목록</h1>
+    </div>
+
+    <div class="report-container">
+        <div th:each="report : ${reports}">
+            <div>
+                <div>
+                    <p class="report-title"> 신고자 </p>
+                    <p class="report-content" th:text="${report.reporter.nickname}"></p>
+                </div>
+                <div>
+                    <p class="report-title"> 신고 내용 </p>
+                    <span class="report-content" th:switch="${report.type}">
+                        <span th:case="'spam'"> 스팸 홍보/도배입니다. </span>
+                        <span th:case="'pornography'">음란물입니다.</span>
+                        <span th:case="'injustice'">불법정보을 포함하고 있습니다.</span>
+                        <span th:case="'youthHarmful'">청소년에게 유해한 내용입니다.</span>
+                        <span th:case="'abuse'">욕설/생명경시/혐오/차별적 표현입니다.</span>
+                        <span th:case="'personalInformation'">개인정보가 노출되었습니다.</span>
+                    </span>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <p class="report-title"> 게시글 </p>
+                    <a class="report-content" th:href="@{'/' + ${report.post.postCategory.category.title} + '/' + ${report.post.postCategory.title} + '/' + ${report.post.id}}">
+                        <p th:text="${#strings.length(report.post.title) > 23 ? #strings.substring(report.post.title, 0, 23) + '...' : report.post.title}"></p>
+                    </a>
+                </div>
+                <div>
+                    <p class="report-title"> 작성자 </p>
+                    <p class="report-content" th:text="${report.post.user.nickname}"></p>
+                </div>
+            </div>
+            <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/reject|}" method="post"
+                  th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
+                <button type="submit" class="chat-button" onclick="return confirmDelete()">삭제</button>
+            </form>
+
+            <div>
+                <form th:action="@{|report/${report.id}/delete|}" method="post" onsubmit="return handleSubmit()">
+                    <button type="submit">반려</button>
+                </form>
+                <a th:href="@{'/report/' + ${report.id}}">
+                    승인
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -327,7 +327,7 @@ header {
     gap: 10px;
 }
 
-.chat-button {
+.chat-button, .report-button {
     background-color: #f1f1f1;
     border: none;
     border-radius: 10px;
@@ -336,6 +336,7 @@ header {
     color: #333;
     cursor: pointer;
     font-weight: bold;
+    text-decoration: none;
 }
 
 .chat-button:hover {

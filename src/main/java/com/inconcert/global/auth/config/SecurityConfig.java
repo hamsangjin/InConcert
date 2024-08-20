@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/notifications/stream").permitAll() // SSE 경로는 인증 없이 접근 가능
                         .requestMatchers("/search").permitAll()
                         .requestMatchers("/api/**","/css/**", "/js/**", "/images/**", "/images/uploads/**", "/uploads/images/**").permitAll()
+                        .requestMatchers("/report").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
