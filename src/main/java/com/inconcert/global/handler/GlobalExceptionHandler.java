@@ -41,8 +41,8 @@ public class GlobalExceptionHandler {
     }
 
     // role을 찾을 수 없을 때
-    @ExceptionHandler(RoleNameNotFoundException.class)
-    public ResponseEntity<String> handleRoleNameNotFoundException(RoleNameNotFoundException ex) {
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<String> handleRoleNameNotFoundException(RoleNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -100,9 +100,9 @@ public class GlobalExceptionHandler {
     }
 
     // 연결된 채팅방이 있으면 삭제 불가
-    @ExceptionHandler(ChatDeleteException.class)
+    @ExceptionHandler(ExistChatPostDeleteException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleChatDeleteException(ChatDeleteException ex) {
+    public ResponseEntity<String> handleChatDeleteException(ExistChatPostDeleteException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -128,13 +128,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
-        return new ResponseEntity<>(ExceptionMessage.USER_NOT_FOUND.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity<>("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(KeywordNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleAKeywordNullPointerException(KeywordNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(Exception.class)

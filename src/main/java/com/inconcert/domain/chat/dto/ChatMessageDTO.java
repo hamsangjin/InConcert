@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessageDto {
+public class ChatMessageDTO {
     private Long id;
     private Long chatRoomId;
     private String username;
@@ -16,6 +16,6 @@ public class ChatMessageDto {
     private MessageType type;
 
     public enum MessageType {
-        ENTER, CHAT, LEAVE;
+        ENTER, CHAT, LEAVE
     }
 }

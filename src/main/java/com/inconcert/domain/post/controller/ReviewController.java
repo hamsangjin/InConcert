@@ -29,7 +29,7 @@ public class ReviewController {
     private final ReportService reportService;
 
     @GetMapping
-    public String review(Model model,
+    public String detailReview(Model model,
                          @RequestParam(name = "page", defaultValue = "0") int page,
                          @RequestParam(name = "size", defaultValue = "10") int size) {
 
@@ -50,7 +50,7 @@ public class ReviewController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDTO> postsPage = reviewService.findByKeywordAndFilters(keyword, period, type, page, size);
+        Page<PostDTO> postsPage = reviewService.getByKeywordAndFilters(keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);
@@ -79,8 +79,7 @@ public class ReviewController {
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/delete")
-    public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                             @PathVariable("postId") Long postId) {
+    public String deletePost(@PathVariable("postId") Long postId) {
         reviewService.deletePost(postId);
         return "redirect:/review";
     }

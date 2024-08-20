@@ -6,6 +6,7 @@ import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.MyPageRepostory;
 import com.inconcert.domain.user.repository.UserRepository;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,21 +28,21 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public Page<PostDTO> mypageBoard(Long userId, int page, int size) {
+    public Page<PostDTO> getMyPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDTO> mypageComment(Long userId, int page, int size) {
+    public Page<PostDTO> getMyCommentPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findPostsWithMyComments(userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDTO> mypageLike(Long userId, int page, int size) {
+    public Page<PostDTO> getMyLikePosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findPostsILiked(userId, pageable);
@@ -51,7 +52,7 @@ public class MyPageService {
     @Transactional
     public void editUser(MyPageEditReqDto reqDto) {
         User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());

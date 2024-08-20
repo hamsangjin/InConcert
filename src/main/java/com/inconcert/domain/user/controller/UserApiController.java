@@ -52,7 +52,7 @@ public class UserApiController {
             );
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userService.findByUsername(userDetails.getUsername());
+            User user = userService.getUserByUsername(userDetails.getUsername());
 
             // 이용 정지 당한 경우
             if(user.getBanDate().isAfter(LocalDate.now())){
@@ -130,7 +130,7 @@ public class UserApiController {
         Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
         String username = (String) claims.get("username");
 
-        User user = userService.findByUsername(username);
+        User user = userService.getUserByUsername(username);
 
         if(user == null) {
             throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
@@ -161,31 +161,31 @@ public class UserApiController {
     // 아이디 중복 확인
     @PostMapping("/user/id-check")
     public ResponseEntity<? super UsernameCheckRspDto> usernameCheck(@RequestBody @Valid UsernameCheckReqDto reqDto) {
-        return userService.usernameCheck(reqDto);
+        return userService.checkUsername(reqDto);
     }
 
     // 이메일 증복 확인
     @PostMapping("/user/email-check")
     public ResponseEntity<? super EmailCheckRspDto> emailCheck(@RequestBody @Valid EmailCheckReqDto reqDto) {
-        return userService.emailCheck(reqDto);
+        return userService.checkEmail(reqDto);
     }
 
     // 닉네임 중복 확인
     @PostMapping("/user/nickname-check")
     public ResponseEntity<? super NicknameCheckRspDto> nicknameCheck(@RequestBody @Valid NicknameCheckReqDto reqDto) {
-        return userService.nicknameCheck(reqDto);
+        return userService.checkNickname(reqDto);
     }
 
     // 전화번호 중복 확인
     @PostMapping("/user/phone-number-check")
     public ResponseEntity<? super PhoneNumberCheckRspDto> phoneNumberCheck(@RequestBody @Valid PhoneNumberCheckReqDto reqDto) {
-        return userService.phoneNumberCheck(reqDto);
+        return userService.checkPhoneNumber(reqDto);
     }
 
     // 인증번호 메일 전송
     @PostMapping("/user/email-certification")
     public ResponseEntity<? super EmailCertificationRspDto> emailCertification(@RequestBody @Valid EmailCertificationReqDto reqDto) {
-        return userService.emailCertification(reqDto);
+        return userService.sendCertificationNumber(reqDto);
     }
 
     // 인증번호 확인
@@ -233,7 +233,7 @@ public class UserApiController {
     // 벤 날짜 반환
     @GetMapping("/api/user/{username}/banDate")
     public ResponseEntity<?> getBanDate(@PathVariable("username") String username) {
-        User user = userService.findByUsername(username);
+        User user = userService.getUserByUsername(username);
 
         return ResponseEntity.ok(Map.of("banDate", user.getBanDate()));
     }

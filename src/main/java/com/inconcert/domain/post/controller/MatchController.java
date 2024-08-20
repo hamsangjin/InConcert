@@ -40,7 +40,7 @@ public class MatchController {
     }
 
     @GetMapping("/{postCategoryTitle}")
-    public String matchDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
+    public String detailMatch(@PathVariable("postCategoryTitle") String postCategoryTitle,
                               @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "10") int size,
                               Model model) {
@@ -67,7 +67,7 @@ public class MatchController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDTO> postsPage = matchService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, gender, mbti, page, size);
+        Page<PostDTO> postsPage = matchService.getByKeywordAndFilters(postCategoryTitle, keyword, period, type, gender, mbti, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);

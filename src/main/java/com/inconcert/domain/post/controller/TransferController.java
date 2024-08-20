@@ -38,10 +38,10 @@ public class TransferController {
     }
 
     @GetMapping("/{postCategoryTitle}")
-    public String transferDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                             @RequestParam(name = "page", defaultValue = "0") int page,
-                             @RequestParam(name = "size", defaultValue = "10") int size,
-                             Model model) {
+    public String detailTransfer(@PathVariable("postCategoryTitle") String postCategoryTitle,
+                                 @RequestParam(name = "page", defaultValue = "0") int page,
+                                 @RequestParam(name = "size", defaultValue = "10") int size,
+                                 Model model) {
 
         Page<PostDTO> postsPage = transferService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
 
@@ -63,7 +63,7 @@ public class TransferController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDTO> postsPage = transferService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
+        Page<PostDTO> postsPage = transferService.getByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);

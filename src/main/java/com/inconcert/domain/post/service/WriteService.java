@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.dto.ChatRoomDTO;
 import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.service.ChatService;
@@ -39,7 +39,6 @@ public class WriteService {
 
     @Transactional
     public Post save(PostDTO postDto){
-
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
@@ -83,9 +82,9 @@ public class WriteService {
                 Post savedMatchPost = matchRepository.save(post); // Post를 저장하여 ID 생성
 
                 // 채팅방 생성 및 Post와 연결
-                ChatRoomDto chatRoomDto = chatService.createChatRoom(post.getTitle());
+                ChatRoomDTO chatRoomDto = chatService.createChatRoom(post.getTitle());
                 ChatRoom chatRoom = chatRoomRepository.findById(chatRoomDto.getId())
-                        .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+                        .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
 
                 // Post와 채팅방 연결
                 savedMatchPost.assignChatRoom(chatRoom);
@@ -99,7 +98,7 @@ public class WriteService {
         };
 
         // 알림 생성 로직 추가
-        notificationService.keywordsNotification(post);
+        notificationService.createKeywordsNotification(post);
 
         return savePost;
     }

@@ -1,6 +1,6 @@
 package com.inconcert.domain.comment.entity;
 
-import com.inconcert.domain.comment.dto.CommentDto;
+import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.entity.BaseEntity;
@@ -63,8 +63,8 @@ public class Comment extends BaseEntity {
         parent.addReply(this);
     }
 
-    public CommentDto toCommentDto() {
-        return CommentDto.builder()
+    public CommentDTO toCommentDto() {
+        return CommentDTO.builder()
                 .id(id)
                 .user(user)
                 .post(post)

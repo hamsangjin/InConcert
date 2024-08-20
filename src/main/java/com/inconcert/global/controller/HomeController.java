@@ -45,7 +45,7 @@ public class HomeController {
                          @RequestParam(name = "size", defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDTO> postPage = homeService.findByKeyword(keyword, page, size);
+        Page<PostDTO> postPage = homeService.getPostDTOsByKeyword(keyword, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);

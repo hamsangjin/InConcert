@@ -17,10 +17,10 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class TransferService {
     private final TransferRepository transferRepository;
 
+    @Transactional(readOnly = true)
     public List<PostDTO> getAllTransferPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
             case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical");
@@ -31,12 +31,14 @@ public class TransferService {
         };
     }
 
+    @Transactional(readOnly = true)
     public Page<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
+    @Transactional(readOnly = true)
+    public Page<PostDTO> getByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -73,6 +75,7 @@ public class TransferService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public Post getPostByPostId(Long postId) {
         Optional<Post> post = transferRepository.findById(postId);
         return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
@@ -81,7 +84,7 @@ public class TransferService {
     @Transactional
     public void deletePost(Long postId) {
         Post post = transferRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException("삭제하려는 게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         transferRepository.delete(post);
     }
 }

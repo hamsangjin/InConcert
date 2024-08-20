@@ -17,16 +17,17 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
+    @Transactional(readOnly = true)
     public Page<PostDTO> getAllInfoPostsByPostCategory(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return reviewRepository.findPostsByPostCategoryTitle(pageable);
     }
 
-    public Page<PostDTO> findByKeywordAndFilters(String keyword, String period, String type, int page, int size) {
+    @Transactional(readOnly = true)
+    public Page<PostDTO> getByKeywordAndFilters(String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -63,6 +64,7 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public Post getPostByPostId(Long postId) {
         Optional<Post> post = reviewRepository.findById(postId);
         return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));

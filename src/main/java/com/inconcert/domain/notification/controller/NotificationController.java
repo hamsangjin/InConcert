@@ -1,6 +1,6 @@
 package com.inconcert.domain.notification.controller;
 
-import com.inconcert.domain.notification.dto.NotificationDto;
+import com.inconcert.domain.notification.dto.NotificationDTO;
 import com.inconcert.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +29,8 @@ public class NotificationController {
     }
 
     @PostMapping("/keyword")
-    public ResponseEntity<?> setKeyword(@RequestParam("keyword") String keyword) {
-        notificationService.setKeyword(keyword);
+    public ResponseEntity<?> addKeyword(@RequestParam("keyword") String keyword) {
+        notificationService.addKeyword(keyword);
         return ResponseEntity.ok("키워드 등록 완료");
     }
 
@@ -47,13 +47,13 @@ public class NotificationController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<NotificationDto>> getAllNotifications() {
-        List<NotificationDto> notificationDtos = notificationService.getAllNotifications();
-        return ResponseEntity.ok(notificationDtos);
+    public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
+        List<NotificationDTO> notificationDTOS = notificationService.getAllNotifications();
+        return ResponseEntity.ok(notificationDTOS);
     }
 
     @GetMapping("/{type}")
-    public List<NotificationDto> getNotificationsByType(@PathVariable("type") String type) {
+    public List<NotificationDTO> getNotificationsByType(@PathVariable("type") String type) {
         return notificationService.getNotificationsByTypeAndUser(type);
     }
 

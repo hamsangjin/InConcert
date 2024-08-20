@@ -6,6 +6,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.global.exception.CategoryNotFoundException;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.repository.HomeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,11 +39,11 @@ public class HomeService {
             case "review" -> reviewRepository.findPostsByCategoryTitle(pageable);
             case "match" -> matchRepository.findPostsByCategoryTitle(pageable);
             case "transfer" -> transferRepository.findPostsByCategoryTitle(pageable);
-            default -> throw new CategoryNotFoundException(categoryTitle + "라는 카테고리를 찾을 수 없습니다.");
+            default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
         };
     }
 
-    public Page<PostDTO> findByKeyword(String keyword, int page, int size) {
+    public Page<PostDTO> getPostDTOsByKeyword(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return homeRepository.findByKeyword(keyword, pageable);

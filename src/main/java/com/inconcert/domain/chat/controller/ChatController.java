@@ -1,7 +1,7 @@
 package com.inconcert.domain.chat.controller;
 
-import com.inconcert.domain.chat.dto.ChatMessageDto;
-import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.dto.ChatMessageDTO;
+import com.inconcert.domain.chat.dto.ChatRoomDTO;
 import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
@@ -23,7 +23,7 @@ public class ChatController {
     // 사용자의 채팅 목록 보기
     @GetMapping("/list")
     public String getChatList(Model model) {
-        List<ChatRoomDto> chatRooms = chatService.getChatRoomDtosByUserId();
+        List<ChatRoomDTO> chatRooms = chatService.getChatRoomDtosByUserId();
         model.addAttribute("chatRooms", chatRooms);
         return "chat/list";
     }
@@ -44,10 +44,10 @@ public class ChatController {
                 .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
 
         // 유저가 채팅방에 없으면 채팅방 리스트로 리다이렉트
-        if(!chatService.userFound(chatRoomId)) return "redirect:/chat/list";
+        if(!chatService.isExistUser(chatRoomId)) return "redirect:/chat/list";
 
-        ChatRoomDto chatRoom = chatService.getChatRoomDto(chatRoomId);
-        List<ChatMessageDto> messages = chatService.getMessageDtosByChatRoom(chatRoomId);
+        ChatRoomDTO chatRoom = chatService.getChatRoomDto(chatRoomId);
+        List<ChatMessageDTO> messages = chatService.getMessageDtosByChatRoom(chatRoomId);
         model.addAttribute("chatRoom", chatRoom);
         model.addAttribute("messages", messages);
         model.addAttribute("user", user);

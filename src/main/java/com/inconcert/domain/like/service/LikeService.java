@@ -8,6 +8,7 @@ import com.inconcert.domain.post.repository.*;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.CategoryNotFoundException;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.PostNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -43,16 +44,17 @@ public class LikeService {
                     .post(post)
                     .user(user)
                     .build();
-            if(post.getUser().getId() != user.getId())  notificationService.likesNotification(post, user, true);
+            if(post.getUser().getId() != user.getId())  notificationService.createLikesNotification(post, user, true);
             likeRepository.save(like);
         } else {
-            if(post.getUser().getId() != user.getId())   notificationService.likesNotification(post, user, false);
+            if(post.getUser().getId() != user.getId())   notificationService.createLikesNotification(post, user, false);
             // 이미 좋아요를 누른 경우, 좋아요 취소
             likeRepository.delete(findLike.get());
         }
         return true;
     }
 
+    @Transactional(readOnly = true)
     public boolean isLikedByUser(Long postId, String categoryTitle) {
         Post post = getPost(postId, categoryTitle);
 
@@ -66,13 +68,13 @@ public class LikeService {
     private Post getPost(Long postId, String categoryTitle) {
         return switch (categoryTitle) {
             case "info" -> infoRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.LIKE_NOT_FOUND.getMessage()));
             case "match" -> matchRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.LIKE_NOT_FOUND.getMessage()));
             case "review" -> reviewRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.LIKE_NOT_FOUND.getMessage()));
             case "transfer" -> transferRepository.findById(postId)
-                    .orElseThrow(() -> new PostNotFoundException("게시글을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.LIKE_NOT_FOUND.getMessage()));
             default -> throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
         };
     }
@@ -81,6 +83,7 @@ public class LikeService {
         Optional<User> optionalUser = userService.getAuthenticatedUser();
         if (optionalUser.isEmpty()) return null;
 
-        return optionalUser.orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+        return optionalUser
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
     }
 }

@@ -1,6 +1,6 @@
 package com.inconcert.domain.notification.service;
 
-import com.inconcert.domain.notification.dto.NotificationDto;
+import com.inconcert.domain.notification.dto.NotificationDTO;
 import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.notification.repository.NotificationRepository;
 import com.inconcert.domain.post.entity.Post;
@@ -8,6 +8,7 @@ import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.ExceptionMessage;
+import com.inconcert.global.exception.KeywordNotFoundException;
 import com.inconcert.global.exception.NotificationNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class NotificationService {
     private final RedisTemplate<String, String> redisTemplate;
     private final NotificationRepository notificationRepository;
@@ -32,7 +32,7 @@ public class NotificationService {
     private final SseEmitters sseEmitters;
     private final UserService userService;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public SseEmitter createSseEmitter() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
@@ -40,6 +40,7 @@ public class NotificationService {
         return sseEmitters.createForUser(user.getId());
     }
 
+    @Transactional(readOnly = true)
     public Set<String> getCurrentKeywords() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
@@ -48,8 +49,8 @@ public class NotificationService {
         return redisTemplate.opsForSet().members(key);
     }
 
-    @Transactional
-    public void setKeyword(String keyword) {
+    @Transactional(readOnly = true)
+    public void addKeyword(String keyword) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
@@ -58,7 +59,7 @@ public class NotificationService {
         redisTemplate.expire(key, 7, TimeUnit.DAYS);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void removeKeyword(String keyword) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
@@ -69,9 +70,9 @@ public class NotificationService {
 
     // Redis 에 저장된 키워드를 가진 사용자만을 대상으로 알림을 생성
     @Transactional
-    public void keywordsNotification(Post post) {
-        try {
-            Set<String> keys = redisTemplate.keys("keywords:*");
+    public void createKeywordsNotification(Post post) {
+        Set<String> keys = redisTemplate.keys("keywords:*");
+        try{
             for (String key : keys) {
                 Long userId = Long.parseLong(key.split(":")[1]);
                 if (userId.equals(post.getUser().getId())) continue;
@@ -99,18 +100,19 @@ public class NotificationService {
                                 .post(post)
                                 .build();
                         notificationRepository.save(notification);
-                        sseEmitters.sendToUser(userId, convertToDto(notification));
+                        sseEmitters.sendToUser(userId, convertToDTO(notification));
                     }
                 }
             }
-        } catch (Exception e) {
-            log.error("Error in publishNotification", e);
+        }catch (NullPointerException e){
+            throw new KeywordNotFoundException(ExceptionMessage.KEYWORD_NOT_FOUND.getMessage());
         }
+
     }
 
     // 댓글 알림 생성
     @Transactional
-    public void commentsNotification(Post post, String content) {
+    public void createCommentsNotification(Post post, String content) {
         String message = "[댓글 알림] " + content;
         User user = userRepository.findById(post.getUser().getId()).get();
 
@@ -122,12 +124,12 @@ public class NotificationService {
                 .type("comment")
                 .build();
         notificationRepository.save(notification);
-        sseEmitters.sendToUser(user.getId(), convertToDto(notification));
+        sseEmitters.sendToUser(user.getId(), convertToDTO(notification));
     }
 
     // 좋아요 알림 생성
     @Transactional
-    public void likesNotification(Post post, User user, boolean liked) {
+    public void createLikesNotification(Post post, User user, boolean liked) {
         User postOwner = post.getUser();
 
         if(liked){
@@ -141,7 +143,7 @@ public class NotificationService {
                     .type("likes")
                     .build();
             notificationRepository.save(notification);
-            sseEmitters.sendToUser(postOwner.getId(), convertToDto(notification));
+            sseEmitters.sendToUser(postOwner.getId(), convertToDTO(notification));
         } else{
             notificationRepository.deleteByTypeAndUserIdAndPostId(postOwner.getId(), post.getId());
         }
@@ -155,23 +157,25 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-    public List<NotificationDto> getAllNotifications() {
+    @Transactional(readOnly = true)
+    public List<NotificationDTO> getAllNotifications() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         List<Notification> notifications = notificationRepository.findByUserOrderByIsReadAscCreatedAtDesc(user);
 
         return notifications.stream()
-                .map(this::convertToDto)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<NotificationDto> getNotificationsByTypeAndUser(String type) {
-        User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+    public List<NotificationDTO> getNotificationsByTypeAndUser(String type) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         List<Notification> notifications = notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId());
 
         return notifications.stream()
-                .map(this::convertToDto)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -184,9 +188,9 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private NotificationDto convertToDto(Notification notification) {
+    private NotificationDTO convertToDTO(Notification notification) {
         Post post = notification.getPost();
-        return new NotificationDto(
+        return new NotificationDTO(
                 notification.getId(),
                 notification.getKeyword(),
                 notification.getMessage(),

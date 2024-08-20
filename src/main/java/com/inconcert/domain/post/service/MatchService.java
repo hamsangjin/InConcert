@@ -38,7 +38,7 @@ public class MatchService {
         return matchRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti, int page, int size) {
+    public Page<PostDTO> getByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -88,7 +88,7 @@ public class MatchService {
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         if (post.hasChatRoom() && post.getChatRoom().getUsers().size() >= 2) {
-            throw new ChatDeleteException("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
+            throw new ExistChatPostDeleteException(ExceptionMessage.EXIST_CHAT_POST_DELETE.getMessage());
         }
         matchRepository.delete(post);
     }
