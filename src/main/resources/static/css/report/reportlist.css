@@ -1,0 +1,172 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    width: 45%;
+    max-width: 45%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* chat 화면 */
+
+.title-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.title-container > h1{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #00A885;
+    color: #00A885;
+}
+
+.report-container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    align-items: center;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.report-container > div{
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.report-container > div > div{
+    display: flex;
+    align-items: center;
+}
+
+.report-container > div > div > div{
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}
+
+.report-container > div > div > div:first-child{
+    flex: 5;
+}
+
+.report-container > div > div > div:nth-child(2){
+    flex: 5;
+}
+
+.report-title{
+    color: #00a885;
+    font-size: 18px;
+    font-weight: bold;
+    padding-right: 10px;
+    border-right: 1px solid #ccc;
+    flex: 1;
+    text-align: right;
+}
+
+.report-content{
+    color: #6f6f6f;
+    font-size: 18px;
+    padding-left: 10px;
+    text-decoration: none;
+    flex: 4;
+}
+
+a.report-content:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.report-container > div > div:nth-child(3){
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.report-container > div > div:nth-child(3) > a{
+    margin-right: 5px;
+}
+
+.report-container > div > div:nth-child(3) > form > button,
+.report-container > div > div:nth-child(3) > a{
+    border: none;
+    background-color: transparent;
+    color: #6f6f6f;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.report-container > div > div:nth-child(3) > form > button:hover,
+.report-container > div > div:nth-child(3) > a:hover{
+    color: #00a885;
+    cursor: pointer;
+}

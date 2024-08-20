@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDto {
+public class PostDTO {
     private Long id;
     private String title;
     private Category category;
@@ -36,7 +36,7 @@ public class PostDto {
     private User user;
 
     // post 저장
-    public static Post toEntity(PostDto postDto, PostCategory postCategory) {
+    public static Post toEntity(PostDTO postDto, PostCategory postCategory) {
         return Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
@@ -50,7 +50,7 @@ public class PostDto {
                 .build();
     }
 
-    public PostDto(Long id, String title, String categoryTitle, String postCategoryTitle, String thumbnailUrl,
+    public PostDTO(Long id, String title, String categoryTitle, String postCategoryTitle, String thumbnailUrl,
                    String nickname, int viewCount, int likeCount, int commentCount, boolean isNew, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
@@ -65,7 +65,7 @@ public class PostDto {
         this.createdAt = createdAt;
     }
 
-    public PostDto(Long id, String postCategoryTitle, String thumbnailUrl) {
+    public PostDTO(Long id, String postCategoryTitle, String thumbnailUrl) {
         this.id = id;
         this.postCategoryTitle = postCategoryTitle;
         this.thumbnailUrl = thumbnailUrl;

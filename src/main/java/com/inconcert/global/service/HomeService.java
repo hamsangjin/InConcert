@@ -1,6 +1,6 @@
 package com.inconcert.global.service;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
@@ -26,11 +26,11 @@ public class HomeService {
     private final TransferRepository transferRepository;
     private final HomeRepository homeRepository;
 
-    public List<PostDto> findLatestPostsByPostCategory(){
+    public List<PostDTO> findLatestPostsByPostCategory(){
         return infoRepository.findLatestPostsByPostCategory();
     }
 
-    public List<PostDto> getAllCategoryPosts(String categoryTitle) {
+    public List<PostDTO> getAllCategoryPosts(String categoryTitle) {
         PageRequest pageable = PageRequest.of(0, 8);
 
         return switch (categoryTitle) {
@@ -42,7 +42,7 @@ public class HomeService {
         };
     }
 
-    public Page<PostDto> findByKeyword(String keyword, int page, int size) {
+    public Page<PostDTO> findByKeyword(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return homeRepository.findByKeyword(keyword, pageable);

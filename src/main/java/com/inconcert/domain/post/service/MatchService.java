@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.util.DateUtil;
@@ -23,7 +23,7 @@ import java.util.*;
 public class MatchService {
     private final MatchRepository matchRepository;
 
-    public List<PostDto> getAllMatchPostsByPostCategory(String postCategoryTitle) {
+    public List<PostDTO> getAllMatchPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
             case "musical" -> matchRepository.findPostsByPostCategoryTitle("musical");
             case "concert" -> matchRepository.findPostsByPostCategoryTitle("concert");
@@ -33,12 +33,12 @@ public class MatchService {
         };
     }
 
-    public Page<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
+    public Page<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return matchRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti, int page, int size) {
+    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -51,7 +51,7 @@ public class MatchService {
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
-    public PostDto getPostDtoByPostId(Long postId) {
+    public PostDTO getPostDtoByPostId(Long postId) {
         Post findPost = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -59,7 +59,7 @@ public class MatchService {
         findPost.incrementViewCount();
         Post post = matchRepository.save(findPost);
 
-        return PostDto.builder()
+        return PostDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

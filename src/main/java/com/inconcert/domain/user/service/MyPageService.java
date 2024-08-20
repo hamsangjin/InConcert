@@ -1,6 +1,6 @@
 package com.inconcert.domain.user.service;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.service.ImageService;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.entity.User;
@@ -27,21 +27,21 @@ public class MyPageService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public Page<PostDto> mypageBoard(Long userId, int page, int size) {
+    public Page<PostDTO> mypageBoard(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDto> mypageComment(Long userId, int page, int size) {
+    public Page<PostDTO> mypageComment(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findPostsWithMyComments(userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<PostDto> mypageLike(Long userId, int page, int size) {
+    public Page<PostDTO> mypageLike(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return myPageRepostory.findPostsILiked(userId, pageable);

@@ -69,6 +69,9 @@ public class User {
     @Column
     private Integer point = 10;
 
+    @Column(name = "ban_date")
+    private LocalDate banDate = LocalDate.now().minusDays(1);
+
     // ----------------------------
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -123,6 +126,8 @@ public class User {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void updateBanDate(LocalDate newBanDate) {this.banDate = newBanDate;}
 
     // 유저 정보 수정
     public void updateUser(MyPageEditReqDto reqDto, String password, String profileImageUrl) {

@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.domain.post.util.DateUtil;
@@ -21,7 +21,7 @@ import java.util.*;
 public class TransferService {
     private final TransferRepository transferRepository;
 
-    public List<PostDto> getAllTransferPostsByPostCategory(String postCategoryTitle) {
+    public List<PostDTO> getAllTransferPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
             case "musical" -> transferRepository.findPostsByPostCategoryTitle("musical");
             case "concert" -> transferRepository.findPostsByPostCategoryTitle("concert");
@@ -31,12 +31,12 @@ public class TransferService {
         };
     }
 
-    public Page<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
+    public Page<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
+    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -47,7 +47,7 @@ public class TransferService {
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
-    public PostDto getPostDtoByPostId(Long postId) {
+    public PostDTO getPostDtoByPostId(Long postId) {
         Post findPost = transferRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -55,7 +55,7 @@ public class TransferService {
         findPost.incrementViewCount();
         Post post = transferRepository.save(findPost);
 
-        return PostDto.builder()
+        return PostDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.repository;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface MatchRepository extends JpaRepository<Post, Long> {
     // /home에서 동행 정보 게시물 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -26,10 +26,10 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.user u " +
             "WHERE c.title = 'match' " +
             "ORDER BY p.createdAt DESC")
-    List<PostDto> findPostsByCategoryTitle(Pageable pageable);
+    List<PostDTO> findPostsByCategoryTitle(Pageable pageable);
 
     // /match 게시물들 카테고리에 맞게 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -37,10 +37,10 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'match' AND pc.title = :postCategoryTitle")
-    List<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
+    List<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /match/categoryTitle에서 게시물들 알맞게 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -48,11 +48,11 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'match' AND pc.title = :postCategoryTitle")
-    Page<PostDto> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
+    Page<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
                                                Pageable pageable);
 
     // /match/categoryTitle에서 검색한 경우 검색 결과 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDto(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
             "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
@@ -67,7 +67,7 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "AND p.createdAt BETWEEN :startDate AND :endDate " +
             "AND (:gender IS NULL OR u.gender = :gender) " +
             "AND (:mbti IS NULL OR u.mbti = :mbti)")
-    Page<PostDto> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
+    Page<PostDTO> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                           @Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,
                                           @Param("endDate") LocalDateTime endDate,

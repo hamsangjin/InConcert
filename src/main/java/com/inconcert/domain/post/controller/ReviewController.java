@@ -1,11 +1,13 @@
 package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.ReviewService;
 import com.inconcert.domain.post.service.WriteService;
+import com.inconcert.domain.report.dto.ReportDTO;
+import com.inconcert.domain.report.service.ReportService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,13 +26,14 @@ public class ReviewController {
     private final UserService userService;
     private final EditService editService;
     private final WriteService writeService;
+    private final ReportService reportService;
 
     @GetMapping
     public String review(Model model,
                          @RequestParam(name = "page", defaultValue = "0") int page,
                          @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Page<PostDto> postsPage = reviewService.getAllInfoPostsByPostCategory(page, size);
+        Page<PostDTO> postsPage = reviewService.getAllInfoPostsByPostCategory(page, size);
 
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("currentPage", page);
@@ -47,7 +50,7 @@ public class ReviewController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDto> postsPage = reviewService.findByKeywordAndFilters(keyword, period, type, page, size);
+        Page<PostDTO> postsPage = reviewService.findByKeywordAndFilters(keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);
@@ -85,7 +88,7 @@ public class ReviewController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = reviewService.getPostDtoByPostId(postId);
+        PostDTO postDto = reviewService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);
@@ -96,7 +99,7 @@ public class ReviewController {
 
     @PostMapping("/{postCategoryTitle}/{postId}/edit")
     public String updatePost(@PathVariable("postId") Long postId,
-                             @ModelAttribute PostDto postDto,
+                             @ModelAttribute PostDTO postDto,
                              @RequestParam("newCategoryTitle") String newCategoryTitle,
                              @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
         Long updatedPostId = editService.updatePost(postId, postDto, "review", newCategoryTitle, newPostCategoryTitle);
@@ -104,8 +107,28 @@ public class ReviewController {
     }
 
     @PostMapping("/write")
-    public String write(@ModelAttribute PostDto postDto) {
+    public String write(@ModelAttribute PostDTO postDto) {
         Post post = writeService.save(postDto);
         return "redirect:/review/" + post.getPostCategory().getTitle() + '/' + post.getId();
+    }
+
+    @GetMapping("/{postCategoryTitle}/{postId}/report")
+    public String reportForm(@PathVariable("postId") Long postId,
+                             Model model) {
+
+        model.addAttribute("reportDTO", new ReportDTO());
+        model.addAttribute("post", reviewService.getPostDtoByPostId(postId));
+        model.addAttribute("user", userService.getAuthenticatedUser());
+        model.addAttribute("categoryTitle", "review");
+        return "report/reportform";
+    }
+
+    @PostMapping("/{postCategoryTitle}/{postId}/report")
+    public String report(@PathVariable("postId") Long postId,
+                         @PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @ModelAttribute ReportDTO reportDTO){
+
+        reportService.report(postId, "review", reportDTO.getType());
+        return "redirect:/info" + '/' + postCategoryTitle + '/' + postId;
     }
 }

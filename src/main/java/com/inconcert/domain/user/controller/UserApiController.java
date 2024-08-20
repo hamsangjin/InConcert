@@ -28,6 +28,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,12 @@ public class UserApiController {
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = userService.findByUsername(userDetails.getUsername());
+
+            // 이용 정지 당한 경우
+            if(user.getBanDate().isAfter(LocalDate.now())){
+                return ResponseEntity.status(HttpStatus.LOCKED).build();
+            }
+
             List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
             String accessToken = jwtTokenizer.createAccessToken(
@@ -221,5 +228,13 @@ public class UserApiController {
         catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
         }
+    }
+
+    // 벤 날짜 반환
+    @GetMapping("/api/user/{username}/banDate")
+    public ResponseEntity<?> getBanDate(@PathVariable("username") String username) {
+        User user = userService.findByUsername(username);
+
+        return ResponseEntity.ok(Map.of("banDate", user.getBanDate()));
     }
 }

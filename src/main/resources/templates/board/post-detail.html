@@ -69,6 +69,11 @@
                           th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
                         <button type="submit" class="chat-button" onclick="return confirmDelete()">삭제</button>
                     </form>
+                    <a th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/report|}"
+                       th:if="${user?.isPresent() && post?.nickname != user.get().nickname}"
+                       class="report-button">
+                        신고
+                    </a>
                 </div>
                 <div class="date-row">
                     <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
@@ -97,7 +102,7 @@
             <button class="sort-button" onclick="sortComments('desc')">최신순</button>
         </div>
         <div class="comment-form-main">
-            <form th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/new'}"
+            <form th:action="@{'/' + ${categoryTitle} + '/' + ${post.postCategory.title} + '/' + ${post.id} + '/comments/new'}"
                   method="post" class="comment-form" th:object="${createForm}">
                 <textarea name="content" placeholder="타인의 권리를 침해하거나 명예를 훼손하는 댓글은 운영원칙 및 관련 법률에 의해 제재를 받을 수 있습니다."
                           class="comment-textarea"></textarea>
