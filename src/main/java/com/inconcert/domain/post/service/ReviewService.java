@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.util.DateUtil;
@@ -21,12 +21,12 @@ import java.util.*;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
 
-    public Page<PostDto> getAllInfoPostsByPostCategory(int page, int size) {
+    public Page<PostDTO> getAllInfoPostsByPostCategory(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return reviewRepository.findPostsByPostCategoryTitle(pageable);
     }
 
-    public Page<PostDto> findByKeywordAndFilters(String keyword, String period, String type, int page, int size) {
+    public Page<PostDTO> findByKeywordAndFilters(String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -37,7 +37,7 @@ public class ReviewService {
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
-    public PostDto getPostDtoByPostId(Long postId) {
+    public PostDTO getPostDtoByPostId(Long postId) {
         Post findPost = reviewRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -45,7 +45,7 @@ public class ReviewService {
         findPost.incrementViewCount();
         Post post = reviewRepository.save(findPost);
 
-        return PostDto.builder()
+        return PostDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

@@ -1,6 +1,6 @@
 package com.inconcert.domain.user.controller;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.entity.User;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/mypage")
@@ -64,7 +62,7 @@ public class MyPageController {
                               @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Page<PostDto> postPage = myPageService.mypageBoard(userId, page, size);
+        Page<PostDTO> postPage = myPageService.mypageBoard(userId, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
@@ -80,7 +78,7 @@ public class MyPageController {
                                 @RequestParam(name = "page", defaultValue = "0") int page,
                                 @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Page<PostDto> postPage = myPageService.mypageComment(userId, page, size);
+        Page<PostDTO> postPage = myPageService.mypageComment(userId, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
@@ -95,7 +93,7 @@ public class MyPageController {
                              @PathVariable("userId") Long userId,
                              @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "10") int size) {
-        Page<PostDto> postPage = myPageService.mypageLike(userId, page, size);
+        Page<PostDTO> postPage = myPageService.mypageLike(userId, page, size);
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -109,7 +107,7 @@ public class MyPageController {
                              @PathVariable("userId") Long userId,
                              @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "10") int size) {
-        Page<PostDto> postPage = myPageService.mypageBoard(userId, page, size);
+        Page<PostDTO> postPage = myPageService.mypageBoard(userId, page, size);
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());

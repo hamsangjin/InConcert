@@ -15,11 +15,6 @@ import java.util.stream.Collectors;
 public class ChatNotificationController {
     private final ChatNotificationService chatNotificationService;
 
-    // 채팅방에 대한 알림 조회
-//    @GetMapping("/{chatRoomId}")
-//    public List<NotificationMessage> getNotifications(@PathVariable Long chatRoomId) {
-//        return chatNotificationService.getNotificationsByChatRoomId(chatRoomId);
-//    }
     @GetMapping("/requestlist")
     public List<NotificationMessage> getRequestList(@RequestParam("userId") Long userId) {
         List<ChatNotification> notifications = chatNotificationService.findByUserId(userId);

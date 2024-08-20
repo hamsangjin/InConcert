@@ -1,7 +1,7 @@
 package com.inconcert.domain.post.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.InfoService;
@@ -40,7 +40,7 @@ public class InfoController {
                              @RequestParam(name = "size", defaultValue = "10") int size,
                              Model model) {
 
-        Page<PostDto> postsPage = infoService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
+        Page<PostDTO> postsPage = infoService.getAllInfoPostsByPostCategory(postCategoryTitle, page, size);
 
         model.addAttribute("postsPage", postsPage);
         model.addAttribute("currentPage", page);
@@ -60,7 +60,7 @@ public class InfoController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDto> postsPage = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
+        Page<PostDTO> postsPage = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);
@@ -98,7 +98,7 @@ public class InfoController {
     @GetMapping("/{postCategoryTitle}/{postId}/edit")
     public String editPostForm(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                @PathVariable("postId") Long postId, Model model) {
-        PostDto postDto = infoService.getPostDtoByPostId(postId);
+        PostDTO postDto = infoService.getPostDtoByPostId(postId);
 
 
         model.addAttribute("post", postDto);
@@ -109,7 +109,7 @@ public class InfoController {
 
     @PostMapping("/{postCategoryTitle}/{postId}/edit")
     public String updatePost(@PathVariable("postId") Long postId,
-                             @ModelAttribute PostDto postDto,
+                             @ModelAttribute PostDTO postDto,
                              @RequestParam("newCategoryTitle") String newCategoryTitle,
                              @RequestParam("newPostCategoryTitle") String newPostCategoryTitle) {
         Long updatedPostId = editService.updatePost(postId, postDto, "info", newCategoryTitle, newPostCategoryTitle);
@@ -117,7 +117,7 @@ public class InfoController {
     }
 
     @PostMapping("/write")
-    public String write(@ModelAttribute PostDto postDto){
+    public String write(@ModelAttribute PostDTO postDto){
         Post post = writeService.save(postDto);
         return "redirect:/info/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }

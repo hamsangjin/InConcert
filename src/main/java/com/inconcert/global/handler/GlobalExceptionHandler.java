@@ -72,6 +72,48 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    // 이미 채팅방에 속해있을 때
+    @ExceptionHandler(AlreadyInChatRoomException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<String> handleAlreadyInChatRoomException(AlreadyInChatRoomException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    // 채팅방이 모집 완료되었을 때
+    @ExceptionHandler(AlreadyFullChatRoomException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleAlreadyFullChatRoomException(AlreadyFullChatRoomException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // 채팅방에 존재하지 않을 때
+    @ExceptionHandler(AlreadyOutOfChatRoomException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleAlreadyOutOfChatRoomException(AlreadyOutOfChatRoomException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // host는 마지막에 나가야 함
+    @ExceptionHandler(HostExitException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<String> handleHostExitException(HostExitException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    // 채팅방 host가 아니면 강퇴 불가
+    @ExceptionHandler(KickException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<String> handleKickException(KickException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    // 강퇴당한 유저는 메시지를 보낼 수 없음
+    @ExceptionHandler(UserKickedOutException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleUserKickedOutException(UserKickedOutException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
         return new ResponseEntity<>(ExceptionMessage.USER_NOT_FOUND.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -81,6 +123,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
         return new ResponseEntity<>("접근 권한이 없습니다.", HttpStatus.FORBIDDEN);
     }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleAllExceptions(Exception ex) {

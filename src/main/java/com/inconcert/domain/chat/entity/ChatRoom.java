@@ -25,7 +25,7 @@ public class ChatRoom {
     private String roomName;
 
     @ManyToOne
-    @JoinColumn(name = "host_user_id", nullable = false)
+    @JoinColumn(name = "host_user_id")
     private User hostUser;
 
     @ManyToMany
@@ -36,8 +36,8 @@ public class ChatRoom {
     )
     private List<User> users = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "post_id", nullable = true)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)

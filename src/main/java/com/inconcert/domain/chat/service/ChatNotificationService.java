@@ -80,25 +80,8 @@ public class ChatNotificationService {
         chatNotificationRepository.deleteById(notificationId);
     }
 
-    // 알림 불러오기
-//    @Transactional(readOnly = true)
-//    public List<NotificationMessage> getNotificationsByChatRoomId(Long chatRoomId) {
-//        List<ChatNotification> chatNotifications = chatNotificationRepository.findByChatRoomId(chatRoomId);
-//        return chatNotifications.stream()
-//                .map(this::convertToDto)
-//                .collect(Collectors.toList());
-//    }
-
-//    private NotificationMessage convertToDto(ChatNotification chatNotification) {
-//        return NotificationMessage.builder()
-//                .message(chatNotification.getMessage())
-//                .chatRoomId(chatNotification.getChatRoom().getId())
-//                .userId(chatNotification.getUser().getId())
-//                .build();
-//    }
-
-    // 사용자별로 거절된 알림 불러오기
-    public List<NotificationMessage> findRejectedNotificationsByUserId(Long userId) {
+    // 사용자의 채팅 알림 불러오기
+    public List<NotificationMessage> findNotificationsByUserId(Long userId) {
         List<ChatNotification> notifications = chatNotificationRepository.findByUserId(userId);
         return notifications.stream()
                 .map(NotificationMessage::new)

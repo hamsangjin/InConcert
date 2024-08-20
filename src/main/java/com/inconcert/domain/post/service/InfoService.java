@@ -1,7 +1,7 @@
 package com.inconcert.domain.post.service;
 
 import com.inconcert.domain.crawling.service.PerformanceService;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.util.DateUtil;
@@ -23,7 +23,7 @@ public class InfoService {
     private final InfoRepository infoRepository;
     private final PerformanceService performanceService;
 
-    public List<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle) {
+    public List<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
             case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical");
             case "concert" -> infoRepository.findPostsByPostCategoryTitle("concert");
@@ -33,12 +33,12 @@ public class InfoService {
         };
     }
 
-    public Page<PostDto> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
+    public Page<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return infoRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDto> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
+    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
@@ -49,7 +49,7 @@ public class InfoService {
 
     // postId를 가지고 게시물을 조회해서 postDto을 리턴해주는 메소드
     @Transactional
-    public PostDto getPostDtoByPostId(Long postId) {
+    public PostDTO getPostDtoByPostId(Long postId) {
         Post findPost = infoRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -57,7 +57,7 @@ public class InfoService {
         findPost.incrementViewCount();
         Post post = infoRepository.save(findPost);
 
-        return PostDto.builder()
+        return PostDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())

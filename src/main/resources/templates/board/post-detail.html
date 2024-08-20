@@ -73,6 +73,7 @@
                             삭제
                         </button>
                     </form>
+                    <input type="hidden" id="chatRoomId" th:value="${post.chatRoomId}">
                     <div th:if="${errorMessage}" id="errorMessage" th:text="${errorMessage}" style="display: none;"></div>
                 </div>
                 <div class="date-row">

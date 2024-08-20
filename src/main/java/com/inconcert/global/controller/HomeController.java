@@ -1,6 +1,6 @@
 package com.inconcert.global.controller;
 
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.global.service.CrawlingService;
 import com.inconcert.global.service.HomeService;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,11 @@ public class HomeController {
         crawlingService.crawlIfNecessary();
 
         // 기존의 게시글 로드
-        List<PostDto> infoPosts = homeService.getAllCategoryPosts("info");
-        List<PostDto> reviewPosts = homeService.getAllCategoryPosts("review");
-        List<PostDto> matchPosts = homeService.getAllCategoryPosts("match");
-        List<PostDto> transferPosts = homeService.getAllCategoryPosts("transfer");
-        List<PostDto> popularPosts = homeService.findLatestPostsByPostCategory();
+        List<PostDTO> infoPosts = homeService.getAllCategoryPosts("info");
+        List<PostDTO> reviewPosts = homeService.getAllCategoryPosts("review");
+        List<PostDTO> matchPosts = homeService.getAllCategoryPosts("match");
+        List<PostDTO> transferPosts = homeService.getAllCategoryPosts("transfer");
+        List<PostDTO> popularPosts = homeService.findLatestPostsByPostCategory();
 
         model.addAttribute("infoPosts", infoPosts);
         model.addAttribute("reviewPosts", reviewPosts);
@@ -45,7 +45,7 @@ public class HomeController {
                          @RequestParam(name = "size", defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDto> postPage = homeService.findByKeyword(keyword, page, size);
+        Page<PostDTO> postPage = homeService.findByKeyword(keyword, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
@@ -57,7 +57,7 @@ public class HomeController {
 
     @GetMapping("/write")
     public String write(Model model) {
-        model.addAttribute("postDto", new PostDto());
+        model.addAttribute("postDto", new PostDTO());
         return "board/writeform";
     }
 }

@@ -2,6 +2,7 @@ package com.inconcert.domain.chat.service;
 
 import com.inconcert.domain.chat.dto.ChatMessageDto;
 import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.dto.UserDto;
 import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.entity.ChatNotification;
 import com.inconcert.domain.chat.entity.ChatRoom;
@@ -12,10 +13,9 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.ChatNotFoundException;
-import com.inconcert.global.exception.ChatNotificationNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +37,9 @@ public class ChatService {
     private final UserService userService;
     private final ChatNotificationService chatNotificationService;
 
-    public ChatRoom findById(Long id) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public ChatRoom getChatRoomById(Long id) {
         return chatRoomRepository.findById(id)
                 .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
     }
@@ -65,6 +67,29 @@ public class ChatService {
                 .hostUserId(chatRoom.getHostUser().getId())
                 .userCount(chatRoom.getUsers().size())
                 .build();
+    }
+
+    // 채팅방에 속한 유저 목록
+    public List<UserDto> getUsersInChatRoom(Long chatRoomId) {
+        List<User> users = chatRoomRepository.findAllById(chatRoomId);
+        // 유저 목록을 UserDto로 변환
+        return users.stream()
+                .map(UserDto::from)
+                .collect(Collectors.toList());
+    }
+
+    // 유저가 채팅방에 있는지 확인하는 메소드
+    public boolean userFound(Long chatRoomId) {
+        User loggedInUser = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+
+        List<UserDto> usersInChatRoom = getUsersInChatRoom(chatRoomId);  // 채팅방 유저 목록 가져오기
+        for (UserDto userDto : usersInChatRoom) {
+            if (userDto.getId().equals(loggedInUser.getId())) {
+                return true;  // 사용자가 채팅방에 있음
+            }
+        }
+        return false;  // 사용자가 채팅방에 없음
     }
 
     // 채팅방 생성
@@ -98,9 +123,14 @@ public class ChatService {
 
         Post post = chatRoom.getPost();
 
+        // 이미 채팅방에 사용자가 속해 있는 경우
+        if (chatRoom.getUsers().contains(requestingUser)) {
+            throw new AlreadyInChatRoomException("이미 채팅방에 속해 있습니다.");
+        }
+
         // 현재 인원이 matchCount와 일치하거나 초과하는지 확인
         if (chatRoom.getUsers().size() >= post.getMatchCount()) {
-            throw new IllegalStateException("이미 인원이 모집 완료된 포스트입니다.");
+            throw new AlreadyFullChatRoomException("이미 인원이 모집 완료된 포스트입니다.");
         }
 
         User hostUser = chatRoom.getHostUser();
@@ -133,13 +163,72 @@ public class ChatService {
         if (!chatRoom.getUsers().contains(requestUser)) {
             chatRoom.addUser(requestUser);
             chatRoomRepository.save(chatRoom);
-        }
 
-//        chatRoom.addUser(requestUser);
-//        chatRoomRepository.save(chatRoom);
+            // 입장 메시지 최초 전송
+            ChatMessageDto enterMessage = ChatMessageDto.builder()
+                    .chatRoomId(chatRoomId)
+                    .username(requestUser.getUsername())
+                    .message(requestUser.getUsername() + "님이 입장하셨습니다.")
+                    .type(ChatMessageDto.MessageType.ENTER)
+                    .build();
+            messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, enterMessage);
+        }
 
         // 사용자에게 채팅방 입장이 승인되었음을 알림
         chatNotificationService.sendJoinApprovalNotification(requestUser, chatRoom, notificationId);
+    }
+
+    // 사용자가 채팅방에서 퇴장할 때 처리
+    @Transactional
+    public void leaveChatRoom(Long chatRoomId, User leavingUser) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+
+        if (chatRoom.getUsers().contains(leavingUser)) {
+            // host는 2명 이상일 때 나갈 수 없음
+            if(chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2) {
+                throw new HostExitException("채팅방에 본인만 존재할 떄 퇴장할 수 있습니다.");
+            }
+            chatRoom.removeUser(leavingUser);   // 2명 이상일 때 host가 아니면 퇴장
+
+            // 채팅방 인원이 0명일 경우 post와 채팅방 삭제
+            if (chatRoom.getUsers().isEmpty()) {
+                chatRoomRepository.deleteById(chatRoomId);
+            }
+            else {
+                chatRoomRepository.save(chatRoom);
+            }
+
+            // 완전히 나간 경우 퇴장 메시지 전송
+            ChatMessageDto leaveMessage = ChatMessageDto.builder()
+                    .chatRoomId(chatRoomId)
+                    .username(leavingUser.getUsername())
+                    .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
+                    .type(ChatMessageDto.MessageType.LEAVE)
+                    .build();
+            messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, leaveMessage);
+        }
+        else {
+            throw new AlreadyOutOfChatRoomException("채팅방에 속해 있지 않습니다.");
+        }
+    }
+
+    // 강퇴
+    @Transactional
+    public void kickUserFromChatRoom(Long chatRoomId, Long kickedUserId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+        User kickedUser = userRepository.findById(kickedUserId)
+                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+
+        // 호스트가 아니면 강퇴할 수 없음
+        if (!chatRoom.getHostUser().getUsername().equals((userService.getAuthenticatedUser().get().getUsername()))) {
+            throw new KickException("호스트만 강퇴할 수 있습니다.");
+        }
+
+        // 유저 강퇴
+        chatRoom.removeUser(kickedUser);
+        chatRoomRepository.save(chatRoom);
     }
 
     // 요청 거절
@@ -198,7 +287,7 @@ public class ChatService {
         List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContains(requestingUser, receiver);
 
         if (!existingRooms.isEmpty()) {
-            throw new IllegalStateException("이미 해당 유저와의 채팅방이 존재합니다.");
+            throw new AlreadyInChatRoomException("이미 해당 유저와의 채팅방이 존재합니다.");
         }
 
         // 채팅방 생성
@@ -211,14 +300,6 @@ public class ChatService {
         chatRoom.addUser(receiver); // 수신자 추가
 
         return chatRoomRepository.save(chatRoom);
-    }
-
-    // 모집 종료 처리
-    @Transactional
-    public void closeChatRoom(Long chatRoomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
-        // 모집 종료 처리 로직
     }
 
     private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
@@ -274,36 +355,10 @@ public class ChatService {
         return ChatMessageDto.builder()
                 .id(chatMessage.getId())
                 .chatRoomId(chatMessage.getChatRoom().getId())
-//                .senderId(chatMessage.getSender().getId())
                 .username(chatMessage.getSender().getUsername())
                 .message(chatMessage.getMessage())
                 .timestamp(chatMessage.getTimestamp())
                 .type(ChatMessageDto.MessageType.CHAT)
                 .build();
     }
-
-    // 전체 채팅방 조회
-//    public List<ChatRoomDto> getAllChatRooms() {
-//        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
-//        return chatRooms.stream()
-//                .map(this::convertToChatRoomDto)
-//                .collect(Collectors.toList());
-//    }
-
-    // 메시지 전송
-//    @Transactional
-//    public void sendMessage(Long chatRoomId, String message) {
-//        User user = userService.getAuthenticatedUser()
-//                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
-//        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-//                .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
-//        ChatMessage chatMessage = ChatMessage.builder()
-//                .chatRoom(chatRoom)
-//                .sender(user)
-//                .message(message)
-//                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-//                .build();
-//
-//        chatMessageRepository.save(chatMessage);
-//    }
 }

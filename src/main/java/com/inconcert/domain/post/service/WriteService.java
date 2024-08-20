@@ -9,7 +9,7 @@ import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.notification.service.NotificationService;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -38,7 +38,7 @@ public class WriteService {
     private final ChatService chatService;
 
     @Transactional
-    public Post save(PostDto postDto){
+    public Post save(PostDTO postDto){
 
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
@@ -72,7 +72,7 @@ public class WriteService {
         if(postDto.getThumbnailUrl().equals(""))    postDto.setThumbnailUrl(null);
 
         // 주입된 PostCategory를 Post에 저장
-        Post post = PostDto.toEntity(postDto, updatedPostCategory);
+        Post post = PostDTO.toEntity(postDto, updatedPostCategory);
 
         // Post 저장
         Post savePost = switch (category.getTitle()) {

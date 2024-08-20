@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ChatNotificationRepository extends JpaRepository<ChatNotification, Long> {
-    List<ChatNotification> findByChatRoomId(Long chatRoomId);
     List<ChatNotification> findByUserId(Long userId);
 }

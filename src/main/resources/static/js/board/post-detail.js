@@ -38,8 +38,22 @@ function confirmDelete(button) {
     }
 
     const hasChatRoom = button.getAttribute("data-has-chat-room") === 'true';
-    if (hasChatRoom) {
-        alert("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
+    const chatRoomId = document.getElementById("chatRoomId").value;
+
+    let userCount = 0;
+
+    fetch(`/api/chat/users/${chatRoomId}`)
+        .then(response => response.json())
+        .then(users => {
+            userCount = users.length;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("유저 목록을 불러오는 데 실패했습니다.");
+        });
+
+    if (hasChatRoom && userCount >= 2) {
+        alert("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다?");
         return false;
     }
 
@@ -104,47 +118,20 @@ function requestJoinChatRoom(button) {
         }
     })
         .then(response => {
-            if (response.ok) {
-                return response.text(); // 성공 시 응답 처리
-            } else if (response.status === 400) {
-                throw new Error('이미 인원이 모집 완료된 포스트입니다.'); // 모집 완료된 경우
-            } else {
-                throw new Error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.'); // 기타 오류
+            if (response.status === 409) { // 이미 채팅방에 속해 있음
+                throw new Error('이미 채팅방에 속해 있습니다.');
+            } else if (response.status === 400) { // 모집이 완료된 경우
+                throw new Error('이미 인원이 모집 완료된 포스트입니다.');
+            } else if (!response.ok) {
+                throw new Error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
             }
+            return response.text(); // 성공 시 응답 처리
         })
         .then(data => {
             alert(data); // 요청 성공 시 메시지 출력
         })
         .catch(error => {
             alert(`${error.message}`); // 오류 메시지 출력
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-
-// 1:1 채팅 요청
-function requestOneToOneChat(button) {
-    const receiverId = button.getAttribute("data-receiver-id");
-
-    fetch(`/api/chat/request-one-to-one/${receiverId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-        .then(response => {
-            if (response.status === 409) {
-                throw new Error('이미 해당 유저와의 채팅방이 존재합니다.');
-            } else if (!response.ok) {
-                throw new Error('알 수 없는 오류가 발생했습니다.');
-            }
-            return response.json(); // 채팅방 ID 반환
-        })
-        .then(chatRoomId => {
-            alert("채팅방이 생성되었습니다.");
-            window.location.href = `/chat/${chatRoomId}`; // 채팅방으로 이동
-        })
-        .catch(error => {
-            alert(`${error.message}`);
             console.error('There was a problem with the fetch operation:', error);
         });
 }

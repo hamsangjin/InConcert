@@ -39,11 +39,27 @@ function connect(userId, chatRoomId) {
 
         // 사용자 정보가 있는지 확인하고 연결 처리
         if (userId && username) {
+            // 알림 구독
             subscribeToNotifications(userId);
 
+            // 강퇴 알림 구독
+            stompClient.subscribe('/topic/chat/kicked/' + userId, function (message) {
+                alert('채팅방에서 강퇴되었습니다.');
+                window.location.href = '/chat/list';
+            });
+
+            // 채팅방 메시지 및 알림 구독
             if (chatRoomId) {
                 subscribeToTopics(chatRoomId);
-                sendEnterMessage(username, chatRoomId); // 사용자 정보 포함하여 메시지 전송
+
+                // 이미 입장 메시지를 보냈는지 확인 (로컬 스토리지나 상태 변수에서 확인)
+                const hasEntered = localStorage.getItem(`entered_${chatRoomId}_${username}`);
+
+                if (!hasEntered) {
+                    sendEnterMessage(username, chatRoomId); // 처음 입장 시에만 메시지 전송
+                    localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
+                }
+
                 fetchNotificationsFromServer(chatRoomId); // 서버에서 알림 가져오기
             }
         } else {
@@ -208,7 +224,7 @@ function sendLeaveMessage(username, chatRoomId) {
         JSON.stringify({
             'username': username, // 퇴장하는 사용자의 username
             'chatRoomId': chatRoomId,
-            'message': username + '님이 퇴장하셨습니다.' // 퇴장 메시지
+            'message': '' // 빈 메시지로 보냄
         })
     );
 }
@@ -236,12 +252,131 @@ function approveJoinRequest(chatRoomId, userId) {
         });
 }
 
-// 페이지가 로딩될 때 유저와 채팅방 정보 가져오기
+// 채팅방 나가기 버튼을 눌렀을 때 실행되는 함수
+function confirmLeaveChatRoom() {
+    if (confirm("이 채팅방을 나가시겠습니까?")) {
+        leaveChatRoom();
+    }
+}
+
+// 채팅방 나가기 로직
+function leaveChatRoom() {
+    const chatRoomId = document.getElementById('chatRoomId').value;
+
+    // API 요청으로 채팅방 나가기
+    fetch(`/api/chat/leave/${chatRoomId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("채팅방을 나갔습니다.");
+                window.location.href = "/chat/list"; // 나가기 후 채팅창 목록으로 이동
+            } else {
+                // 예외 발생 시 오류 메시지를 받아 alert로 표시
+                return response.text().then(errorMessage => {
+                    alert(errorMessage);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("오류가 발생했습니다. 다시 시도해 주세요.");
+        });
+}
+
+// 유저 목록을 보여주거나 숨기는 함수
+function toggleUserList() {
+    const userListContainer = document.getElementById('user-list-container');
+
+    if (userListContainer.style.display === 'none' || userListContainer.style.display === '') {
+        // 유저 목록이 숨겨져 있을 때 불러옴
+        loadUserList();
+        userListContainer.style.display = 'block'; // 목록을 표시
+    } else {
+        userListContainer.style.display = 'none'; // 목록을 숨김
+    }
+}
+
+// 유저 목록을 불러오는 함수
+function loadUserList() {
+    const chatRoomId = document.getElementById('chatRoomId').value;
+    const hostUserId = document.getElementById('hostUserId').value; // 현재 호스트의 ID
+    const currentUserId = document.getElementById('userId').value; // 현재 로그인한 유저의 ID
+
+    // API 호출로 유저 목록을 가져옴
+    fetch(`/api/chat/users/${chatRoomId}`)
+        .then(response => response.json())
+        .then(users => {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = ''; // 기존 목록 초기화
+
+            // 유저 목록을 순회하며 리스트 아이템으로 추가
+            users.forEach(user => {
+                const listItem = document.createElement('li');
+
+                // 호스트인 경우 'username (호스트)'로 표시
+                if (user.id == hostUserId) {
+                    listItem.textContent = `${user.username} (호스트)`;
+                } else {
+                    listItem.textContent = user.username;
+                }
+
+                // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
+                if (currentUserId == hostUserId && user.id != currentUserId) {
+                    const kickButton = document.createElement('button');
+                    kickButton.textContent = "강퇴";
+                    kickButton.onclick = function () {
+                        kickUserFromChatRoom(user.id); // 강퇴 함수 호출
+                    };
+                    listItem.appendChild(kickButton);
+                }
+
+                // 리스트에 아이템 추가
+                userList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("유저 목록을 불러오는 데 실패했습니다.");
+        });
+}
+
+// 강퇴 함수
+function kickUserFromChatRoom(kickedUserId) {
+    const chatRoomId = document.getElementById('chatRoomId').value;
+    console.log(kickedUserId + " ?????");
+
+    // 강퇴 API 호출
+    fetch(`/api/chat/kick/${chatRoomId}/${kickedUserId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                alert("유저가 강퇴되었습니다.");
+                loadUserList(); // 유저 목록 새로고침
+            } else {
+                return response.text().then(errorMessage => {
+                    alert(errorMessage);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("유저 강퇴에 실패했습니다.");
+        });
+}
+
+// 페이지가 로딩될 때 유저 목록도 함께 가져오기
 window.addEventListener('load', function () {
     const userId = document.getElementById('userId').value;
     const chatRoomId = document.getElementById('chatRoomId').value;
 
-    // 사용자 정보가 존재할 때만 STOMP 연결을 시도
     if (userId && chatRoomId) {
         connect(userId, chatRoomId);
     } else {
@@ -252,7 +387,14 @@ window.addEventListener('load', function () {
 window.addEventListener('beforeunload', function () {
     const username = document.getElementById('username').value;
     const chatRoomId = document.getElementById('chatRoomId').value;
-    sendLeaveMessage(username, chatRoomId);
+
+    // 이미 퇴장한 경우 퇴장 메시지를 보내지 않음
+    const hasLeft = localStorage.getItem(`left_${chatRoomId}_${username}`);
+
+    if (!hasLeft) {
+        sendLeaveMessage(username, chatRoomId); // 처음 퇴장 시에만 메시지 전송
+        localStorage.setItem(`left_${chatRoomId}_${username}`, true); // 퇴장 플래그 설정
+    }
     disconnect();
 });
 

@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.crawling.entity.Performance;
 import com.inconcert.domain.crawling.repository.PerformanceRepository;
-import com.inconcert.domain.post.dto.PostDto;
+import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.user.entity.User;
@@ -169,7 +169,7 @@ public class PerformanceService {
                 endDate = LocalDate.now();
             }
 
-            PostDto postDto = PostDto.builder()
+            PostDTO postDto = PostDTO.builder()
                     .title(performance.getTitle())
                     .content("<img src=" + performance.getImageUrl() + "><br><span>장소: </span><span>" + performance.getPlace() + "</span><br><span>날짜: </span><span>"+ performance.getDate()+"</span>")
                     .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
@@ -179,7 +179,7 @@ public class PerformanceService {
                     .user(user)
                     .build();
 
-            Post post = PostDto.toEntity(postDto, postCategory);
+            Post post = PostDTO.toEntity(postDto, postCategory);
 
             infoRepository.save(post);
             log.info("Saved post: {}", post.getTitle());
