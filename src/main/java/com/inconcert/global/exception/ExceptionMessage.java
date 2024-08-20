@@ -7,7 +7,8 @@ public enum ExceptionMessage {
     POST_NOT_FOUND("찾으려는 Post가 존재하지 않습니다."),
     USER_NOT_FOUND("인증되지 않은 사용자입니다."),
     IMAGE_UPLOAD_BAD_REQUEST("이미지 업로드에 실패했습니다."),
-    NOTIFICATION_NOT_FOUND("알림이 존재하지 않습니다.");
+    NOTIFICATION_NOT_FOUND("알림이 존재하지 않습니다."),
+    REPORT_NOT_FOUND("찾으려는 신고가 존재하지 않습니다.");
 
 
     private final String message;

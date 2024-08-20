@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" class="jua-regular" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" class="jua-regular" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Fragment Header</title>
@@ -59,6 +59,7 @@
                         <img class="profile-img" src="/images/profile.png" alt="No Posts"/>
                         <div class="dropdown-content">
                             <a th:href="@{/mypage}">마이페이지</a>
+                            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/report}">신고 목록</a>
                             <a th:href="@{/logout}">로그아웃</a>
                         </div>
                     </div>

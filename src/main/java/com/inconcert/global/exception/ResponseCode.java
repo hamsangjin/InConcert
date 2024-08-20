@@ -6,6 +6,8 @@ public interface ResponseCode {
     String DUPLICATE_ID = "DI";
     String DUPLICATE_EMAIL = "DE";
     String DUPLICATE_NICKNAME = "DN";
+
+    String DUPLICATE_PHONE_NUMBER = "DP";
     String SIGN_IN_FAIL = "SF";
     String CERTIFICATION_FAIL = "CF";
     String MAIL_FAIL = "MF";

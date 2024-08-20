@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>채팅방 목록</title>
+    <link rel="stylesheet" href="/css/report/reportform.css">
+    <script>
+        function handleSubmit() {
+            alert('신고가 정상적으로 접수되었습니다.');
+            return true;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <header>
+        <a class="logo" th:href="@{/home}">
+            <h2 class="logo-text"> In Concert </h2>
+        </a>
+    </header>
+    <div class="title-container">
+        <h1>신고하기</h1>
+    </div>
+    <div class="button-container">
+        <a th:href="@{|/${categoryTitle}/${post.postCategory.title}/${post.id}|}">돌아가기</a>
+    </div>
+
+    <div class="report-container">
+        <div class="report-title">
+                <div>
+                    <p> 작성자 </p>
+                    <p th:text="${post.nickname}"></p>
+                </div>
+                <div>
+                    <p> 제목 </p>
+                    <p th:text="${post.title}"></p>
+                </div>
+        </div>
+        <form class="report-content" method="post" th:object="${reportDTO}"
+            th:action="@{'/' + ${categoryTitle} + '/' + ${post.postCategory.title} + '/' + ${post.id} + '/report'}"
+              onsubmit="return handleSubmit()">
+
+            <p> 신고 사유 </p>
+
+            <div>
+                <p>
+                    <input type="radio" id="option1" name="type" value="spam" checked>
+                    <label for="option1">스팸 홍보/도배입니다.</label>
+                </p>
+                <p>
+                    <input type="radio" id="option2" name="type" value="pornography">
+                    <label for="option2">음란물입니다.</label>
+                </p>
+                <p>
+                    <input type="radio" id="option3" name="type" value="injustice">
+                    <label for="option3">불법정보을 포함하고 있습니다.</label>
+                </p>
+                <p>
+                    <input type="radio" id="option4" name="type" value="youthHarmful">
+                    <label for="option4">청소년에게 유해한 내용입니다.</label>
+                </p>
+                <p>
+                    <input type="radio" id="option5" name="type" value="abuse">
+                    <label for="option5">욕설/생명경시/혐오/차별적 표현입니다.</label>
+                </p>
+                <p>
+                    <input type="radio" id="option6" name="type" value="personalInformation">
+                    <label for="option6">개인정보가 노출되었습니다.</label>
+                </p>
+            </div>
+
+            <button type="submit">신고하기</button>
+        </form>
+    </div>
+
+    <div id='wrapper'></div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

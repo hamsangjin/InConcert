@@ -6,6 +6,8 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
 import com.inconcert.domain.post.service.MatchService;
 import com.inconcert.domain.post.service.WriteService;
+import com.inconcert.domain.report.dto.ReportDTO;
+import com.inconcert.domain.report.service.ReportService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,7 @@ public class MatchController {
     private final UserService userService;
     private final EditService editService;
     private final WriteService writeService;
+    private final ReportService reportService;
 
     @GetMapping
     public String match(Model model) {
@@ -138,5 +141,25 @@ public class MatchController {
     public String write(@ModelAttribute PostDTO postDto) {
         Post post = writeService.save(postDto);
         return "redirect:/match/" + post.getPostCategory().getTitle() + '/' + post.getId();
+    }
+
+    @GetMapping("/{postCategoryTitle}/{postId}/report")
+    public String reportForm(@PathVariable("postId") Long postId,
+                             Model model) {
+
+        model.addAttribute("reportDTO", new ReportDTO());
+        model.addAttribute("post", matchService.getPostDtoByPostId(postId));
+        model.addAttribute("user", userService.getAuthenticatedUser());
+        model.addAttribute("categoryTitle", "match");
+        return "report/reportform";
+    }
+
+    @PostMapping("/{postCategoryTitle}/{postId}/report")
+    public String report(@PathVariable("postId") Long postId,
+                         @PathVariable("postCategoryTitle") String postCategoryTitle,
+                         @ModelAttribute ReportDTO reportDTO){
+
+        reportService.report(postId, "match", reportDTO.getType());
+        return "redirect:/match" + '/' + postCategoryTitle + '/' + postId;
     }
 }

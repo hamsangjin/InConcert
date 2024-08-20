@@ -72,8 +72,15 @@
                 })
             })
                 .then(response => {
-                    if (!response.ok) {
+                    if(response.status === 401){
                         throw new Error('Login failed');
+                    } else if (response.status === 423) {
+                        // 차단된 사용자의 경우, banDate 정보를 GET 요청으로 가져온다
+                        return fetch(`/api/user/${username}/banDate`)
+                            .then(res => res.json())
+                            .then(data => {
+                                throw new Error('baned user:' + data.banDate);
+                            });
                     }
                     return response.json();
                 })
@@ -85,7 +92,15 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('아이디와 비밀번호를 다시 입력해주세요.');
+                    if(error.message === 'Login failed'){
+                        alert('아이디와 비밀번호를 다시 입력해주세요.');
+                    } else if (error.message.startsWith('baned user')) {
+                        const banDate = error.message.split(':')[1];
+
+                        let message = '이 계정은 ';
+                        message += banDate + '까지 이용이 정지되었습니다.\n';
+                        alert(message);
+                    }
                 });
         });
 
@@ -99,6 +114,7 @@
             }
         }
 
+        // 이거 왜 있는 건지 설명해주세요 혜원 희정
         function makeAuthenticatedRequest(url, method = 'GET', body = null) {
             const token = localStorage.getItem('accessToken');
             return fetch(url, {

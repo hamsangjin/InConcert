@@ -24,9 +24,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,6 +53,12 @@ public class UserApiController {
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = userService.findByUsername(userDetails.getUsername());
+
+            // 이용 정지 당한 경우
+            if(user.getBanDate().isAfter(LocalDate.now())){
+                return ResponseEntity.status(HttpStatus.LOCKED).build();
+            }
+
             List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
             String accessToken = jwtTokenizer.createAccessToken(
@@ -149,7 +160,7 @@ public class UserApiController {
 
     // 아이디 중복 확인
     @PostMapping("/user/id-check")
-    public ResponseEntity<? super UsernameCheckRspDto> usenameCheck(@RequestBody @Valid UsernameCheckReqDto reqDto) {
+    public ResponseEntity<? super UsernameCheckRspDto> usernameCheck(@RequestBody @Valid UsernameCheckReqDto reqDto) {
         return userService.usernameCheck(reqDto);
     }
 
@@ -163,6 +174,12 @@ public class UserApiController {
     @PostMapping("/user/nickname-check")
     public ResponseEntity<? super NicknameCheckRspDto> nicknameCheck(@RequestBody @Valid NicknameCheckReqDto reqDto) {
         return userService.nicknameCheck(reqDto);
+    }
+
+    // 전화번호 중복 확인
+    @PostMapping("/user/phone-number-check")
+    public ResponseEntity<? super PhoneNumberCheckRspDto> phoneNumberCheck(@RequestBody @Valid PhoneNumberCheckReqDto reqDto) {
+        return userService.phoneNumberCheck(reqDto);
     }
 
     // 인증번호 메일 전송
@@ -179,7 +196,14 @@ public class UserApiController {
 
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<?> register(@ModelAttribute RegisterReqDto reqDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterReqDto reqDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errorMap.put(error.getField(), error.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errorMap);
+        }
         return userService.joinUser(reqDto);
     }
 
@@ -204,5 +228,13 @@ public class UserApiController {
         catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
         }
+    }
+
+    // 벤 날짜 반환
+    @GetMapping("/api/user/{username}/banDate")
+    public ResponseEntity<?> getBanDate(@PathVariable("username") String username) {
+        User user = userService.findByUsername(username);
+
+        return ResponseEntity.ok(Map.of("banDate", user.getBanDate()));
     }
 }

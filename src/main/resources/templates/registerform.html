@@ -12,7 +12,6 @@
         <a class="logo" href="/home">
             <h2 class="logo-text">In Concert</h2>
         </a>
-
         <div class="register-title">
             <h2>회원가입</h2>
         </div>
@@ -22,46 +21,70 @@
             <form id="registerForm" th:action="@{/register}" method="post">
                 <div class="form-group">
                     <label for="username">아이디</label>
-                    <input type="text" id="username" name="username" placeholder="아이디" required>
-                    <button type="button" id="checkIdBtn">중복 확인</button>
+                    <input type="text" id="username" name="username" placeholder="아이디" required
+                           oninvalid="this.setCustomValidity('아이디를 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
+                <div id="username-error" class="error-message"></div>
                 <div class="form-group">
                     <label for="password">비밀번호</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required
+                           oninvalid="this.setCustomValidity('비밀번호를 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
+                <div id="password-error" class="error-message"></div>
                 <div class="form-group">
                     <label for="password-confirm">비밀번호 확인</label>
-                    <input type="password" id="password-confirm" name="password-confirm" required>
+                    <input type="password" id="password-confirm" name="password-confirm" required
+                           oninvalid="this.setCustomValidity('비밀번호 확인을 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
                 <div class="form-group">
                     <label for="email">이메일</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" required
+                           oninvalid="this.setCustomValidity('유효한 이메일 주소를 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                     <button type="button" id="checkEmailBtn">이메일 확인</button>
                 </div>
                 <div class="form-group">
                     <label for="certificationNumber">인증번호</label>
-                    <input type="text" id="certificationNumber" name="certificationNumber" required>
+                    <input type="text" id="certificationNumber" name="certificationNumber" required
+                           oninvalid="this.setCustomValidity('인증번호를 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                     <button type="button" id="checkCertificationBtn">인증번호 확인</button>
                 </div>
                 <div class="form-group">
                     <label for="name">이름</label>
-                    <input type="text" id="name" name="name" required>
+                    <input type="text" id="name" name="name" required
+                           oninvalid="this.setCustomValidity('이름을 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
                 <div class="form-group">
                     <label for="nickname">닉네임</label>
-                    <input type="text" id="nickname" name="nickname" required>
+                    <input type="text" id="nickname" name="nickname" required
+                           oninvalid="this.setCustomValidity('닉네임을 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
+                <div id="nickname-error" class="error-message"></div>
                 <div class="form-group">
                     <label for="phoneNumber">핸드폰 번호</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" pattern="\d{10,11}"
+                           title="10-11자리의 숫자만 입력 가능합니다." required
+                           oninvalid="this.setCustomValidity('유효한 핸드폰 번호를 입력해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
+                <div id="phoneNumber-error" class="error-message"></div>
                 <div class="form-group">
                     <label for="birth">생년월일</label>
-                    <input type="date" id="birth" name="birth" required>
+                    <input type="date" id="birth" name="birth" required
+                           oninvalid="this.setCustomValidity('생년월일을 선택해주세요.')"
+                           oninput="this.setCustomValidity('')">
                 </div>
                 <div class="form-group">
                     <label for="gender">성별</label>
-                    <select id="gender" name="gender" required>
+                    <select id="gender" name="gender" required
+                            oninvalid="this.setCustomValidity('성별을 선택해주세요.')"
+                            onchange="this.setCustomValidity('')">
                         <option value="">선택하세요</option>
                         <option value="MALE">남성</option>
                         <option value="FEMALE">여성</option>
@@ -69,7 +92,9 @@
                 </div>
                 <div class="form-group">
                     <label for="mbti">MBTI</label>
-                    <select id="mbti" name="mbti" required>
+                    <select id="mbti" name="mbti" required
+                            oninvalid="this.setCustomValidity('MBTI를 선택해주세요.')"
+                            onchange="this.setCustomValidity('')">
                         <option value="">선택하세요</option>
                         <option value="INTJ">INTJ</option>
                         <option value="INTP">INTP</option>
@@ -91,8 +116,10 @@
                 </div>
                 <div class="submit-container">
                     <div class="form-group">
-                        <label for="agree">In Concert 가입 - 개인정보 약관에 동의합니다.</label>
-                        <input type="checkbox" id="agree" name="agree" required>
+                        <label for="agree">In Concert 가입 - 개인정보 이용에 동의합니다.</label>
+                        <input type="checkbox" id="agree" name="agreeTerms" required
+                               oninvalid="this.setCustomValidity('개인정보 이용에 동의해주세요.')"
+                               oninput="this.setCustomValidity('')">
                     </div>
                     <button type="button" id="registerBtn" class="submit-btn">가입하기</button>
                 </div>
@@ -106,111 +133,173 @@
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:inline="javascript">
-    document.getElementById('checkIdBtn').addEventListener('click', function () {
-        let username = document.getElementById('username').value;
-        fetch('/user/id-check', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username: username }),
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.code === "SU") {
-                    alert('사용 가능한 아이디입니다.');
-                } else {
-                    alert('이미 존재하는 아이디입니다.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    // 실시간 유효성 검사 및 중복 확인
+    function validateInput(inputElement, checkUrl, errorElement, errorMessage, validationRegex, validationMessage) {
+        let timeoutId;
+        inputElement.addEventListener('input', function() {
+            clearTimeout(timeoutId);
+            const value = this.value;
+            this.setCustomValidity('');
+
+            if (validationRegex && !validationRegex.test(value)) {
+                errorElement.textContent = validationMessage;
+                return;
+            }
+
+            errorElement.textContent = '';
+            if (checkUrl) {
+                timeoutId = setTimeout(() => {
+                    fetch(checkUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ [inputElement.name]: value })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            errorElement.textContent = data.code !== "SU" ? errorMessage : '';
+                        })
+                        .catch(error => console.error('Error:', error));
+                }, 500);
+            }
+        });
+    }
+
+    // 각 필드에 대한 유효성 검사 적용
+    validateInput(
+        document.getElementById('username'),
+        '/user/id-check',
+        document.getElementById('username-error'),
+        '이미 존재하는 아이디입니다.',
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{5,}$/,
+        '아이디는 5자 이상으로 알파벳, 숫자를 조합해서 사용하세요.'
+    );
+
+    validateInput(
+        document.getElementById('password'),
+        null,
+        document.getElementById('password-error'),
+        '',
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        '비밀번호는 8자 이상으로 알파벳, 숫자, 특수기호를 조합해서 사용하세요.'
+    );
+
+    validateInput(
+        document.getElementById('nickname'),
+        '/user/nickname-check',
+        document.getElementById('nickname-error'),
+        '이미 존재하는 닉네임입니다.'
+    );
+
+    validateInput(
+        document.getElementById('phoneNumber'),
+        '/user/phone-number-check',
+        document.getElementById('phoneNumber-error'),
+        '이미 존재하는 번호입니다.'
+    );
+
+    // 비밀번호 확인
+    document.getElementById('password-confirm').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const errorElement = document.getElementById('password-confirm-error');
+        errorElement.textContent = this.value !== password ? '비밀번호가 일치하지 않습니다.' : '';
     });
 
+    // 이메일 인증
     document.getElementById('checkEmailBtn').addEventListener('click', function () {
-        let email = document.getElementById('email').value;
-        let username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+
         fetch('/user/email-check', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email, username: username }),
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, username }),
         })
             .then(response => response.json())
             .then(data => {
                 if (data.code === "SU") {
                     alert('사용 가능한 이메일입니다. 인증 번호를 전송합니다.');
-                    fetch('/user/email-certification', {
+                    return fetch('/user/email-certification', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email: email, username: username }),
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.code === "SU") {
-                                console.log('인증 번호가 전송되었습니다.');
-                            } else {
-                                alert('인증 번호 전송에 실패했습니다.');
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, username }),
+                    });
                 } else {
                     alert('이미 존재하는 이메일입니다.');
+                    throw new Error('이메일 중복');
                 }
             })
-            .catch(error => console.error('Error:', error));
-    });
-
-    document.getElementById('checkCertificationBtn').addEventListener('click', function () {
-        let certificationNumber = document.getElementById('certificationNumber').value;
-        let email = document.getElementById('email').value;
-        let username = document.getElementById('username').value;
-        fetch('/user/check-certification', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: email, username: username, certificationNumber: certificationNumber }),
-        })
             .then(response => response.json())
             .then(data => {
                 if (data.code === "SU") {
-                    alert('인증되었습니다.');
+                    alert('인증 번호가 전송되었습니다.');
                 } else {
-                    console.log('인증 번호가 일치하지 않습니다.');
+                    alert('인증 번호 전송에 실패했습니다.');
                 }
+            })
+            .catch(error => {
+                if (error.message !== '이메일 중복') {
+                    console.error('Error:', error);
+                    alert('처리 중 오류가 발생했습니다.');
+                }
+            });
+    });
+
+    // 인증번호 확인
+    document.getElementById('checkCertificationBtn').addEventListener('click', function () {
+        const certificationNumber = document.getElementById('certificationNumber').value;
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+
+        fetch('/user/check-certification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, username, certificationNumber }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.code === "SU" ? '인증되었습니다.' : '인증 번호가 일치하지 않습니다.');
             })
             .catch(error => console.error('Error:', error));
     });
 
+    // 회원가입 버튼 클릭 이벤트
     document.getElementById('registerBtn').addEventListener('click', function () {
-        let password = document.getElementById('password').value;
-        let passwordConfirm = document.getElementById('password-confirm').value;
-        if (password !== passwordConfirm) {
-            alert('비밀번호가 일치하지 않습니다.');
+        const form = document.getElementById('registerForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
             return;
         }
 
-        let form = document.getElementById('registerForm');
-        let formData = new FormData(form);
+        const formData = new FormData(form);
+        const jsonData = Object.fromEntries(
+            Array.from(formData.entries()).map(([key, value]) =>
+                key === 'agreeTerms' ? [key, value === 'on'] : [key, value]
+            )
+        );
 
         fetch('/register', {
             method: 'POST',
-            body: formData,
+            body: JSON.stringify(jsonData),
+            headers: { 'Content-Type': 'application/json' },
         })
             .then(response => response.json())
             .then(data => {
                 if (data.code === "SU") {
                     alert('회원가입이 완료되었습니다.');
-                    window.location.href = '/home';
+                    window.location.href = '/loginform';
                 } else {
                     alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                    console.error('Error details:', data);
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                alert('회원가입 처리 중 오류가 발생했습니다.');
+                console.error('Error:', error);
+            });
     });
+
+    // 생년월일 입력 제한
+    document.getElementById('birth').max = new Date().toISOString().split("T")[0];
 </script>
 </body>
 </html>

@@ -24,7 +24,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "SELECT MIN(p2.createdAt) FROM Post p2 " +
             "JOIN p2.postCategory pc2 " +
             "JOIN pc2.category c2 " +
-            "WHERE c2.title = 'info' " +
+            "WHERE c2.title = 'info'" +
             "GROUP BY pc2.id) ")
     List<PostDTO> findLatestPostsByPostCategory();
 

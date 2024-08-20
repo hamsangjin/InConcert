@@ -94,6 +94,21 @@ public class UserService {
         return NicknameCheckRspDto.success();
     }
 
+    // 전화번호 중복 확인
+    public ResponseEntity<? super PhoneNumberCheckRspDto> phoneNumberCheck(PhoneNumberCheckReqDto reqDto) {
+        try {
+            String phoneNumber = reqDto.getPhoneNumber();
+            boolean isExistPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
+            if(isExistPhoneNumber) return PhoneNumberCheckRspDto.duplicatePhoneNumber();
+        }
+        catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseDto.databaseError();
+        }
+
+        return PhoneNumberCheckRspDto.success();
+    }
+
     // 인증 메일 전송
     @Transactional
     public ResponseEntity<? super EmailCertificationRspDto> emailCertification(EmailCertificationReqDto reqDto) {
@@ -235,6 +250,11 @@ public class UserService {
             log.error("Error getting authenticated user", e);
             return Optional.empty();
         }
+    }
+
+    @Transactional
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
 
     @Transactional
