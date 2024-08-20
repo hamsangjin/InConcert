@@ -2,30 +2,6 @@ let stompClient = null;
 let isConnected = false;
 
 // STOMP 연결
-// function connect(userId, chatRoomId) {
-//     const socket = new SockJS('/ws');
-//     stompClient = Stomp.over(socket);
-//
-//     stompClient.connect({}, function (frame) {
-//         console.log('Connected: ' + frame);
-//         isConnected = true;
-//
-//         subscribeToNotifications(userId); // 사용자 알림 구독
-//
-//         // 채팅방 메시지 구독
-//         if (chatRoomId) {
-//             subscribeToTopics(chatRoomId);
-//             sendEnterMessage(userId, chatRoomId);
-//
-//             // 로컬 스토리지에 저장된 알림 확인 및 표시
-//             loadNotificationsFromLocalStorage(chatRoomId);
-//         }
-//     }, function (error) {
-//         console.error('Connection error:', error);
-//         isConnected = false;
-//     });
-// }
-// STOMP 연결
 function connect(userId, chatRoomId) {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
@@ -137,20 +113,6 @@ function saveNotificationToLocalStorage(notification) {
     notifications.push(notification);
     localStorage.setItem('notifications', JSON.stringify(notifications));
 }
-
-// 로컬 스토리지에서 알림 불러오기
-// function loadNotificationsFromLocalStorage(chatRoomId) {
-//     let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-//     notifications.forEach(notification => {
-//         if (notification.chatRoomId === chatRoomId) {
-//             showNotificationConfirm(notification);
-//         }
-//     });
-//
-//     // 표시된 알림은 로컬 스토리지에서 제거
-//     notifications = notifications.filter(notification => notification.chatRoomId !== chatRoomId);
-//     localStorage.setItem('notifications', JSON.stringify(notifications));
-// }
 
 // 알림창 표시 (승인 요청 시)
 function showNotificationConfirm(notification) {

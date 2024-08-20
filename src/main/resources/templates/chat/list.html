@@ -17,7 +17,6 @@
     </div>
     <div class="button-container">
         <a th:href="@{/chat/request}">요청 목록</a>
-<!--        <a th:href="@{/chat/{userId}/newform(userId=${userId})}">새 채팅방 생성</a>-->
     </div>
 
     <div class="chat-container" th:each="chatRoom : ${chatRooms}">
