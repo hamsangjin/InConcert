@@ -31,6 +31,7 @@ public class ReportService {
     private final TransferRepository transferRepository;
     private final UserService userService;
 
+    // 신고 목록 불러오기
     public List<ReportDTO> findAll() {
         List<Report> reportList = reportRepository.findAll();
         return reportList.stream()
@@ -43,6 +44,7 @@ public class ReportService {
                 .collect(Collectors.toList());
     }
 
+    // 신고하기
     @Transactional
     public void report(Long postId, String categoryTitle, String type){
         Post reportPost = findPostByIdAndCategory(postId, categoryTitle);
@@ -51,17 +53,20 @@ public class ReportService {
 
         Report report = ReportDTO.toEntity(new ReportDTO(type, reportPost, reporter));
 
+        // 한 유저가 같은 게시글을 또 신고했을 경우에는 무시
         boolean isDuplicateReport = reportRepository.existsByReporterAndPost(reporter, reportPost);
         if(!isDuplicateReport){
             reportRepository.save(report);
         }
     }
 
+    // 신고 반려하기
     @Transactional
     public void deleteReportId(Long reportId){
         reportRepository.deleteById(reportId);
     }
 
+    // 관리자가 신고 처리할 때 신고 내용 보기
     public ReportDTO findById(Long reportId){
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new ReportNotFoundException(ExceptionMessage.REPORT_NOT_FOUND.getMessage()));
@@ -74,6 +79,7 @@ public class ReportService {
                 .build();
     }
 
+    // 관리자가 신고 처리
     @Transactional
     public void reportResult(Long reportId, ReportDTO reportDTO){
         Report report = reportRepository.findById(reportId)
@@ -108,11 +114,13 @@ public class ReportService {
         userService.updateUser(postUser);
     }
 
+    // 반환받은 Repository로 post 조회
     private Post findPostByIdAndCategory(Long postId, String categoryTitle) {
         return getRepositoryByCategoryTitle(categoryTitle).findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
 
+    // 카테고리 제목에 따라 맞는 Repository 반환
     private JpaRepository<Post, Long> getRepositoryByCategoryTitle(String categoryTitle) {
         return switch (categoryTitle.toLowerCase()) {
             case "info" -> infoRepository;
