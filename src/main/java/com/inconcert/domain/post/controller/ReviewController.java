@@ -129,6 +129,6 @@ public class ReviewController {
                          @ModelAttribute ReportDTO reportDTO){
 
         reportService.report(postId, "review", reportDTO.getType());
-        return "redirect:/info" + '/' + postCategoryTitle + '/' + postId;
+        return "redirect:/review" + '/' + postCategoryTitle + '/' + postId;
     }
 }

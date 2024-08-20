@@ -145,6 +145,6 @@ public class MatchController {
                          @ModelAttribute ReportDTO reportDTO){
 
         reportService.report(postId, "match", reportDTO.getType());
-        return "redirect:/info" + '/' + postCategoryTitle + '/' + postId;
+        return "redirect:/match" + '/' + postCategoryTitle + '/' + postId;
     }
 }

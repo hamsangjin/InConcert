@@ -142,6 +142,6 @@ public class TransferController {
                          @ModelAttribute ReportDTO reportDTO){
 
         reportService.report(postId, "transfer", reportDTO.getType());
-        return "redirect:/info" + '/' + postCategoryTitle + '/' + postId;
+        return "redirect:/transfer" + '/' + postCategoryTitle + '/' + postId;
     }
 }
