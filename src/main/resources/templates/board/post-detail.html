@@ -61,6 +61,7 @@
                     <button class="chat-button"
                             th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}"
                             th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
+                            th:attr="data-has-chat-room=${hasChatRoom}"
                             onclick="location.href=this.getAttribute('href');">
                         수정
                     </button>

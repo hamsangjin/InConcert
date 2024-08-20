@@ -31,7 +31,6 @@ public class ChatWebSocketController {
 
         // 메시지를 해당 채팅방의 모든 사용자에게 전송
         messagingTemplate.convertAndSend("/topic/chat/room/" + message.getChatRoomId(), message);
-        System.out.println(message.getUsername() + " sjeoiafjeojefo");
 
         // 채팅 내용 저장
         chatService.sendMessage(message.getChatRoomId(), message.getUsername(), message.getMessage());

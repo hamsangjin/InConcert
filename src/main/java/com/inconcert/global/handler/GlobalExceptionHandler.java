@@ -99,6 +99,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    // 연결된 채팅방이 있으면 삭제 불가
+    @ExceptionHandler(ChatDeleteException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleChatDeleteException(ChatDeleteException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     // host는 마지막에 나가야 함
     @ExceptionHandler(HostExitException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)

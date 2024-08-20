@@ -132,6 +132,6 @@ function requestJoinChatRoom(button) {
         })
         .catch(error => {
             alert(`${error.message}`); // 오류 메시지 출력
-            console.error('There was a problem with the fetch operation:', error);
+            console.error('API를 호출하는 데 오류가 생겼습니다.', error);
         });
 }

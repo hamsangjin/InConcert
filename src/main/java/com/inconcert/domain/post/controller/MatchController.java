@@ -121,6 +121,9 @@ public class MatchController {
                                @PathVariable("postId") Long postId, Model model) {
         PostDTO postDto = matchService.getPostDtoByPostId(postId);
 
+        // 채팅방과 연결된 포스트가 있으면 수정 불가
+        boolean hasChatRoom = matchService.checkPostHasChatRoom(postId);
+        model.addAttribute("hasChatRoom", String.valueOf(hasChatRoom));
 
         model.addAttribute("post", postDto);
         model.addAttribute("categoryTitle", "match");

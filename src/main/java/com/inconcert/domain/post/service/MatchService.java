@@ -88,7 +88,7 @@ public class MatchService {
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         if (post.hasChatRoom() && post.getChatRoom().getUsers().size() >= 2) {
-            throw new IllegalStateException("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
+            throw new ChatDeleteException("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
         }
         matchRepository.delete(post);
     }

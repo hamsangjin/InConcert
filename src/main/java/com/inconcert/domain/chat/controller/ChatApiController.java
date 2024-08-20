@@ -102,7 +102,7 @@ public class ChatApiController {
             ChatRoom chatRoom = chatService.createOneToOneChatRoom(receiverId);
             return ResponseEntity.ok(chatRoom.getId()); // 채팅방 ID 반환
         }
-        catch (IllegalStateException e) {
+        catch (AlreadyInChatRoomException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 이미 존재하는 경우 메시지 반환
         }
     }
