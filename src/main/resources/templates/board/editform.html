@@ -56,6 +56,7 @@
                     <option value="match" th:selected="${categoryTitle == 'match'}">동행</option>
                     <option value="transfer" th:selected="${categoryTitle == 'transfer'}">양도</option>
                 </select>
+                <input type="hidden" id="originalCategoryTitle" th:value="${categoryTitle}">
 
                 <select id="postCategoryTitle" name="newPostCategoryTitle" required>
                     <option value="musical" th:selected="${postCategoryTitle == 'musical'}">뮤지컬</option>
@@ -68,10 +69,10 @@
             <div class="dropdowns">
                 <select id="matchCount" name="matchCount" th:field="${post.matchCount}">
                     <option disabled value="0">모집인원 선택</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+                    <option value="2">1</option>
+                    <option value="3">2</option>
+                    <option value="4">3</option>
+                    <option value="5">4</option>
                 </select>
                 <div class="date-container">
                     <label for="endDate">종료 날짜 지정</label>
@@ -145,12 +146,19 @@
     document.getElementById('editForm').addEventListener('submit', function(event) {
         document.getElementById('content').value = quill.root.innerHTML;
 
+        var originalCategoryTitle = document.getElementById('originalCategoryTitle').value;
+
         var categoryTitle = document.getElementById('categoryTitle');
         var postCategoryTitle = document.getElementById('postCategoryTitle');
         var matchCount = document.getElementById('matchCount');
         var endDate = document.getElementById('endDate');
         var title = document.getElementById('title');
         var content = document.getElementById('content');
+
+        if(originalCategoryTitle === 'match' && categoryTitle.value !== 'match') {
+            event.preventDefault();
+            alert("채팅방이 존재하는 경우 카테고리를 변경할 수 없습니다.")
+        }
 
         if (
             categoryTitle.value === 'default' ||

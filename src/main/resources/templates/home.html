@@ -64,7 +64,6 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -79,7 +78,7 @@
                 </a>
             </div>
 
-            <div class="post-list"th:each="post : ${reviewPosts}">
+            <div class="post-list" th:each="post : ${reviewPosts}">
                 <div class="post-left">
                     <a class="post-title"  th:href="@{'/review/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategoryTitle}">
@@ -97,7 +96,6 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -131,7 +129,6 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>
@@ -162,7 +159,6 @@
                 </div>
 
                 <div class="post-right">
-                    <p><span th:text="${post.nickname}"></span></p>
                     <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
                     <p><span th:text="${post.viewCount}"></span></p>
                 </div>

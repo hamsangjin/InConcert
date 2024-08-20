@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,13 +93,26 @@ public class MatchController {
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
         model.addAttribute("createForm", new CommentCreateForm());
+
+        // 연결된 채팅방 확인
+        boolean hasChatRoom = matchService.checkPostHasChatRoom(postId);
+        model.addAttribute("hasChatRoom", String.valueOf(hasChatRoom));
         return "board/post-detail";
     }
 
     @PostMapping("/{postCategoryTitle}/{postId}/delete")
     public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                             @PathVariable("postId") Long postId) {
-        matchService.deletePost(postId);
+                             @PathVariable("postId") Long postId,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            matchService.deletePost(postId);
+        }
+        // 연결된 채팅방이 있으면 삭제 불가
+        catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/match/" + postCategoryTitle + "/" + postId;
+        }
+
         return "redirect:/match/" + postCategoryTitle;
     }
 
@@ -106,6 +121,9 @@ public class MatchController {
                                @PathVariable("postId") Long postId, Model model) {
         PostDTO postDto = matchService.getPostDtoByPostId(postId);
 
+        // 채팅방과 연결된 포스트가 있으면 수정 불가
+        boolean hasChatRoom = matchService.checkPostHasChatRoom(postId);
+        model.addAttribute("hasChatRoom", String.valueOf(hasChatRoom));
 
         model.addAttribute("post", postDto);
         model.addAttribute("categoryTitle", "match");

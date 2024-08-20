@@ -68,6 +68,7 @@ public class MatchService {
                 .viewCount(post.getViewCount())
                 .matchCount(post.getMatchCount())
                 .endDate(post.getEndDate())
+                .chatRoomId(post.getChatRoom().getId())
                 .commentCount(post.getComments().size())
                 .comments(post.getComments())
                 .likeCount(post.getLikes().size())
@@ -84,9 +85,18 @@ public class MatchService {
 
     @Transactional
     public void deletePost(Long postId) {
-
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        if (post.hasChatRoom() && post.getChatRoom().getUsers().size() >= 2) {
+            throw new ChatDeleteException("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다.");
+        }
         matchRepository.delete(post);
+    }
+
+    // 연결된 채팅방이 있는지 확인
+    public boolean checkPostHasChatRoom(Long postId) {
+        Post post = matchRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+        return post.hasChatRoom();
     }
 }

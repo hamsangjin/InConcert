@@ -94,7 +94,7 @@
             <div class="popup" id="profilePopup-comment">
                 <div class="popup-content">
                     <div class="card" id="profileCard-comment">
-                        <button class="chat-btn">1:1 채팅</button>
+                        <button class="chat-btn" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
                         <span class="close" id="closePopup-comment">&times;</span>
                         <div class="profile-container">
                             <div class="profile-left">

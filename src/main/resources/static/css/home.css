@@ -300,10 +300,12 @@ header {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #6f6f6f;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .post-left{
-    flex: 4;
+    flex: 6;
     display: flex;
     align-items: center;
 }
@@ -322,7 +324,7 @@ header {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 270px;
+    max-width: 360px;
     display: block;
 }
 
@@ -354,7 +356,7 @@ header {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    flex: 3;
+    flex: 2;
     gap: 10px;
 }
 

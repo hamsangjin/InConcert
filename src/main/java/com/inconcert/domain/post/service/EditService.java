@@ -4,17 +4,19 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
+import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.repository.ChatRoomRepository;
+import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
-import com.inconcert.global.exception.CategoryNotFoundException;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.PostNotFoundException;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EditService {
     private final InfoRepository infoRepository;
     private final MatchRepository matchRepository;
@@ -33,6 +36,8 @@ public class EditService {
     private final TransferRepository transferRepository;
     private final PostCategoryRepository postCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatService chatService;
 
     @Transactional
     public Long updatePost(Long postId, PostDTO postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
@@ -58,6 +63,26 @@ public class EditService {
             postDto.setEndDate(null);
         }
 
+        // 채팅방 찾기 (match 카테고리인 경우에만 처리)
+        ChatRoom chatRoom = currentPost.getChatRoom();
+//        if (currentPost.getChatRoom() != null && currentCategoryTitle.equals("match")) {
+//            log.info("이거 타냐?");
+//            chatRoom = chatRoomRepository.findById(currentPost.getChatRoom().getId())
+//                    .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+//        }
+
+        // 다른 게시판에서 동행 게시판으로 수정하는 경우 채팅방 생성
+        if(!currentCategoryTitle.equals("match") && newCategoryTitle.equals("match")){
+            log.info("얘는?");
+            ChatRoomDto chatRoomDto = chatService.createChatRoom(postDto.getTitle());
+            chatRoom = chatRoomRepository.findById(chatRoomDto.getId())
+                    .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+
+            // Post와 채팅방 연결
+            chatRoom.assignPost(currentPost);
+            currentPost.assignChatRoom(chatRoom);
+        }
+
         // 새로운 레포지토리에 저장
         Post updatedPost = Post.builder()
                 .id(currentPost.getId())
@@ -65,6 +90,7 @@ public class EditService {
                 .thumbnailUrl(postDto.getThumbnailUrl())
                 .content(postDto.getContent())
                 .endDate(postDto.getEndDate())
+                .chatRoom(chatRoom)
                 .matchCount(postDto.getMatchCount())
                 .user(currentPost.getUser())
                 .comments(new ArrayList<>(currentPost.getComments()))
@@ -75,6 +101,7 @@ public class EditService {
                 .build();
 
         savePostToRepository(updatedPost, newCategoryTitle);
+
         return updatedPost.getId();
     }
 

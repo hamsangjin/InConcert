@@ -22,6 +22,7 @@ public class PostDTO {
     private PostCategory postCategory;
     private String postCategoryTitle;
     private LocalDate endDate;
+    private Long chatRoomId;
     private int matchCount;
     private String content;
     private String thumbnailUrl;

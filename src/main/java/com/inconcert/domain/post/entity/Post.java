@@ -1,6 +1,7 @@
 package com.inconcert.domain.post.entity;
 
 import com.inconcert.domain.category.entity.PostCategory;
+import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
@@ -60,11 +61,22 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
+    @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private ChatRoom chatRoom;
+
     public void incrementViewCount() {
         this.viewCount += 1;
     }
 
     public void addComment(Comment comment) {
         comments.add(comment);
+    }
+
+    public void assignChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+    }
+
+    public boolean hasChatRoom() {
+        return this.chatRoom != null;
     }
 }

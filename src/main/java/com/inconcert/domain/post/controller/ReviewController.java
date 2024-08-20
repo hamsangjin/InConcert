@@ -82,7 +82,7 @@ public class ReviewController {
     public String deletePost(@PathVariable("postCategoryTitle") String postCategoryTitle,
                              @PathVariable("postId") Long postId) {
         reviewService.deletePost(postId);
-        return "redirect:/review/" + postCategoryTitle;
+        return "redirect:/review";
     }
 
     @GetMapping("/{postCategoryTitle}/{postId}/edit")

@@ -36,9 +36,8 @@
     <div class="review-block" th:if="${categoryTitle} == 'review'"></div>
 
     <div class="button-group">
-        <a class="nav-button" th:if="${categoryTitle != 'review'}"
-           th:href="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle}}">목록</a>
-        <a class="nav-button" th:if="${categoryTitle == 'review'}" th:href="@{'/' + ${categoryTitle}}">목록</a>
+        <a class="nav-button"
+           th:href="@{'/' + ${categoryTitle} + ${categoryTitle != 'review' ? '/' + postCategoryTitle : ''}}">목록</a>
     </div>
 
     <div class="post-container">
@@ -57,18 +56,26 @@
             <div>
                 <div class="author-row">
                     <span class="author" th:text="${post.nickname}"></span>
-                    <button class="chat-button">1:1 채팅</button>
+                    <button class="chat-button" th:if="${user.isPresent() && post.user.username != user.get().username}" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
+                    <button class="chat-button" th:if="${categoryTitle == 'match' && user.isPresent() && post.user.username != user.get().username}" th:data-chat-room-id="${post.chatRoomId}" onclick="requestJoinChatRoom(this)">동행 요청</button>
                     <button class="chat-button"
                             th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}"
                             th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
+                            th:attr="data-has-chat-room=${hasChatRoom}"
                             onclick="location.href=this.getAttribute('href');">
                         수정
                     </button>
 
                     <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/delete|}" method="post"
                           th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
-                        <button type="submit" class="chat-button" onclick="return confirmDelete()">삭제</button>
+                        <button type="submit" class="chat-button" id="delete-button"
+                                th:attr="data-has-chat-room=${hasChatRoom}"
+                                onclick="return confirmDelete(this)">
+                            삭제
+                        </button>
                     </form>
+                    <input type="hidden" id="chatRoomId" th:value="${post.chatRoomId}">
+                    <div th:if="${errorMessage}" id="errorMessage" th:text="${errorMessage}" style="display: none;"></div>
                     <a th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/report|}"
                        th:if="${user?.isPresent() && post?.nickname != user.get().nickname}"
                        class="report-button">
@@ -126,7 +133,7 @@
     <div class="popup" id="profilePopup">
         <div class="popup-content">
             <div class="card" id="profileCard">
-                <button class="chat-btn">1:1 채팅</button>
+                <button class="chat-btn" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
                 <span class="close" id="closePopup">&times;</span>
                 <div class="profile-container">
                     <div class="profile-left">
