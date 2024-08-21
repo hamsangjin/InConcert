@@ -136,6 +136,34 @@ function requestJoinChatRoom(button) {
         });
 }
 
+// 1:1 채팅
+function requestOneToOneChat(button) {
+    const receiverId = button.getAttribute("data-receiver-id");
+
+    fetch(`/api/chat/request-one-to-one/${receiverId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+        .then(response => {
+            if (response.status === 409) {
+                throw new Error('이미 해당 유저와의 채팅방이 존재합니다.');
+            } else if (!response.ok) {
+                throw new Error('알 수 없는 오류가 발생했습니다.');
+            }
+            return response.json(); // 채팅방 ID 반환
+        })
+        .then(chatRoomId => {
+            alert("채팅방이 생성되었습니다.");
+            window.location.href = `/chat/${chatRoomId}`; // 채팅방으로 이동
+        })
+        .catch(error => {
+            alert(error.message); // 오류 메시지 출력
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     var shareButton = document.getElementById('kakao-share-button');
 
@@ -154,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .replace(/<br>/g, '')        // <br> 태그 제거
         .replace(/<\/?span[^>]*>/g, '')  // <span> 태그 제거
         .replace(/<\/?p[^>]*>/g, '')  // <p> 태그 제거
-        .replace(/[^ㄱ-힣\s:\d~.]/g, '');  // 한글, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
+        .replace(/[^ㄱ-힣a-zA-Z\s:\d~.]/g, '');  // 한글, 알파벳, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
 
     // 장소와 날짜 사이에 구분자 추가
     var formattedText = descriptionWithoutTags
@@ -205,7 +233,7 @@ function shareTwitter() {
         .replace(/<br>/g, '')        // <br> 태그 제거
         .replace(/<\/?span[^>]*>/g, '')  // <span> 태그 제거
         .replace(/<\/?p[^>]*>/g, '')  // <p> 태그 제거
-        .replace(/[^ㄱ-힣\s:\d~.]/g, '');  // 한글, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
+        .replace(/[^ㄱ-힣a-zA-Z\s:\d~.]/g, '');  // 한글, 알파벳, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
 
     // 장소와 날짜 사이에 구분자 추가
     var formattedText = descriptionWithoutTags
