@@ -86,7 +86,7 @@ public class UserService {
         return PhoneNumberCheckRspDto.success();
     }
 
-    // 인증 메일 전송
+    // 인증 메일 전송 (인증번호 갱신 또는 생성)
     @Transactional
     public ResponseEntity<? super EmailCertificationRspDto> sendCertificationNumber(EmailCertificationReqDto reqDto) {
         String username = reqDto.getUsername();
@@ -95,13 +95,34 @@ public class UserService {
         boolean isExistUsername = userRepository.existsByUsername(username);
         if(isExistUsername) return UsernameCheckRspDto.duplicateId();    // id가 중복될 경우 (username)
 
+        // 새로운 인증번호 생성
         String certificationNumber = CertificationNumber.certificationNumber();
 
         // 메일 전송
         boolean isSucceed = emailProvider.sendEmail(email, certificationNumber);
         if(!isSucceed) return EmailCertificationRspDto.mailSendFail();
 
-        Certification certification = new Certification(email, certificationNumber, username);
+        // 해당 사용자에 대한 인증번호가 이미 존재하는지 확인
+        Certification existingCertification = certificationRepository.findByUsername(username);
+
+        Certification certification;
+        if (existingCertification != null) {
+            certification = Certification.builder()
+                    .id(existingCertification.getId())
+                    .email(email)
+                    .certificationNumber(certificationNumber)
+                    .username(username)
+                    .build();
+        }
+        else {
+            // 새로운 인증번호 객체 생성
+            certification = Certification.builder()
+                    .email(email)
+                    .certificationNumber(certificationNumber)
+                    .username(username)
+                    .build();
+        }
+
         certificationRepository.save(certification);
 
         return EmailCertificationRspDto.success();
@@ -129,6 +150,11 @@ public class UserService {
         String username = reqDto.getUsername();
         boolean isExistUsername = userRepository.existsByUsername(username);
         if(isExistUsername) return RegisterRspDto.duplicateId();
+
+        // 비밀번호 확인
+        if (!reqDto.getPassword().equals(reqDto.getPasswordConfirm())) {
+            return RegisterRspDto.passwordNotMatch();
+        }
 
         String email = reqDto.getEmail();
         String certificationNumber = reqDto.getCertificationNumber();
