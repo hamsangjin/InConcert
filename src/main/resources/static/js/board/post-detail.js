@@ -135,3 +135,31 @@ function requestJoinChatRoom(button) {
             console.error('API를 호출하는 데 오류가 생겼습니다.', error);
         });
 }
+
+// 1:1 채팅
+function requestOneToOneChat(button) {
+    const receiverId = button.getAttribute("data-receiver-id");
+
+    fetch(`/api/chat/request-one-to-one/${receiverId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+        .then(response => {
+            if (response.status === 409) {
+                throw new Error('이미 해당 유저와의 채팅방이 존재합니다.');
+            } else if (!response.ok) {
+                throw new Error('알 수 없는 오류가 발생했습니다.');
+            }
+            return response.json(); // 채팅방 ID 반환
+        })
+        .then(chatRoomId => {
+            alert("채팅방이 생성되었습니다.");
+            window.location.href = `/chat/${chatRoomId}`; // 채팅방으로 이동
+        })
+        .catch(error => {
+            alert(error.message); // 오류 메시지 출력
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
