@@ -160,6 +160,8 @@
             this.action = '/' + selectedCategory + '/write';
         }
     });
+
+    document.getElementById('endDate').min = new Date().toISOString().split("T")[0];
 </script>
 </body>
 </html>

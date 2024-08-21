@@ -171,6 +171,8 @@
             alert('모든 필드를 올바르게 입력해주세요.');
         }
     });
+
+    document.getElementById('endDate').min = new Date().toISOString().split("T")[0];
 </script>
 </body>
 </html>
