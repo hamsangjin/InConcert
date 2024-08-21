@@ -265,8 +265,9 @@ function toggleUserList() {
 // 유저 목록을 불러오는 함수
 function loadUserList() {
     const chatRoomId = document.getElementById('chatRoomId').value;
-    const hostUserId = document.getElementById('hostUserId').value; // 현재 호스트의 ID
-    const currentUserId = document.getElementById('userId').value; // 현재 로그인한 유저의 ID
+    const hostUserId = document.getElementById('hostUserId').value;
+    const currentUserId = document.getElementById('userId').value;
+    const chatRoomTitle = document.getElementById('chatRoomTitle').textContent;
 
     // API 호출로 유저 목록을 가져옴
     fetch(`/api/chat/users/${chatRoomId}`)
@@ -279,21 +280,26 @@ function loadUserList() {
             users.forEach(user => {
                 const listItem = document.createElement('li');
 
-                // 호스트인 경우 'username (호스트)'로 표시
-                if (user.id == hostUserId) {
-                    listItem.textContent = `${user.username} (호스트)`;
-                } else {
+                // 채팅방 제목이 '1:1 채팅'으로 시작하는 경우 호스트 표시와 강퇴 버튼을 생략
+                if (chatRoomTitle.startsWith('1:1 채팅')) {
                     listItem.textContent = user.username;
                 }
+                else {
+                    if (user.id == hostUserId) {
+                        listItem.textContent = `${user.username} (호스트)`;
+                    } else {
+                        listItem.textContent = user.username;
+                    }
 
-                // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
-                if (currentUserId == hostUserId && user.id != currentUserId) {
-                    const kickButton = document.createElement('button');
-                    kickButton.textContent = "강퇴";
-                    kickButton.onclick = function () {
-                        kickUserFromChatRoom(user.id); // 강퇴 함수 호출
-                    };
-                    listItem.appendChild(kickButton);
+                    // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
+                    if (currentUserId == hostUserId && user.id != currentUserId) {
+                        const kickButton = document.createElement('button');
+                        kickButton.textContent = "강퇴";
+                        kickButton.onclick = function () {
+                            kickUserFromChatRoom(user.id);
+                        };
+                        listItem.appendChild(kickButton);
+                    }
                 }
 
                 // 리스트에 아이템 추가
