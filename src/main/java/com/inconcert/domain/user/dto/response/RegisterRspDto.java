@@ -21,7 +21,7 @@ public class RegisterRspDto extends ResponseDto {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }
 
-    public static ResponseEntity<ResponseDto> passwordNotMatch() {
+    public static ResponseEntity<ResponseDto> notMatchPassword() {
         ResponseDto responseBody = new ResponseDto(ResponseCode.PASSWORD_NOT_MATCH, ResponseMessage.PASSWORD_NOT_MATCH);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
     }

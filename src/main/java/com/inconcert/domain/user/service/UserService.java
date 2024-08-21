@@ -153,7 +153,7 @@ public class UserService {
 
         // 비밀번호 확인
         if (!reqDto.getPassword().equals(reqDto.getPasswordConfirm())) {
-            return RegisterRspDto.passwordNotMatch();
+            return RegisterRspDto.notMatchPassword();
         }
 
         String email = reqDto.getEmail();
