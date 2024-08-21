@@ -22,7 +22,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
@@ -56,8 +55,9 @@ public class PerformanceService {
         return driver;
     }
 
+    @Transactional
     public void crawlPerformances(String type) {
-        String url = null;
+        String url;
 
         if (Integer.parseInt(type) >= 3) {
             url = "http://m.playdb.co.kr/Play/List?maincategory=00000" + type + "&playtype=3";
@@ -90,35 +90,10 @@ public class PerformanceService {
         List<WebElement> elements = driver.findElements(By.cssSelector("#list li"));
 
         for (WebElement element : elements) {
-            try {
-                String poster = "";
-                String title = "";
-                String date = "";
-                String place = "";
-
-                try {
-                    poster = element.findElement(By.cssSelector("a span:nth-child(1) img")).getAttribute("src");
-                } catch (Exception e) {
-                    log.warn("Failed to find poster for an element");
-                }
-
-                try {
-                    title = element.findElement(By.cssSelector("a span:nth-child(2)")).getText();
-                } catch (Exception e) {
-                    log.warn("Failed to find title for an element");
-                }
-
-                try {
-                    date = element.findElement(By.cssSelector("a span:nth-child(3)")).getText();
-                } catch (Exception e) {
-                    log.warn("Failed to find date for an element");
-                }
-
-                try {
-                    place = element.findElement(By.cssSelector("a span:nth-child(4)")).getText();
-                } catch (Exception e) {
-                    log.warn("Failed to find place for an element");
-                }
+                String poster = element.findElement(By.cssSelector("a span:nth-child(1) img")).getAttribute("src");
+                String title = element.findElement(By.cssSelector("a span:nth-child(2)")).getText();
+                String date = element.findElement(By.cssSelector("a span:nth-child(3)")).getText();
+                String place = element.findElement(By.cssSelector("a span:nth-child(4)")).getText();
 
                 if (!title.isEmpty() && !date.isEmpty() && !place.isEmpty()) {
                     Performance performance = Performance.builder()
@@ -135,11 +110,7 @@ public class PerformanceService {
                 } else {
                     log.warn("Skipping element due to missing required information");
                 }
-            } catch (Exception e) {
-                log.error("Failed to parse element: " + e.getMessage());
-            }
         }
-
         driver.quit();
     }
 
@@ -148,44 +119,39 @@ public class PerformanceService {
         if(type == 2) type = 3L;
         else if (type == 3) type = 2L;
 
+        PostCategory postCategory = postCategoryRepository.findById(type)
+                .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
+
+        User user = userService.getUserByUsername("admin");    // 작성자는 항상 관리자
+
+        LocalDate endDate;
         try {
-            PostCategory postCategory = postCategoryRepository.findById(type)
-                    .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
-
-            User user = userService.findByUsername("admin");    // 작성자는 항상 관리자
-
-            LocalDate endDate;
-            try {
-                String[] dateParts = performance.getDate().split("~");
-                if (dateParts.length > 1) {
-                    String endDatePart = dateParts[1].trim();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-                    endDate = LocalDate.parse(endDatePart, formatter);
-                } else {
-                    endDate = LocalDate.now();
-                }
-            } catch (DateTimeParseException e) {
-                log.error("Date parsing error: ", e);
+            String[] dateParts = performance.getDate().split("~");
+            if (dateParts.length > 1) {
+                String endDatePart = dateParts[1].trim();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+                endDate = LocalDate.parse(endDatePart, formatter);
+            } else {
                 endDate = LocalDate.now();
             }
-
-            PostDTO postDto = PostDTO.builder()
-                    .title(performance.getTitle())
-                    .content("<img src=" + performance.getImageUrl() + "><br><span>장소: </span><span>" + performance.getPlace() + "</span><br><span>날짜: </span><span>"+ performance.getDate()+"</span>")
-                    .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
-                    .matchCount(0)
-                    .thumbnailUrl(performance.getImageUrl())
-                    .postCategory(postCategory)
-                    .user(user)
-                    .build();
-
-            Post post = PostDTO.toEntity(postDto, postCategory);
-
-            infoRepository.save(post);
-            log.info("Saved post: {}", post.getTitle());
-        } catch (Exception e) {
-            log.error("Error saving post: ", e);
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        } catch (DateTimeParseException e) {
+            log.error("Date parsing error: ", e);
+            endDate = LocalDate.now();
         }
+
+        PostDTO postDto = PostDTO.builder()
+                .title(performance.getTitle())
+                .content("<img src=" + performance.getImageUrl() + "><br><span>장소: </span><span>" + performance.getPlace() + "</span><br><span>날짜: </span><span>"+ performance.getDate()+"</span>")
+                .endDate(endDate) // assuming the date is in the format "start_date ~ end_date"
+                .matchCount(0)
+                .thumbnailUrl(performance.getImageUrl())
+                .postCategory(postCategory)
+                .user(user)
+                .build();
+
+        Post post = PostDTO.toEntity(postDto, postCategory);
+
+        infoRepository.save(post);
+        log.info("Saved post: {}", post.getTitle());
     }
 }

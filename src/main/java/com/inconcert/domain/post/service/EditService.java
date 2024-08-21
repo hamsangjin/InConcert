@@ -4,7 +4,7 @@ import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
 import com.inconcert.domain.category.repository.PostCategoryRepository;
-import com.inconcert.domain.chat.dto.ChatRoomDto;
+import com.inconcert.domain.chat.dto.ChatRoomDTO;
 import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.service.ChatService;
@@ -42,7 +42,7 @@ public class EditService {
     @Transactional
     public Long updatePost(Long postId, PostDTO postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
         // 현재 카테고리에서 게시글 찾기
-        Post currentPost = findPostByIdAndCategory(postId, currentCategoryTitle);
+        Post currentPost = getPostByIdAndCategory(postId, currentCategoryTitle);
 
         Category category = categoryRepository.findByTitle(newCategoryTitle)
                 .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
@@ -65,18 +65,13 @@ public class EditService {
 
         // 채팅방 찾기 (match 카테고리인 경우에만 처리)
         ChatRoom chatRoom = currentPost.getChatRoom();
-//        if (currentPost.getChatRoom() != null && currentCategoryTitle.equals("match")) {
-//            log.info("이거 타냐?");
-//            chatRoom = chatRoomRepository.findById(currentPost.getChatRoom().getId())
-//                    .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
-//        }
 
         // 다른 게시판에서 동행 게시판으로 수정하는 경우 채팅방 생성
         if(!currentCategoryTitle.equals("match") && newCategoryTitle.equals("match")){
             log.info("얘는?");
-            ChatRoomDto chatRoomDto = chatService.createChatRoom(postDto.getTitle());
+            ChatRoomDTO chatRoomDto = chatService.createChatRoom(postDto.getTitle());
             chatRoom = chatRoomRepository.findById(chatRoomDto.getId())
-                    .orElseThrow(() -> new ChatNotFoundException("채팅방을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
 
             // Post와 채팅방 연결
             chatRoom.assignPost(currentPost);
@@ -105,7 +100,7 @@ public class EditService {
         return updatedPost.getId();
     }
 
-    private Post findPostByIdAndCategory(Long postId, String categoryTitle) {
+    private Post getPostByIdAndCategory(Long postId, String categoryTitle) {
         return getRepositoryByCategoryTitle(categoryTitle).findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
@@ -136,7 +131,6 @@ public class EditService {
             url = matcher.group();
             break;
         }
-
         return url;
     }
 }

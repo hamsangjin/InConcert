@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomDto {
+public class ChatRoomDTO {
     private Long id;
     private String roomName;
     private Long hostUserId;

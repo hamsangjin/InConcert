@@ -57,12 +57,12 @@ public class MyPageController {
     }
 
     @GetMapping("/board/{userId}")
-    public String mypageBoard(Model model,
+    public String showMyPosts(Model model,
                               @PathVariable("userId") Long userId,
                               @RequestParam(name = "page", defaultValue = "0") int page,
                               @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Page<PostDTO> postPage = myPageService.mypageBoard(userId, page, size);
+        Page<PostDTO> postPage = myPageService.getMyPosts(userId, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
@@ -73,12 +73,12 @@ public class MyPageController {
     }
 
     @GetMapping("/comment/{userId}")
-    public String mypageComment(Model model,
-                                @PathVariable("userId") Long userId,
-                                @RequestParam(name = "page", defaultValue = "0") int page,
-                                @RequestParam(name = "size", defaultValue = "10") int size) {
+    public String showMyCommentPosts(Model model,
+                                     @PathVariable("userId") Long userId,
+                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                     @RequestParam(name = "size", defaultValue = "10") int size) {
 
-        Page<PostDTO> postPage = myPageService.mypageComment(userId, page, size);
+        Page<PostDTO> postPage = myPageService.getMyCommentPosts(userId, page, size);
 
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
@@ -89,11 +89,11 @@ public class MyPageController {
     }
 
     @GetMapping("/like/{userId}")
-    public String mypageLike(Model model,
-                             @PathVariable("userId") Long userId,
-                             @RequestParam(name = "page", defaultValue = "0") int page,
-                             @RequestParam(name = "size", defaultValue = "10") int size) {
-        Page<PostDTO> postPage = myPageService.mypageLike(userId, page, size);
+    public String showMyLikePosts(Model model,
+                                  @PathVariable("userId") Long userId,
+                                  @RequestParam(name = "page", defaultValue = "0") int page,
+                                  @RequestParam(name = "size", defaultValue = "10") int size) {
+        Page<PostDTO> postPage = myPageService.getMyLikePosts(userId, page, size);
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -103,11 +103,11 @@ public class MyPageController {
 
     // 이건 그냥 작성해놓은 거임
     @GetMapping("/with/{userId}")
-    public String mypageWith(Model model,
+    public String showMyWith(Model model,
                              @PathVariable("userId") Long userId,
                              @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "10") int size) {
-        Page<PostDTO> postPage = myPageService.mypageBoard(userId, page, size);
+        Page<PostDTO> postPage = myPageService.getMyPosts(userId, page, size);
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -116,7 +116,7 @@ public class MyPageController {
     }
 
     @PostMapping("/bye")
-    public String mypageBye(){
+    public String deleteUser(){
         userService.deleteUser();
         return "redirect:/logout";
     }

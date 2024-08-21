@@ -1,7 +1,7 @@
 package com.inconcert.domain.comment.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreateForm;
-import com.inconcert.domain.comment.dto.CommentDto;
+import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.service.CommentService;
 import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.entity.Post;
@@ -73,11 +73,10 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommentDto>> getComments(@PathVariable("categoryTitle") String categoryTitle,
-                                                        @PathVariable("postCategoryTitle") String postCategoryTitle,
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                                         @PathVariable("postId") Long postId,
                                                         @RequestParam(defaultValue = "asc") String sort) {
-        List<CommentDto> comments = getService(postCategoryTitle).findByPostId(postCategoryTitle, postId, sort);
+        List<CommentDTO> comments = getService(postCategoryTitle).getCommentDTOsByPostId(postCategoryTitle, postId, sort);
         return ResponseEntity.ok(comments);
     }
 
@@ -94,7 +93,7 @@ public class CommentController {
         }
 
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        CommentDto existingComment = getService(postCategoryTitle).findComment(postCategoryTitle, commentId);
+        CommentDTO existingComment = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, commentId);
 
         if (!existingComment.getUser().getUsername().equals(user.getUsername())) {
             throw new SecurityException("이 댓글을 수정할 권한이 없습니다.");
@@ -111,7 +110,7 @@ public class CommentController {
                                 @PathVariable("postId") Long postId,
                                 @PathVariable("commentId") Long id) {
         User user = userService.getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        CommentDto dto = getService(postCategoryTitle).findComment(postCategoryTitle, id);
+        CommentDTO dto = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, id);
 
         // 현재 사용자와 댓글 작성자가 일치하는지 확인
         boolean isCommentAuthor = dto.getUser().getUsername().equals(user.getUsername());
@@ -158,7 +157,7 @@ public class CommentController {
             case "transfer" -> transferService.getPostByPostId(postId);
             default -> throw new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage());
         };
-        notificationService.commentsNotification(post, commentForm.getContent());
+        notificationService.createCommentsNotification(post, commentForm.getContent());
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
 

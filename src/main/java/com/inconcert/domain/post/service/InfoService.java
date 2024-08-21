@@ -18,11 +18,11 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class InfoService {
     private final InfoRepository infoRepository;
     private final PerformanceService performanceService;
 
+    @Transactional(readOnly = true)
     public List<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
             case "musical" -> infoRepository.findPostsByPostCategoryTitle("musical");
@@ -33,12 +33,14 @@ public class InfoService {
         };
     }
 
+    @Transactional(readOnly = true)
     public Page<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return infoRepository.findPostsByPostCategoryTitle(postCategoryTitle, pageable);
     }
 
-    public Page<PostDTO> findByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
+    @Transactional(readOnly = true)
+    public Page<PostDTO> getByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
         LocalDateTime startDate = DateUtil.getStartDate(period);
         LocalDateTime endDate = DateUtil.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);

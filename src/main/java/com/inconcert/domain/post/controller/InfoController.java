@@ -38,7 +38,7 @@ public class InfoController {
     }
 
     @GetMapping("/{postCategoryTitle}")
-    public String infoDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
+    public String detailInfo(@PathVariable("postCategoryTitle") String postCategoryTitle,
                              @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "10") int size,
                              Model model) {
@@ -63,7 +63,7 @@ public class InfoController {
                          @RequestParam(name = "size", required = false, defaultValue = "10") int size,
                          Model model) {
 
-        Page<PostDTO> postsPage = infoService.findByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
+        Page<PostDTO> postsPage = infoService.getByKeywordAndFilters(postCategoryTitle, keyword, period, type, page, size);
 
         Map<String, String> searchInfo = new HashMap<>();
         searchInfo.put("period", period);

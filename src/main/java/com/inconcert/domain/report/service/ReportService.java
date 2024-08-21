@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ReportService {
     private final ReportRepository reportRepository;
     private final InfoRepository infoRepository;
@@ -32,7 +31,8 @@ public class ReportService {
     private final UserService userService;
 
     // 신고 목록 불러오기
-    public List<ReportDTO> findAll() {
+    @Transactional(readOnly = true)
+    public List<ReportDTO> getReportDTOAll() {
         List<Report> reportList = reportRepository.findAll();
         return reportList.stream()
                 .map(report -> ReportDTO.builder()
@@ -47,7 +47,7 @@ public class ReportService {
     // 신고하기
     @Transactional
     public void report(Long postId, String categoryTitle, String type){
-        Post reportPost = findPostByIdAndCategory(postId, categoryTitle);
+        Post reportPost = getPostByIdAndCategoryTitle(postId, categoryTitle);
         User reporter = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
@@ -67,7 +67,8 @@ public class ReportService {
     }
 
     // 관리자가 신고 처리할 때 신고 내용 보기
-    public ReportDTO findById(Long reportId){
+    @Transactional(readOnly = true)
+    public ReportDTO getReportDTOById(Long reportId){
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new ReportNotFoundException(ExceptionMessage.REPORT_NOT_FOUND.getMessage()));
 
@@ -115,7 +116,7 @@ public class ReportService {
     }
 
     // 반환받은 Repository로 post 조회
-    private Post findPostByIdAndCategory(Long postId, String categoryTitle) {
+    private Post getPostByIdAndCategoryTitle(Long postId, String categoryTitle) {
         return getRepositoryByCategoryTitle(categoryTitle).findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }

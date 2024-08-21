@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NotificationDto {
+public class NotificationDTO {
     private Long id;
     private String keyword;
     private String message;

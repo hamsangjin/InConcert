@@ -6,7 +6,7 @@ import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
-import com.inconcert.global.exception.RoleNameNotFoundException;
+import com.inconcert.global.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -61,7 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private User createUser(String username, String email, String name) {
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RoleNameNotFoundException("Role을 찾을 수 없습니다."))
+                .orElseThrow(() -> new RoleNotFoundException("Role을 찾을 수 없습니다."))
         );
 
         // user 테이블 컬럼에서 not null인 요소 기본값으로 지정 후 회원가입 되도록 처리

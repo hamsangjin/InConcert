@@ -12,9 +12,8 @@ import com.inconcert.domain.user.dto.request.*;
 import com.inconcert.domain.user.dto.response.*;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
-import com.inconcert.global.dto.ResponseDto;
 import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.RoleNameNotFoundException;
+import com.inconcert.global.exception.RoleNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +31,6 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
@@ -41,118 +38,87 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final EmailProvider emailProvider;
     private final TempPasswordEmailProvider tempPasswordEmailProvider;
-
     private final PasswordEncoder passwordEncoder;
 
-    public User findByUsername(String username) {
+    @Transactional(readOnly = true)
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
     }
 
     // 아이디 중복 확인
-    public ResponseEntity<? super UsernameCheckRspDto> usernameCheck(UsernameCheckReqDto reqDto) {
-        try {
-            String username = reqDto.getUsername();
-            boolean isExistUserId = userRepository.existsByUsername(username);
-            if(isExistUserId) return UsernameCheckRspDto.duplicateId();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super UsernameCheckRspDto> checkUsername(UsernameCheckReqDto reqDto) {
+        String username = reqDto.getUsername();
+        boolean isExistUserId = userRepository.existsByUsername(username);
+        if(isExistUserId) return UsernameCheckRspDto.duplicateId();
 
         return UsernameCheckRspDto.success();
     }
 
     // 이메일 중복 확인
-    public ResponseEntity<? super EmailCheckRspDto> emailCheck(EmailCheckReqDto reqDto) {
-        try {
-            String email = reqDto.getEmail();
-            boolean isExistEmail = userRepository.existsByEmail(email);
-            if(isExistEmail) return EmailCheckRspDto.duplicateEmail();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super EmailCheckRspDto> checkEmail(EmailCheckReqDto reqDto) {
+        String email = reqDto.getEmail();
+        boolean isExistEmail = userRepository.existsByEmail(email);
+        if(isExistEmail) return EmailCheckRspDto.duplicateEmail();
 
         return EmailCheckRspDto.success();
     }
 
     // 닉네임 중복 확인
-    public ResponseEntity<? super NicknameCheckRspDto> nicknameCheck(NicknameCheckReqDto reqDto) {
-        try {
-            String nickname = reqDto.getNickname();
-            boolean isExistNickname = userRepository.existsByNickname(nickname);
-            if(isExistNickname) return NicknameCheckRspDto.duplicateNickname();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super NicknameCheckRspDto> checkNickname(NicknameCheckReqDto reqDto) {
+        String nickname = reqDto.getNickname();
+        boolean isExistNickname = userRepository.existsByNickname(nickname);
+        if(isExistNickname) return NicknameCheckRspDto.duplicateNickname();
 
         return NicknameCheckRspDto.success();
     }
 
     // 전화번호 중복 확인
-    public ResponseEntity<? super PhoneNumberCheckRspDto> phoneNumberCheck(PhoneNumberCheckReqDto reqDto) {
-        try {
-            String phoneNumber = reqDto.getPhoneNumber();
-            boolean isExistPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
-            if(isExistPhoneNumber) return PhoneNumberCheckRspDto.duplicatePhoneNumber();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super PhoneNumberCheckRspDto> checkPhoneNumber(PhoneNumberCheckReqDto reqDto) {
+        String phoneNumber = reqDto.getPhoneNumber();
+        boolean isExistPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
+        if(isExistPhoneNumber) return PhoneNumberCheckRspDto.duplicatePhoneNumber();
 
         return PhoneNumberCheckRspDto.success();
     }
 
     // 인증 메일 전송
     @Transactional
-    public ResponseEntity<? super EmailCertificationRspDto> emailCertification(EmailCertificationReqDto reqDto) {
-        try{
-            String username = reqDto.getUsername();
-            String email = reqDto.getEmail();
+    public ResponseEntity<? super EmailCertificationRspDto> sendCertificationNumber(EmailCertificationReqDto reqDto) {
+        String username = reqDto.getUsername();
+        String email = reqDto.getEmail();
 
-            boolean isExistUsername = userRepository.existsByUsername(username);
-            if(isExistUsername) return UsernameCheckRspDto.duplicateId();    // id가 중복될 경우 (username)
+        boolean isExistUsername = userRepository.existsByUsername(username);
+        if(isExistUsername) return UsernameCheckRspDto.duplicateId();    // id가 중복될 경우 (username)
 
-            String certificationNumber = CertificationNumber.certificationNumber();
+        String certificationNumber = CertificationNumber.certificationNumber();
 
-            // 메일 전송
-            boolean isSucceed = emailProvider.sendEmail(email, certificationNumber);
-            if(!isSucceed) return EmailCertificationRspDto.mailSendFail();
+        // 메일 전송
+        boolean isSucceed = emailProvider.sendEmail(email, certificationNumber);
+        if(!isSucceed) return EmailCertificationRspDto.mailSendFail();
 
-            Certification certification = new Certification(email, certificationNumber, username);
-            certificationRepository.save(certification);
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+        Certification certification = new Certification(email, certificationNumber, username);
+        certificationRepository.save(certification);
 
         return EmailCertificationRspDto.success();
     }
 
     // 인증 번호 확인
+    @Transactional(readOnly = true)
     public ResponseEntity<? super CheckCertificationRspDto> checkCertification(CheckCertificationReqDto reqDto) {
-        try {
-            String username = reqDto.getUsername();
-            String email = reqDto.getEmail();
-            String certificationNumber = reqDto.getCertificationNumber();
+        String username = reqDto.getUsername();
+        String email = reqDto.getEmail();
+        String certificationNumber = reqDto.getCertificationNumber();
 
-            Certification certification = certificationRepository.findByUsername(username);
-            if(certification == null) return CheckCertificationRspDto.certificationFail();
+        Certification certification = certificationRepository.findByUsername(username);
+        if(certification == null) return CheckCertificationRspDto.certificationFail();
 
-            boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
-            if(!isMatched) return CheckCertificationRspDto.certificationFail(); // 인증 번호가 일치하지 않을 때
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+        boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
+        if(!isMatched) return CheckCertificationRspDto.certificationFail(); // 인증 번호가 일치하지 않을 때
 
         return CheckCertificationRspDto.success();
     }
@@ -160,57 +126,52 @@ public class UserService {
     // 회원가입
     @Transactional
     public ResponseEntity<? super RegisterRspDto> joinUser(RegisterReqDto reqDto) {
-        try {
-            String username = reqDto.getUsername();
-            boolean isExistUsername = userRepository.existsByUsername(username);
-            if(isExistUsername) return RegisterRspDto.duplicateId();
+        String username = reqDto.getUsername();
+        boolean isExistUsername = userRepository.existsByUsername(username);
+        if(isExistUsername) return RegisterRspDto.duplicateId();
 
-            String email = reqDto.getEmail();
-            String certificationNumber = reqDto.getCertificationNumber();
+        String email = reqDto.getEmail();
+        String certificationNumber = reqDto.getCertificationNumber();
 
-            Certification certification = certificationRepository.findByUsername(username);
+        Certification certification = certificationRepository.findByUsername(username);
 
-            boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
-            if(!isMatched) return RegisterRspDto.certificationFail();
+        boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
+        if(!isMatched) return RegisterRspDto.certificationFail();
 
-            String password = reqDto.getPassword();
-            String encodedPassword = passwordEncoder.encode(password);
+        String password = reqDto.getPassword();
+        String encodedPassword = passwordEncoder.encode(password);
 
-            // ROLE_USER를 데이터베이스에서 조회
-            Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RoleNameNotFoundException("Role을 찾을 수 없습니다."));
+        // ROLE_USER를 데이터베이스에서 조회
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RoleNotFoundException(ExceptionMessage.ROLE_NOT_FOUND.getMessage()));
 
-            Set<Role> roles = new HashSet<>();
-            roles.add(userRole);
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
 
-            User user = User.builder()
-                    .username(username)
-                    .password(encodedPassword)
-                    .email(email)
-                    .name(reqDto.getName())
-                    .nickname(reqDto.getNickname())
-                    .phoneNumber(reqDto.getPhoneNumber())
-                    .birth(reqDto.getBirth())
-                    .gender(reqDto.getGender())
-                    .mbti(reqDto.getMbti())
-                    .roles(roles)
-                    .build();
+        User user = User.builder()
+                .username(username)
+                .password(encodedPassword)
+                .email(email)
+                .name(reqDto.getName())
+                .nickname(reqDto.getNickname())
+                .phoneNumber(reqDto.getPhoneNumber())
+                .birth(reqDto.getBirth())
+                .gender(reqDto.getGender())
+                .mbti(reqDto.getMbti())
+                .roles(roles)
+                .build();
 
-            userRepository.save(user);
-            certificationRepository.delete(certification); // 회원가입이 되면 안증번호 내역 지우기
+        userRepository.save(user);
+        certificationRepository.delete(certification); // 회원가입이 되면 안증번호 내역 지우기
 
-            return RegisterRspDto.success();
-        }
-        catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return ResponseDto.databaseError();
-        }
+        return RegisterRspDto.success();
     }
 
     // 아이디 찾기
+    @Transactional(readOnly = true)
     public String findUserId(FindIdReqDto reqDto) {
         User findUser = userRepository.findByNameAndEmail(reqDto.getName(), reqDto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         return findUser.getUsername();
     }
 
@@ -218,7 +179,7 @@ public class UserService {
     @Transactional
     public User findPassword(FindPasswordReqDto reqDto) {
         User user = userRepository.findByUsernameAndEmail(reqDto.getUsername(), reqDto.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 임시 비밀번호
         String tempPassword = TempPassword.certificationNumber();
@@ -233,6 +194,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public Optional<User> getAuthenticatedUser() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -247,7 +209,7 @@ public class UserService {
 
             return userRepository.findByUsername(username);
         } catch (Exception e) {
-            log.error("Error getting authenticated user", e);
+            log.error("getAuthenticatedUser 메소드에서 오류난거임 오류 클래스 생성하세요 !!!!", e);
             return Optional.empty();
         }
     }
@@ -259,7 +221,8 @@ public class UserService {
 
     @Transactional
     public void deleteUser(){
-        User user = getAuthenticatedUser().orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         userRepository.deleteById(user.getId());
     }
 }

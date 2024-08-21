@@ -19,13 +19,13 @@ public class ReportController {
 
     @GetMapping("/report")
     public String reportList(Model model) {
-        List<ReportDTO> reportDTOS = reportService.findAll();
+        List<ReportDTO> reportDTOS = reportService.getReportDTOAll();
         model.addAttribute("reports", reportDTOS);
         return "report/reportlist";
     }
 
     @PostMapping("/report/{id}/delete")
-    public String reportDelete(@PathVariable("id") Long id) {
+    public String deleteReport(@PathVariable("id") Long id) {
         reportService.deleteReportId(id);
         return "redirect:/report";
     }
@@ -33,7 +33,7 @@ public class ReportController {
     @GetMapping("/report/{id}")
     public String reportDetailForm(@PathVariable("id") Long id, Model model) {
         model.addAttribute("reportDTO", new ReportDTO());
-        model.addAttribute("report", reportService.findById(id));
+        model.addAttribute("report", reportService.getReportDTOById(id));
 
         return "report/reportdetail";
     }
