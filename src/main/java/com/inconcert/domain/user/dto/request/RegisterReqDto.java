@@ -19,20 +19,24 @@ public class RegisterReqDto {
     private String password;
 
     @NotBlank
-    @Email
+    private String passwordConfirm;
+
+    @NotBlank
+    @Email(message = "이메일 형식이 아닙니다.")
     private String email;
 
     @NotBlank
     private String certificationNumber;
 
     @NotBlank
+    @Pattern(regexp = "^[가-힣a-zA-Z]+$", message = "이름은 한글 또는 영어만 입력 가능합니다.")
     private String name;
 
     @NotBlank
     private String nickname;
 
     @NotBlank
-    @Pattern(regexp = "^\\d{10,11}$")
+    @Pattern(regexp = "^010\\d{7,8}$", message = "010으로 시작하는 번호를 숫자만 입력해주세요.")
     private String phoneNumber;
 
     @NotNull

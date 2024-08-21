@@ -1,6 +1,9 @@
 package com.inconcert.domain.certification.entity;
 
+import com.inconcert.global.entity.BaseEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +11,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "certifications")
 @Getter
 @NoArgsConstructor
-public class Certification {
+@AllArgsConstructor
+@Builder
+public class Certification extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
