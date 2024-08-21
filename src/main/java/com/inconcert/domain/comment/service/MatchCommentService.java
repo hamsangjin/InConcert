@@ -1,6 +1,6 @@
 package com.inconcert.domain.comment.service;
 
-import com.inconcert.domain.comment.dto.CommentCreateForm;
+import com.inconcert.domain.comment.dto.CommentCreationDTO;
 import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
@@ -49,15 +49,13 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public Long saveComment(String boardType, Long id, User user, CommentCreateForm dto) {
-        Post post = matchRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+    public Long saveComment(String boardType, Long id, User user, CommentCreationDTO dto) {
+        Post post = getPostByCategoryAndId(boardType, id);
 
         Comment comment = dto.toEntity();
         comment.setPost(post);
         comment.setUser(user);
 
-        // parentId가 있는 경우 부모 댓글 설정
         if (dto.getParent() != null) {
             Comment parentComment = commentRepository.findById(dto.getParent())
                     .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
@@ -71,15 +69,13 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public void reSaveComment(String boardType, Long postId, Long parentId, User user, CommentCreateForm dto) {
+    public void saveReply(String boardType, Long postId, Long parentId, User user, CommentCreationDTO dto) {
+        Post post = getPostByCategoryAndId(boardType, postId);
         dto.setUser(user);
         Comment comment = dto.toEntity();
 
-        // Post를 설정합니다.
-        comment.confirmPost(matchRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage())));
+        comment.confirmPost(post);
 
-        // parentId가 null이 아닌 경우에만 부모 댓글을 설정합니다.
         if (parentId != null) {
             Comment parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
@@ -91,7 +87,7 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public Long updateComment(String boardType, Long id, CommentCreateForm dto) {
+    public Long updateComment(String boardType, Long id, CommentCreationDTO dto) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
         comment.update(dto.getContent(), dto.getIsSecret());
@@ -105,5 +101,29 @@ public class MatchCommentService implements CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
         commentRepository.delete(comment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Post getPostByCategoryAndId(String categoryTitle, Long postId) {
+        return matchRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+    }
+
+    @Override
+    public void validateCommentDeletion(CommentDTO dto, Post post, User user) {
+        boolean isCommentAuthor = dto.getUser().getUsername().equals(user.getUsername());
+        boolean isPostAuthor = post.getUser().getUsername().equals(user.getUsername());
+
+        if (!isCommentAuthor && !isPostAuthor) {
+            throw new SecurityException("이 댓글을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    @Override
+    public void validateCommentEditAuthorization(CommentDTO dto, User user) {
+        if (!dto.getUser().getUsername().equals(user.getUsername())) {
+            throw new SecurityException("이 댓글을 수정할 권한이 없습니다.");
+        }
     }
 }

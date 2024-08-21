@@ -76,3 +76,6 @@ chrome:
 redis:
   host: localhost
   port: 6379
+
+kakao:
+  javascript-key: ${kakaoKey}

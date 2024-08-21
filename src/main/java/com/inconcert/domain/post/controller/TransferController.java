@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.controller;
 
-import com.inconcert.domain.comment.dto.CommentCreateForm;
+import com.inconcert.domain.comment.dto.CommentCreationDTO;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.service.EditService;
@@ -10,6 +10,7 @@ import com.inconcert.domain.report.dto.ReportDTO;
 import com.inconcert.domain.report.service.ReportService;
 import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,9 @@ public class TransferController {
     private final EditService editService;
     private final WriteService writeService;
     private final ReportService reportService;
+
+    @Value("${kakao.javascript-key}")
+    private String kakaoKey;
 
     @GetMapping
     public String transfer(Model model) {
@@ -86,7 +90,8 @@ public class TransferController {
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);
-        model.addAttribute("createForm", new CommentCreateForm());
+        model.addAttribute("createForm", new CommentCreationDTO());
+        model.addAttribute("kakaoKey", kakaoKey);
 
         return "board/post-detail";
     }

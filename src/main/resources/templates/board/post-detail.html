@@ -5,9 +5,14 @@
     <title>메인 화면</title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+            integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
     <script defer src="/js/board/post-detail.js"></script>
     <script defer src="/js/comment.js"></script>
     <script defer src="/js/profile.js"></script>
+    <script>
+        Kakao.init('[[${kakaoKey}]]'); // 사용하려는 앱의 JavaScript 키 입력
+    </script>
 </head>
 <body>
 <div class="container">
@@ -95,6 +100,15 @@
             </div>
         </div>
 
+        <div id="kakao-share-button"
+             th:data-title="${post.title}"
+             th:data-description="${post.content}"
+             th:data-image-url="${post.thumbnailUrl}"
+             th:data-web-url="@{'http://localhost:8080/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id}}"
+             th:data-likeCount="${post.likeCount}"
+             th:data-commentCount="${post.commentCount}">
+        </div>
+
         <div class="interaction">
             <i class="like-icon far fa-heart" id="like-icon"
                th:data-post-id="${post.id}"
@@ -102,6 +116,13 @@
                onclick="toggleLike(this)"></i>
             <span id="like-count" th:text="${post.likeCount}"></span>
             <span th:text="'댓글 '+ ${post.commentCount}"></span>
+            <a id="kakaotalk-sharing-btn" href="javascript:;">
+                <img src="/images/sns/kakao.png"
+                     alt="카카오톡 공유 보내기 버튼" />
+            </a>
+            <a id="twitter-sharing-btn" href="javascript:shareTwitter();">
+                <img src="/images/sns/twitter.png" alt="트위터 공유 보내기 버튼">
+            </a>
         </div>
 
         <div class="sort-buttons">
