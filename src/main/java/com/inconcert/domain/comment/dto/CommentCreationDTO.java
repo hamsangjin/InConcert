@@ -6,14 +6,12 @@ import com.inconcert.domain.user.entity.User;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-//@Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-// 댓글 생성 폼 DTO
-public class CommentCreateForm {
+public class CommentCreationDTO {
     private Long id;
     private User user;
     private Post post;

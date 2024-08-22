@@ -371,7 +371,7 @@ header {
 
 .interaction {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     background-color: #d3d3d3;
@@ -750,4 +750,25 @@ header {
     margin-top: 15px;
     margin-bottom: 50px;
     color: #333;
+}
+
+#kakaotalk-sharing-btn {
+    margin-left: auto;
+}
+
+#kakaotalk-sharing-btn img {
+    width: 29px;
+    height: 29px;
+}
+
+#twitter-sharing-btn {
+    margin-left: 10px;
+}
+
+#twitter-sharing-btn img {
+    border-radius: 5px;
+    padding: 5px;
+    background-color: #000000;
+    width: 19px;
+    height: 19px;
 }

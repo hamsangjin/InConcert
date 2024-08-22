@@ -163,3 +163,88 @@ function requestOneToOneChat(button) {
             console.error('There was a problem with the fetch operation:', error);
         });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    var shareButton = document.getElementById('kakao-share-button');
+
+    var title = shareButton.getAttribute('data-title');
+    var description = shareButton.getAttribute('data-description');
+    var imageUrl = shareButton.getAttribute('data-image-url');
+    var webUrl = shareButton.getAttribute('data-web-url');
+
+    // 문자열로 가져온 값을 정수로 변환
+    var likeCount = parseInt(shareButton.getAttribute('data-likeCount'), 10);
+    var commentCount = parseInt(shareButton.getAttribute('data-commentCount'), 10);
+
+    // // 정규 표현식을 사용하여 <img>, <br>, <span>, <p> 태그 제거 및 한글만 추출
+    var descriptionWithoutTags = description
+        .replace(/<img[^>]*>/g, '')  // <img> 태그 제거
+        .replace(/<br>/g, '')        // <br> 태그 제거
+        .replace(/<\/?span[^>]*>/g, '')  // <span> 태그 제거
+        .replace(/<\/?p[^>]*>/g, '')  // <p> 태그 제거
+        .replace(/[^ㄱ-힣a-zA-Z\s:\d~.]/g, '');  // 한글, 알파벳, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
+
+    // 장소와 날짜 사이에 구분자 추가
+    var formattedText = descriptionWithoutTags
+        .replace(/(장소:\s*[^날]*)\s*(날짜:\s*[^]*)/, '$1\n$2');  // 장소와 날짜 사이에 " / " 추가
+
+    var koreanText = formattedText.trim();
+
+    // imageUrl이 유효하지 않으면 기본 이미지로 설정
+    if (!imageUrl || imageUrl.trim() === "") {
+        imageUrl = '/images/logo.png';  // 기본 이미지 경로
+    }
+
+    Kakao.Share.createDefaultButton({
+        container: '#kakaotalk-sharing-btn',
+        objectType: 'feed',
+        content: {
+            title: title,
+            description: koreanText,
+            imageUrl: imageUrl,  // 기본값이 포함된 imageUrl
+            link: {
+                webUrl: webUrl,
+            },
+        },
+        social: {
+            likeCount: likeCount,
+            commentCount: commentCount,
+        },
+        buttons: [
+            {
+                title: '웹으로 보기',
+                link: {
+                    webUrl: webUrl,
+                },
+            }
+        ],
+    });
+});
+
+function shareTwitter() {
+    var shareButton = document.getElementById('kakao-share-button');
+    var title = shareButton.getAttribute('data-title');
+    var description = shareButton.getAttribute('data-description'); // 전달할 텍스트
+    var webUrl = shareButton.getAttribute('data-web-url'); // 전달할 URL
+
+    // 정규 표현식을 사용하여 <img>, <br>, <span>, <p> 태그 제거 및 한글만 추출
+    var descriptionWithoutTags = description
+        .replace(/<img[^>]*>/g, '')  // <img> 태그 제거
+        .replace(/<br>/g, '')        // <br> 태그 제거
+        .replace(/<\/?span[^>]*>/g, '')  // <span> 태그 제거
+        .replace(/<\/?p[^>]*>/g, '')  // <p> 태그 제거
+        .replace(/[^ㄱ-힣a-zA-Z\s:\d~.]/g, '');  // 한글, 알파벳, 숫자, 공백, 콜론(:), ~, . 제외한 문자 제거
+
+    // 장소와 날짜 사이에 구분자 추가
+    var formattedText = descriptionWithoutTags
+        .replace(/(장소:\s*[^날]*)\s*(날짜:\s*[^]*)/, '$1\n$2');  // 장소와 날짜 사이에 " / " 추가
+
+    var koreanText = formattedText.trim();
+
+    // 텍스트와 URL을 인코딩하여 Twitter의 intent URL에 추가
+    var tweetContent = title + "\n" + koreanText + "\n" + webUrl;
+
+    var tweetText = encodeURIComponent(tweetContent);
+
+    window.open("https://twitter.com/intent/tweet?text=" + tweetText, '_blank', 'width=600,height=400');
+}
