@@ -40,8 +40,6 @@ function connect(userId, chatRoomId) {
                     sendEnterMessage(username, chatRoomId); // 처음 입장 시에만 메시지 전송
                     localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
                 }
-
-                fetchNotificationsFromServer(chatRoomId); // 서버에서 알림 가져오기
             }
         } else {
             console.error("User information is missing.");
@@ -50,18 +48,6 @@ function connect(userId, chatRoomId) {
         console.error('Connection error:', error);
         isConnected = false;
     });
-}
-
-// 서버에서 알림 목록 가져오기
-function fetchNotificationsFromServer(chatRoomId) {
-    fetch(`/api/notifications/${chatRoomId}`)
-        .then(response => response.json())
-        .then(notifications => {
-            notifications.forEach(notification => {
-                showNotificationConfirm(notification);
-            });
-        })
-        .catch(error => console.error('Error fetching notifications:', error));
 }
 
 function subscribeToTopics(chatRoomId) {
@@ -290,21 +276,26 @@ function loadUserList() {
                 const userContainer = document.createElement('div');
                 const listItem = document.createElement('li');
 
-                // 호스트인 경우 'username (호스트)'로 표시
-                if (user.id == hostUserId) {
-                    listItem.textContent = `${user.username} (호스트)`;
-                } else {
+                // 채팅방 제목이 '1:1 채팅'으로 시작하는 경우 호스트 표시와 강퇴 버튼을 생략
+                if (chatRoomTitle.startsWith('1:1 채팅')) {
                     listItem.textContent = user.username;
                 }
+                else {
+                    if (user.id == hostUserId) {
+                        listItem.textContent = `${user.username} (호스트)`;
+                    } else {
+                        listItem.textContent = user.username;
+                    }
 
-                // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
-                if (currentUserId == hostUserId && user.id != currentUserId) {
-                    const kickButton = document.createElement('button');
-                    kickButton.textContent = "강퇴";
-                    kickButton.onclick = function () {
-                        kickUserFromChatRoom(user.id); // 강퇴 함수 호출
-                    };
-                    listItem.appendChild(kickButton);
+                    // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
+                    if (currentUserId == hostUserId && user.id != currentUserId) {
+                        const kickButton = document.createElement('button');
+                        kickButton.textContent = "강퇴";
+                        kickButton.onclick = function () {
+                            kickUserFromChatRoom(user.id);
+                        };
+                        listItem.appendChild(kickButton);
+                    }
                 }
 
                 const userProfileImg = document.createElement('img');
