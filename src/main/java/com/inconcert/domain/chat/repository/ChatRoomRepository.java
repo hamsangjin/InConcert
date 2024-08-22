@@ -18,7 +18,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     List<ChatRoom> findAllByUserId(@Param("userId") Long userId);
 
     // 두 유저가 포함된 1:1 채팅방이 존재하는지 확인
-    List<ChatRoom> findByUsersContainsAndUsersContains(User user1, User user2);
+    List<ChatRoom> findByUsersContainsAndUsersContainsAndPostIsNull(User user1, User user2);
 
     // 채팅방에 속한 유저 목록
     @Query("select c.users from ChatRoom c where c.id = :chatRoomId")

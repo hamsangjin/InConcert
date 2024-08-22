@@ -189,7 +189,7 @@ public class ChatService {
 
         if (chatRoom.getUsers().contains(leavingUser)) {
             // host는 2명 이상일 때 나갈 수 없음
-            if(chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2) {
+            if(chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2 && chatRoom.getPost() != null) {
                 throw new HostExitException(ExceptionMessage.HOST_EXIT.getMessage());
             }
             chatRoom.removeUser(leavingUser);   // 2명 이상일 때 host가 아니면 퇴장
@@ -287,7 +287,7 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 이미 요청자와 수신자 사이의 1:1 채팅방이 존재하는지 확인
-        List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContains(requestingUser, receiver);
+        List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContainsAndPostIsNull(requestingUser, receiver);
 
         if (!existingRooms.isEmpty()) {
             throw new AlreadyInChatRoomException(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());
