@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,8 +173,18 @@ public class ChatService {
                     .username(requestUser.getUsername())
                     .message(requestUser.getUsername() + "님이 입장하셨습니다.")
                     .type(ChatMessageDTO.MessageType.ENTER)
+                    .isNotice(true)
                     .build();
+
+            ChatMessage saveMessage = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(requestUser)
+                    .message(enterMessage.getMessage())
+                    .isNotice(true)
+                    .build();
+
             messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, enterMessage);
+            chatMessageRepository.save(saveMessage);
         }
 
         // 사용자에게 채팅방 입장이 승인되었음을 알림
@@ -190,7 +199,7 @@ public class ChatService {
 
         if (chatRoom.getUsers().contains(leavingUser)) {
             // host는 2명 이상일 때 나갈 수 없음
-            if(chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2) {
+            if(chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2 && chatRoom.getPost() != null) {
                 throw new HostExitException(ExceptionMessage.HOST_EXIT.getMessage());
             }
             chatRoom.removeUser(leavingUser);   // 2명 이상일 때 host가 아니면 퇴장
@@ -209,8 +218,19 @@ public class ChatService {
                     .username(leavingUser.getUsername())
                     .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
                     .type(ChatMessageDTO.MessageType.LEAVE)
+                    .isNotice(true)
                     .build();
+
+            ChatMessage saveMessage = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(leavingUser)
+                    .message(leaveMessage.getMessage())
+                    .isNotice(true)
+                    .build();
+
             messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, leaveMessage);
+            chatMessageRepository.save(saveMessage);
+
         }
         else {
             throw new AlreadyOutOfChatRoomException("채팅방에 속해 있지 않습니다.");
@@ -229,6 +249,25 @@ public class ChatService {
         if (!chatRoom.getHostUser().getUsername().equals((userService.getAuthenticatedUser().get().getUsername()))) {
             throw new KickException("호스트만 강퇴할 수 있습니다.");
         }
+
+        // 완전히 나간 경우 퇴장 메시지 전송
+        ChatMessageDTO kickedMessage = ChatMessageDTO.builder()
+                .chatRoomId(chatRoomId)
+                .username(kickedUser.getUsername())
+                .message(kickedUser.getUsername() + "님이 강퇴되었습니다.")
+                .type(ChatMessageDTO.MessageType.LEAVE)
+                .isNotice(true)
+                .build();
+
+        ChatMessage saveMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(kickedUser)
+                .message(kickedMessage.getMessage())
+                .isNotice(true)
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, kickedMessage);
+        chatMessageRepository.save(saveMessage);
 
         // 유저 강퇴
         chatRoom.removeUser(kickedUser);
@@ -274,7 +313,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .sender(user)
                 .message(message)
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .isNotice(false)
                 .build();
 
         chatMessageRepository.save(chatMessage);
@@ -289,7 +328,7 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 이미 요청자와 수신자 사이의 1:1 채팅방이 존재하는지 확인
-        List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContains(requestingUser, receiver);
+        List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContainsAndPostIsNull(requestingUser, receiver);
 
         if (!existingRooms.isEmpty()) {
             throw new AlreadyInChatRoomException(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());
@@ -323,8 +362,7 @@ public class ChatService {
     private static List<String> getMessageTime(ChatRoom chatRoom) {
         if(chatRoom.getMessages().isEmpty())    return null;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(chatRoom.getMessages().get(chatRoom.getMessages().size()-1).getTimestamp(), formatter).truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime dateTime = chatRoom.getMessages().get(chatRoom.getMessages().size()-1).getCreatedAt().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
         String timeSince = "";
@@ -362,8 +400,10 @@ public class ChatService {
                 .chatRoomId(chatMessage.getChatRoom().getId())
                 .username(chatMessage.getSender().getUsername())
                 .message(chatMessage.getMessage())
-                .timestamp(chatMessage.getTimestamp())
+                .createdAt(chatMessage.getCreatedAt())
                 .type(ChatMessageDTO.MessageType.CHAT)
+                .profileImage(chatMessage.getSender().getProfileImage())
+                .isNotice(chatMessage.isNotice())
                 .build();
     }
 }

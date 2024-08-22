@@ -27,7 +27,7 @@ public class ChatApiController {
 
     // 채팅방에 속한 유저 목록
     @GetMapping("/users/{chatRoomId}")
-    public ResponseEntity<List<UserDto>> getUsersInChatRoom(@PathVariable Long chatRoomId) {
+    public ResponseEntity<List<UserDto>> getUsersInChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         List<UserDto> users = chatService.getUsersInChatRoom(chatRoomId);
         return ResponseEntity.ok(users);
     }
@@ -54,21 +54,23 @@ public class ChatApiController {
 
     // 동행 요청 승인
     @PostMapping("/approve-join/{chatRoomId}/{notificationId}")
-    public ResponseEntity<?> approveJoinRequest(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("notificationId") Long notificationId) {
+    public ResponseEntity<?> approveJoinRequest(@PathVariable("chatRoomId") Long chatRoomId,
+                                                @PathVariable("notificationId") Long notificationId) {
         chatService.approveJoinRequest(chatRoomId, notificationId);
         return ResponseEntity.ok("승인이 완료되었습니다.");
     }
 
     // 동행 요청 거절
     @PostMapping("/reject-join/{chatRoomId}/{notificationId}")
-    public ResponseEntity<?> rejectJoinRequest(@PathVariable("chatRoomId") Long chatRoomId, @PathVariable("notificationId") Long notificationId) {
+    public ResponseEntity<?> rejectJoinRequest(@PathVariable("chatRoomId") Long chatRoomId,
+                                               @PathVariable("notificationId") Long notificationId) {
         chatService.rejectJoinRequest(chatRoomId, notificationId);
         return ResponseEntity.ok("채팅방 '" + chatService.getChatRoomById(chatRoomId).getRoomName() + "'의 요청이 거절되었습니다.");
     }
 
     // 채팅방 나가기
     @PostMapping("/leave/{chatRoomId}")
-    public ResponseEntity<?> leaveChatRoom(@PathVariable Long chatRoomId) {
+    public ResponseEntity<?> leaveChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
         try {
             User leavingUser = userService.getAuthenticatedUser()
                     .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
