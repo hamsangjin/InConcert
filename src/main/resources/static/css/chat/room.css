@@ -1,0 +1,283 @@
+/* 공통 설정 */
+html {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    margin: 0;
+}
+
+.container {
+    flex: 1;
+    width: 45%;
+    max-width: 45%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
+}
+
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* chat 화면 */
+
+.title-container{
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #00A885;
+    margin: 0 auto 10px;
+}
+
+.title-container > h1{
+    color: #00A885;
+    margin: 0;
+    padding: 0;
+}
+
+#hamburger-btn{
+    display: flex;
+    align-items: center;
+}
+
+#hamburger-btn > p {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+    user-select: none;
+}
+
+#hamburger-btn > p:hover {
+    cursor: pointer;
+}
+
+#user-list-container {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#user-list-container > h2{
+    color: #00A885;
+    margin-bottom: 10px;
+    padding: 0;
+    border-bottom: 1px solid #00a885;
+}
+
+#user-list{
+    padding-left: 10px;
+}
+
+#user-list > div{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+#user-list > div > li{
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6f6f6f;
+}
+
+#user-list > div > li > button{
+    border: 1px solid #00a885;
+    border-radius: 5px;
+    padding: 3px;
+    background-color: white;
+    color: #6f6f6f;
+    font-size: 12px;
+    align-items: center;
+}
+
+#user-list > div > li > button:hover{
+    cursor: pointer;
+    background-color: #00a885;
+    color: white;
+}
+
+#user-list-container > div{
+    display: flex;
+    justify-content: flex-end;
+}
+
+#user-list-container > div > button{
+    border: 1px solid red;
+    border-radius: 5px;
+    padding: 5px;
+    background-color: white;
+    color: red;
+    font-size: 14px;
+    align-items: center;
+}
+
+#user-list-container > div > button:hover{
+    cursor: pointer;
+    background-color: red;
+    color: white;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 auto 50px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.button-container > a{
+    text-decoration: none;
+    color: #00a885;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.button-container > a:hover{
+    color: black;
+    cursor: pointer;
+}
+
+.chat-list {
+    max-height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+}
+
+.chat-list > li{
+    list-style-type: none;
+}
+
+.my-message > .message-content{
+    justify-content: right;
+}
+
+.message-header > img,
+#user-list > div > img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.message-header, .message-content{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.message-content{
+    margin-left: 40px;
+    margin-bottom: 10px;
+}
+
+.not-my-message > .message-content > p:first-child,
+.my-message > .message-content > p:nth-child(2){
+    border: 1px solid #00a885;
+    border-radius: 15px;
+    padding: 5px;
+}
+
+.not-my-message > .message-content > p:nth-child(2),
+.my-message > .message-content > p:first-child{
+    color: #6f6f6f;
+    font-size: 14px;
+}
+
+.message-header > p, .message-content > p{
+    margin: 0;
+}
+
+.send-form{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.send-form > input{
+    flex: 8;
+    border: 1px solid #00a885;
+    border-radius: 15px;
+    font-size: 18px;
+    padding: 5px 5px 5px 10px;
+    outline: none;
+}
+
+.send-form > button{
+    flex: 0.5;
+    border: 1px solid #00a885;
+    border-radius: 15px;
+    padding: 5px;
+    background-color: white;
+    font-size: 18px;
+}
+
+.send-form > button:hover{
+    cursor: pointer;
+    background-color: #00a885;
+    color: white;
+}

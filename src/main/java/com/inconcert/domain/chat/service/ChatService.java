@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -274,7 +273,6 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .sender(user)
                 .message(message)
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
 
         chatMessageRepository.save(chatMessage);
@@ -323,8 +321,7 @@ public class ChatService {
     private static List<String> getMessageTime(ChatRoom chatRoom) {
         if(chatRoom.getMessages().isEmpty())    return null;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(chatRoom.getMessages().get(chatRoom.getMessages().size()-1).getTimestamp(), formatter).truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime dateTime = chatRoom.getMessages().get(chatRoom.getMessages().size()-1).getCreatedAt().truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
         String timeSince = "";
@@ -362,8 +359,9 @@ public class ChatService {
                 .chatRoomId(chatMessage.getChatRoom().getId())
                 .username(chatMessage.getSender().getUsername())
                 .message(chatMessage.getMessage())
-                .timestamp(chatMessage.getTimestamp())
+                .createdAt(chatMessage.getCreatedAt())
                 .type(ChatMessageDTO.MessageType.CHAT)
+                .profileImage(chatMessage.getSender().getProfileImage())
                 .build();
     }
 }

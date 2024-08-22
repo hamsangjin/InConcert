@@ -5,6 +5,7 @@ import com.inconcert.domain.chat.dto.ChatRoomDTO;
 import com.inconcert.domain.chat.service.ChatService;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,7 @@ public class ChatController {
     @GetMapping("/request")
     public String requestList(Model model) {
         User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         model.addAttribute("user", user);
         return "/chat/requests";
     }
@@ -41,7 +42,7 @@ public class ChatController {
     @GetMapping("/{chatRoomId}")
     public String getChatRoom(@PathVariable("chatRoomId") Long chatRoomId, Model model) {
         User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 유저가 채팅방에 없으면 채팅방 리스트로 리다이렉트
         if(!chatService.isExistUser(chatRoomId)) return "redirect:/chat/list";

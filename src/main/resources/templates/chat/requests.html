@@ -27,6 +27,7 @@
 
     <input id="userId" type="hidden" th:value="${user.id}">
 </div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/chat/request.js}"></script>
 </body>
 </html>
