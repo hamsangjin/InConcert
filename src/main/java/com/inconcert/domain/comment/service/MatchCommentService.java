@@ -24,12 +24,6 @@ public class MatchCommentService implements CommentService {
     private final UserService userService;
 
     @Override
-    public User getAuthenticatedUserOrThrow() {
-        return userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-    }
-
-    @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getCommentDTOsByPostId(String boardType, Long id, String sort) {
         List<Comment> byPostId;
@@ -55,7 +49,9 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public Long saveComment(String boardType, Long id, User user, CommentCreationDTO dto) {
+    public Long saveComment(String boardType, Long id, CommentCreationDTO dto) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         Post post = getPostByCategoryAndId(boardType, id);
 
         Comment comment = dto.toEntity();
@@ -75,7 +71,9 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public void saveReply(String boardType, Long postId, Long parentId, User user, CommentCreationDTO dto) {
+    public void saveReply(String boardType, Long postId, Long parentId, CommentCreationDTO dto) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         Post post = getPostByCategoryAndId(boardType, postId);
         dto.setUser(user);
         Comment comment = dto.toEntity();
@@ -94,8 +92,13 @@ public class MatchCommentService implements CommentService {
     @Override
     @Transactional
     public Long updateComment(String boardType, Long id, CommentCreationDTO dto) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
+
+        validateCommentEditAuthorization(comment.toCommentDto(), user);
+
         comment.update(dto.getContent(), dto.getIsSecret());
         commentRepository.save(comment);
         return comment.getId();
@@ -104,8 +107,14 @@ public class MatchCommentService implements CommentService {
     @Override
     @Transactional
     public void deleteComment(String boardType, Long id) {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
+        Post post = getPostByCategoryAndId(boardType, comment.getPost().getId());
+
+        validateCommentDeletion(comment.toCommentDto(), post, user);
+
         commentRepository.delete(comment);
     }
 

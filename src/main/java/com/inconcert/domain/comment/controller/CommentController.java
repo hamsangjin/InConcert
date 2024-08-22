@@ -72,12 +72,6 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
-        CommentDTO existingComment = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, commentId);
-
-        // 댓글 수정 권한 검증
-        getService(postCategoryTitle).validateCommentEditAuthorization(existingComment, user);
-
         getService(postCategoryTitle).updateComment(postCategoryTitle, commentId, commentForm);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
@@ -88,13 +82,6 @@ public class CommentController {
                                 @PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId,
                                 @PathVariable("commentId") Long id) {
-        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
-        CommentDTO dto = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, id);
-        Post post = getService(postCategoryTitle).getPostByCategoryAndId(categoryTitle, postId);
-
-        // 댓글 삭제 권한 검증
-        getService(postCategoryTitle).validateCommentDeletion(dto, post, user);
-
         getService(postCategoryTitle).deleteComment(postCategoryTitle, id);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
@@ -110,8 +97,7 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
-        getService(postCategoryTitle).saveComment(postCategoryTitle, postId, user, commentForm);
+        getService(postCategoryTitle).saveComment(postCategoryTitle, postId, commentForm);
 
         Post post = getService(postCategoryTitle).getPostByCategoryAndId(categoryTitle, postId);
         notificationService.createCommentsNotification(post, commentForm.getContent());
@@ -130,9 +116,8 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
         commentForm.setParent(parentId); // 부모 댓글 ID 설정
-        getService(postCategoryTitle).saveReply(postCategoryTitle, postId, parentId, user, commentForm);
+        getService(postCategoryTitle).saveReply(postCategoryTitle, postId, parentId, commentForm);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
 }

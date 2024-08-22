@@ -12,12 +12,11 @@ import java.util.List;
 public interface CommentService {
     List<CommentDTO> getCommentDTOsByPostId(String boardType, Long id, String sort);
     CommentDTO getCommentDTOByBoardTypeAndId(String boardType, Long id);
-    Long saveComment(String boardType, Long id, User user, CommentCreationDTO dto);
-    void saveReply(String boardType, Long postId, Long parentId, User user, CommentCreationDTO dto);
+    Long saveComment(String boardType, Long id, CommentCreationDTO dto);
+    void saveReply(String boardType, Long postId, Long parentId, CommentCreationDTO dto);
     Long updateComment(String boardType, Long id, CommentCreationDTO dto);
     void deleteComment(String boardType, Long id);
     Post getPostByCategoryAndId(String categoryTitle, Long postId);
     void validateCommentDeletion(CommentDTO dto, Post post, User user);
     void validateCommentEditAuthorization(CommentDTO dto, User user);
-    User getAuthenticatedUserOrThrow();
 }
