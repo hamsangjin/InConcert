@@ -4,6 +4,7 @@ import com.inconcert.domain.comment.dto.CommentCreationDTO;
 import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
+import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.user.entity.User;
@@ -22,6 +23,7 @@ public class MatchCommentService implements CommentService {
     private final CommentRepository commentRepository;
     private final MatchRepository matchRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,14 +43,6 @@ public class MatchCommentService implements CommentService {
 
     @Override
     @Transactional
-    public CommentDTO getCommentDTOByBoardTypeAndId(String boardType, Long id) {
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
-        return comment.toCommentDto();
-    }
-
-    @Override
-    @Transactional
     public Long saveComment(String boardType, Long id, CommentCreationDTO dto) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
@@ -64,7 +58,8 @@ public class MatchCommentService implements CommentService {
             comment.confirmParent(parentComment);
         }
 
-        commentRepository.save(comment);
+        Comment saveComment = commentRepository.save(comment);
+        if(!saveComment.getUser().getId().equals(post.getUser().getId())) notificationService.createCommentsNotification(post, saveComment.getContent());
 
         return comment.getId();
     }
@@ -86,7 +81,8 @@ public class MatchCommentService implements CommentService {
             comment.confirmParent(parentComment);
         }
 
-        commentRepository.save(comment);
+        Comment saveComment = commentRepository.save(comment);
+        if(!saveComment.getUser().getId().equals(post.getUser().getId())) notificationService.createCommentsNotification(post, saveComment.getContent());
     }
 
     @Override

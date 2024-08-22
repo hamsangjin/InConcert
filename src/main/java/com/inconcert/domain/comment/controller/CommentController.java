@@ -3,9 +3,6 @@ package com.inconcert.domain.comment.controller;
 import com.inconcert.domain.comment.dto.CommentCreationDTO;
 import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.service.CommentService;
-import com.inconcert.domain.notification.service.NotificationService;
-import com.inconcert.domain.post.entity.Post;
-import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +21,12 @@ import java.util.Map;
 @RequestMapping("/{categoryTitle}/{postCategoryTitle}/{postId}/comments")
 public class CommentController {
     private final Map<String, CommentService> commentServices;
-    private final NotificationService notificationService;
 
     @Autowired
     public CommentController(@Qualifier("infoCommentService") CommentService infoCommentService,
                              @Qualifier("matchCommentService") CommentService matchCommentService,
                              @Qualifier("reviewCommentService") CommentService reviewCommentService,
-                             @Qualifier("transferCommentService") CommentService transferCommentService,
-                             NotificationService notificationService) {
+                             @Qualifier("transferCommentService") CommentService transferCommentService) {
         this.commentServices = new HashMap<>();
         this.commentServices.put("info", infoCommentService);
         this.commentServices.put("match", matchCommentService);
@@ -41,7 +36,6 @@ public class CommentController {
         this.commentServices.put("concert", infoCommentService);
         this.commentServices.put("theater", infoCommentService);
         this.commentServices.put("etc", infoCommentService);
-        this.notificationService = notificationService;
     }
 
     private CommentService getService(String postCategoryTitle) {
@@ -99,8 +93,6 @@ public class CommentController {
 
         getService(postCategoryTitle).saveComment(postCategoryTitle, postId, commentForm);
 
-        Post post = getService(postCategoryTitle).getPostByCategoryAndId(categoryTitle, postId);
-        notificationService.createCommentsNotification(post, commentForm.getContent());
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
 

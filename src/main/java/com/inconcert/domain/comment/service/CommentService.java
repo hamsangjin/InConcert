@@ -11,7 +11,6 @@ import java.util.List;
 @Service
 public interface CommentService {
     List<CommentDTO> getCommentDTOsByPostId(String boardType, Long id, String sort);
-    CommentDTO getCommentDTOByBoardTypeAndId(String boardType, Long id);
     Long saveComment(String boardType, Long id, CommentCreationDTO dto);
     void saveReply(String boardType, Long postId, Long parentId, CommentCreationDTO dto);
     Long updateComment(String boardType, Long id, CommentCreationDTO dto);
