@@ -251,6 +251,13 @@ header {
     margin: 0;
 }
 
+.notice, li.chat-message{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .send-form{
     display: flex;
     align-items: center;

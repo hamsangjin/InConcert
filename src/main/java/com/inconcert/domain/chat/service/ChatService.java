@@ -173,8 +173,18 @@ public class ChatService {
                     .username(requestUser.getUsername())
                     .message(requestUser.getUsername() + "님이 입장하셨습니다.")
                     .type(ChatMessageDTO.MessageType.ENTER)
+                    .isNotice(true)
                     .build();
+
+            ChatMessage saveMessage = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(requestUser)
+                    .message(enterMessage.getMessage())
+                    .isNotice(true)
+                    .build();
+
             messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, enterMessage);
+            chatMessageRepository.save(saveMessage);
         }
 
         // 사용자에게 채팅방 입장이 승인되었음을 알림
@@ -208,8 +218,19 @@ public class ChatService {
                     .username(leavingUser.getUsername())
                     .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
                     .type(ChatMessageDTO.MessageType.LEAVE)
+                    .isNotice(true)
                     .build();
+
+            ChatMessage saveMessage = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(leavingUser)
+                    .message(leaveMessage.getMessage())
+                    .isNotice(true)
+                    .build();
+
             messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, leaveMessage);
+            chatMessageRepository.save(saveMessage);
+
         }
         else {
             throw new AlreadyOutOfChatRoomException("채팅방에 속해 있지 않습니다.");
@@ -228,6 +249,25 @@ public class ChatService {
         if (!chatRoom.getHostUser().getUsername().equals((userService.getAuthenticatedUser().get().getUsername()))) {
             throw new KickException("호스트만 강퇴할 수 있습니다.");
         }
+
+        // 완전히 나간 경우 퇴장 메시지 전송
+        ChatMessageDTO kickedMessage = ChatMessageDTO.builder()
+                .chatRoomId(chatRoomId)
+                .username(kickedUser.getUsername())
+                .message(kickedUser.getUsername() + "님이 강퇴되었습니다.")
+                .type(ChatMessageDTO.MessageType.LEAVE)
+                .isNotice(true)
+                .build();
+
+        ChatMessage saveMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(kickedUser)
+                .message(kickedMessage.getMessage())
+                .isNotice(true)
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, kickedMessage);
+        chatMessageRepository.save(saveMessage);
 
         // 유저 강퇴
         chatRoom.removeUser(kickedUser);
@@ -273,6 +313,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .sender(user)
                 .message(message)
+                .isNotice(false)
                 .build();
 
         chatMessageRepository.save(chatMessage);
@@ -362,6 +403,7 @@ public class ChatService {
                 .createdAt(chatMessage.getCreatedAt())
                 .type(ChatMessageDTO.MessageType.CHAT)
                 .profileImage(chatMessage.getSender().getProfileImage())
+                .isNotice(chatMessage.isNotice())
                 .build();
     }
 }

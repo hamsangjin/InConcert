@@ -27,10 +27,15 @@ public class ChatMessage extends BaseEntity {
     @Column(nullable = false, columnDefinition = "longtext")
     private String message;
 
+    @Column(name = "is_notice", nullable = false)
+    private boolean isNotice = false;
+
     @Builder
-    public ChatMessage(ChatRoom chatRoom, User sender, String message) {
+    public ChatMessage(ChatRoom chatRoom, User sender,
+                       String message, boolean isNotice) {
         this.chatRoom = chatRoom;
         this.sender = sender;
         this.message = message;
+        this.isNotice = isNotice;
     }
 }

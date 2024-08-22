@@ -17,6 +17,7 @@ public class ChatMessageDTO {
     private LocalDateTime createdAt;
     private String profileImage;
     private MessageType type;
+    private boolean isNotice;
 
     public enum MessageType {
         ENTER, CHAT, LEAVE
