@@ -248,3 +248,25 @@ function shareTwitter() {
 
     window.open("https://twitter.com/intent/tweet?text=" + tweetText, '_blank', 'width=600,height=400');
 }
+
+function applyReplyStyles() {
+    const comments = document.querySelectorAll('.comment-wrapper');
+
+    comments.forEach(comment => {
+        let level = 0;
+        let parent = comment.closest('.replies');
+
+        while (parent) {
+            level++;
+            parent = parent.parentElement.closest('.replies');
+        }
+
+        // 두 번째 답글부터 마진 적용
+        if (level > 1) {
+            comment.style.marginLeft = `${40 * (level - 1)}px`;
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', applyReplyStyles);
+
