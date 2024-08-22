@@ -132,6 +132,7 @@ function sendEnterMessage(username, chatRoomId) {
         JSON.stringify({
             'username': username,
             'chatRoomId': chatRoomId,
+            'type': 'ENTER',
             'message': '' // 빈 메시지 (입장 메시지는 공백)
         })
     );
