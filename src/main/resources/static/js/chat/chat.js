@@ -260,8 +260,9 @@ function toggleUserList() {
 // 유저 목록을 불러오는 함수
 function loadUserList() {
     const chatRoomId = document.getElementById('chatRoomId').value;
-    const hostUserId = document.getElementById('hostUserId').value; // 현재 호스트의 ID
-    const currentUserId = document.getElementById('userId').value; // 현재 로그인한 유저의 ID
+    const hostUserId = document.getElementById('hostUserId').value;
+    const currentUserId = document.getElementById('userId').value;
+    const chatRoomTitle = document.getElementById('chatRoomTitle').textContent;
 
     // API 호출로 유저 목록을 가져옴
     fetch(`/api/chat/users/${chatRoomId}`)
