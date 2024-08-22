@@ -19,4 +19,5 @@ public interface CommentService {
     Post getPostByCategoryAndId(String categoryTitle, Long postId);
     void validateCommentDeletion(CommentDTO dto, Post post, User user);
     void validateCommentEditAuthorization(CommentDTO dto, User user);
+    User getAuthenticatedUserOrThrow();
 }

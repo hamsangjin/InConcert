@@ -6,10 +6,7 @@ import com.inconcert.domain.comment.service.CommentService;
 import com.inconcert.domain.notification.service.NotificationService;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.PostCategoryNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +24,6 @@ import java.util.Map;
 @RequestMapping("/{categoryTitle}/{postCategoryTitle}/{postId}/comments")
 public class CommentController {
     private final Map<String, CommentService> commentServices;
-    private final UserService userService;
     private final NotificationService notificationService;
 
     @Autowired
@@ -35,7 +31,7 @@ public class CommentController {
                              @Qualifier("matchCommentService") CommentService matchCommentService,
                              @Qualifier("reviewCommentService") CommentService reviewCommentService,
                              @Qualifier("transferCommentService") CommentService transferCommentService,
-                             UserService userService, NotificationService notificationService) {
+                             NotificationService notificationService) {
         this.commentServices = new HashMap<>();
         this.commentServices.put("info", infoCommentService);
         this.commentServices.put("match", matchCommentService);
@@ -45,7 +41,6 @@ public class CommentController {
         this.commentServices.put("concert", infoCommentService);
         this.commentServices.put("theater", infoCommentService);
         this.commentServices.put("etc", infoCommentService);
-        this.userService = userService;
         this.notificationService = notificationService;
     }
 
@@ -77,8 +72,7 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
         CommentDTO existingComment = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, commentId);
 
         // 댓글 수정 권한 검증
@@ -94,8 +88,7 @@ public class CommentController {
                                 @PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId,
                                 @PathVariable("commentId") Long id) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
         CommentDTO dto = getService(postCategoryTitle).getCommentDTOByBoardTypeAndId(postCategoryTitle, id);
         Post post = getService(postCategoryTitle).getPostByCategoryAndId(categoryTitle, postId);
 
@@ -117,9 +110,7 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-
+        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
         getService(postCategoryTitle).saveComment(postCategoryTitle, postId, user, commentForm);
 
         Post post = getService(postCategoryTitle).getPostByCategoryAndId(categoryTitle, postId);
@@ -139,8 +130,7 @@ public class CommentController {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getService(postCategoryTitle).getAuthenticatedUserOrThrow();
         commentForm.setParent(parentId); // 부모 댓글 ID 설정
         getService(postCategoryTitle).saveReply(postCategoryTitle, postId, parentId, user, commentForm);
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;

@@ -9,6 +9,8 @@ public enum ExceptionMessage {
 
     // 댓글 관련 에러 메시지
     COMMENT_NOT_FOUND("찾으려는 댓글이 존재하지 않습니다."),
+    COMMENT_EDIT_UNAUTHORIZED("이 댓글을 수정할 권한이 없습니다."),
+    COMMENT_DELETE_UNAUTHORIZED("이 댓글을 삭제할 권한이 없습니다."),
 
     LIKE_NOT_FOUND("찾으려는 좋아요가 존재하지 않습니다."),
 

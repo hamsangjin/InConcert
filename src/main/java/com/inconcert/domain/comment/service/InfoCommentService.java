@@ -7,9 +7,8 @@ import com.inconcert.domain.comment.repository.CommentRepository;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.global.exception.CommentNotFoundException;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.PostNotFoundException;
+import com.inconcert.domain.user.service.UserService;
+import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,13 @@ import java.util.List;
 public class InfoCommentService implements CommentService {
     private final CommentRepository commentRepository;
     private final InfoRepository infoRepository;
+    private final UserService userService;
+
+    @Override
+    public User getAuthenticatedUserOrThrow() {
+        return userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -116,14 +122,14 @@ public class InfoCommentService implements CommentService {
         boolean isPostAuthor = post.getUser().getUsername().equals(user.getUsername());
 
         if (!isCommentAuthor && !isPostAuthor) {
-            throw new SecurityException("이 댓글을 삭제할 권한이 없습니다.");
+            throw new CommentDeleteUnauthorizedException(ExceptionMessage.COMMENT_DELETE_UNAUTHORIZED.getMessage());
         }
     }
 
     @Override
     public void validateCommentEditAuthorization(CommentDTO dto, User user) {
         if (!dto.getUser().getUsername().equals(user.getUsername())) {
-            throw new SecurityException("이 댓글을 수정할 권한이 없습니다.");
+            throw new CommentEditUnauthorizedException(ExceptionMessage.COMMENT_EDIT_UNAUTHORIZED.getMessage());
         }
     }
 }
