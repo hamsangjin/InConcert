@@ -17,7 +17,7 @@
         </a>
     </header>
     <div class="title-container">
-        <h1 th:text="${chatRoom.roomName}">Chat Room</h1>
+        <h1 id="chatRoomTitle" th:text="${chatRoom.roomName}">Chat Room</h1>
         <div id="hamburger-btn" onclick="toggleUserList()">
             <p>☰</p>
             <!-- 유저 목록을 표시할 공간 -->
@@ -63,8 +63,6 @@
         <input type="text" id="message" th:if="${chatRoom.hostUserId != null}" required />
         <button type="submit" th:disabled="${chatRoom.hostUserId == null}">전송</button>
     </form>
-
-
 
     <input type="hidden" id="username" th:value="${user.username}"/>
     <input type="hidden" id="userId" th:value="${user.id}"/>
