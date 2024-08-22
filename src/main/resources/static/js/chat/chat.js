@@ -36,7 +36,6 @@ function connect(userId, chatRoomId) {
                     localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
                 }
 
-                fetchNotificationsFromServer(chatRoomId); // 서버에서 알림 가져오기
             }
         } else {
             console.error("User information is missing.");
@@ -47,17 +46,6 @@ function connect(userId, chatRoomId) {
     });
 }
 
-// 서버에서 알림 목록 가져오기
-function fetchNotificationsFromServer(chatRoomId) {
-    fetch(`/api/notifications/${chatRoomId}`)
-        .then(response => response.json())
-        .then(notifications => {
-            notifications.forEach(notification => {
-                showNotificationConfirm(notification);
-            });
-        })
-        .catch(error => console.error('Error fetching notifications:', error));
-}
 
 function subscribeToTopics(chatRoomId) {
     if (!isConnected) {
@@ -141,6 +129,7 @@ function sendEnterMessage(username, chatRoomId) {
         JSON.stringify({
             'username': username,
             'chatRoomId': chatRoomId,
+            'type': 'ENTER',
             'message': '' // 빈 메시지 (입장 메시지는 공백)
         })
     );
