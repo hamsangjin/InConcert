@@ -563,6 +563,7 @@ header {
 
 .comment-p {
     margin: 20px 0 20px 5px;
+    white-space: pre-wrap;
 }
 
 .comment-p.secret {
