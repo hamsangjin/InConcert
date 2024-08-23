@@ -78,11 +78,6 @@ public class InfoService {
                 .build();
     }
 
-    public Post getPostByPostId(Long postId) {
-        return infoRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
-    }
-
     @Transactional
     public void deletePost(Long postId) {
         Post post = infoRepository.findById(postId)

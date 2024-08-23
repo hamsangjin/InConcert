@@ -23,6 +23,7 @@ public class PostDTO {
     private String postCategoryTitle;
     private LocalDate endDate;
     private Long chatRoomId;
+    private int chatRoomUserSize;
     private int matchCount;
     private String content;
     private String thumbnailUrl;
@@ -35,6 +36,7 @@ public class PostDTO {
     private boolean isNew;
     private LocalDateTime createdAt;
     private User user;
+    private boolean isEnd;
 
     // post 저장
     public static Post toEntity(PostDTO postDto, PostCategory postCategory) {

@@ -145,6 +145,14 @@ public class MatchController {
         return "redirect:/" + newCategoryTitle + '/' + newPostCategoryTitle + '/' + updatedPostId;
     }
 
+    @PostMapping("/{postCategoryTitle}/{postId}/complete")
+    public String completeMatch(@PathVariable("postId") Long postId,
+                                @PathVariable("postCategoryTitle") String postCategoryTitle) {
+
+            matchService.completeMatch(postId);
+        return "redirect:/match/" + postCategoryTitle + '/' + postId;
+    }
+
     @PostMapping("/write")
     public String write(@ModelAttribute PostDTO postDto) {
         Post post = writeService.save(postDto);

@@ -8,11 +8,6 @@ html {
     flex-shrink: 0;
 }
 
-p{
-    margin: 5px;
-    padding: 0;
-}
-
 body {
     display: flex;
     flex-direction: column;
@@ -22,8 +17,8 @@ body {
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
 }
 
@@ -33,17 +28,17 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 10px 0;
     margin: 0 auto;
 }
 
@@ -218,14 +213,12 @@ header {
     margin: 3px 0;
 }
 
-.review-block{
-    margin-top: 40px;
-}
+/* */
 
 .title-container{
-    min-width: 1300px;
-    max-width: 1300px;
-    margin: 0 auto 50px;
+    width: 60%;
+    max-width: 60%;
+    margin: 0 auto 20px;
 }
 
 .title-container h1{
@@ -237,154 +230,168 @@ header {
     color: #6f6f6f;
 }
 
+.review-container{
+    width: 60%;
+    max-width: 60%;
+    margin: 0 auto 50px;
+}
+
 .post-header {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
     font-weight: bold;
-    margin: 0 auto;
-    gap: 10px;
-    min-width: 1280px;
-    max-width: 1280px;
+    margin: 0 auto 10px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .post-header span {
     text-align: center;
 }
 
-.header-title {
-    flex: 5; /* 제목이 50% 차지 */
+.header-image,
+.header-nickname,
+.header-birth,
+.header-mbti,
+.header-gender,
+.header-review{
+    flex: 2;
 }
 
-.header-author,
-.header-date,
-.header-views,
-.header-likes {
-    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
-}
-
-.post-list {
-    border-top: 1px solid #ddd;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
-}
-
-.post {
+.review-container > div:nth-child(n+2){
     display: flex;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
+    align-items: center;
+    text-align: center;
 }
 
-.post-thumbnail {
-    flex-shrink: 0;
-    margin-right: 15px;
+.reviewee-img{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.post-thumbnail img {
+.reviewee-img img {
     width: 50px;
     height: 50px;
+    border-radius: 50%;
     object-fit: cover;
 }
 
-.post-content {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
+.reviewee-img,
+.reviewee-nickname,
+.reviewee-birth,
+.reviewee-mbti,
+.reviewee-gender,
+.reviewee-review{
+    flex: 2;
 }
 
-.post-title {
-    flex: 5; /* 제목이 50% 차지 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.post-title > a{
-    color: black;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.post-title > a:hover{
-    text-decoration: underline;
-}
-
-.post-title > a > span:nth-child(2){
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 410px;
-    display: block;
-}
-
-.comment-count{
-    color: red;
-    padding: 0;
-}
-
-.post-title > div{
+.openReviewPopupBtn{
     border: none;
-    border-radius: 50%;
-    background-color: red;
+    border-radius: 15px;
+    padding: 7px;
+    background-color: #00a885;
     color: white;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-.post-meta {
+.openReviewPopupBtn:hover{
+    cursor: pointer;
+    color: #00a885;
+    background-color: white;
+    border: 1px solid #00a885;
+}
+
+.disabledPopupBtn{
+    border: none;
+    border-radius: 15px;
+    padding: 7px;
+    background-color: #6f6f6f;
+    color: white;
+}
+
+
+
+
+/* 팝업 배경 */
+.popup {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 팝업 내용 */
+.popup-content {
+    position: absolute;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 닫기 버튼 */
+.close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* 제목 스타일 */
+.popup-content h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+/* 평점 버튼 스타일 */
+.rating-buttons {
     display: flex;
-    flex: 5;
     justify-content: space-between;
-    align-items: center;
-    margin-left: 45px;
+    margin: 20px 0;
 }
 
-.post-meta span {
-    flex: 1;
+.rating-buttons input[type="radio"] {
+    display: none;
+}
+
+.rating-buttons label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
     text-align: center;
-    color: #6f6f6f;
-    white-space: nowrap;
+    border-radius: 50%;
+    background-color: #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.pagination > ul{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+.rating-buttons input[type="radio"]:checked + label {
+    background-color: #00a885;
+    color: white;
 }
 
-.pagination > ul > li{
-    list-style-type: none;
+/* 제출 버튼 스타일 */
+.submit-btn {
+    background-color: #00a885;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 20px;
 }
 
-.pagination > ul > li a{
-    color: #6f6f6f;
-    text-decoration: none;
-    align-items: center;
-}
-
-.pagination > ul > li.active a {
-    color: #0BA885;
-    font-weight: bold;
-}
-
-.pagination > ul > li.disabled a {
-    color: #ccc;
-    pointer-events: none;
-    cursor: default;
-}
-
-.pagination > ul > li.disabled span {
-    color: #ccc;
+.submit-btn:hover {
+    background-color: #009878;
 }

@@ -309,12 +309,20 @@ header {
 .post-info {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #666;
+}
+
+.post-info > div:first-child{
+    display: flex;
+    align-items: center;
     gap: 10px;
     font-size: 14px;
     color: #666;
 }
 
-.post-info > .profile-img {
+.post-info .profile-img {
     width: 40px;
     height: 40px;
     margin-top: 3px;
@@ -346,6 +354,25 @@ header {
 .date, .views {
     font-size: 12px;
     color: #999;
+}
+
+.post-info-detail{
+    align-items: center;
+}
+
+.post-info-detail > div{
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.post-info-detail > div > p{
+    margin: 0 0 5px;
+}
+
+.post-info-detail > div > p:first-child{
+    color: #00a885;
+    font-size: 14px;
 }
 
 .post-body {

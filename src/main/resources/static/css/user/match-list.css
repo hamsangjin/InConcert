@@ -8,11 +8,6 @@ html {
     flex-shrink: 0;
 }
 
-p{
-    margin: 5px;
-    padding: 0;
-}
-
 body {
     display: flex;
     flex-direction: column;
@@ -22,8 +17,8 @@ body {
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
 }
 
@@ -33,14 +28,14 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -218,14 +213,12 @@ header {
     margin: 3px 0;
 }
 
-.review-block{
-    margin-top: 40px;
-}
+/* */
 
 .title-container{
-    min-width: 1300px;
-    max-width: 1300px;
-    margin: 0 auto 50px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 20px;
 }
 
 .title-container h1{
@@ -237,45 +230,95 @@ header {
     color: #6f6f6f;
 }
 
+.container > section{
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto
+}
+
+.nav-tabs{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    gap: 150px;
+    margin-bottom: 100px;
+}
+
+.nav-tabs > li{
+    list-style-type: none;
+}
+
+.nav-tabs > li > a{
+    text-decoration: none;
+    color: #6f6f6f;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav-tabs > li > a:hover{
+    color: #00a885;
+    cursor: pointer;
+}
+
+.nav-tabs li.active a {
+    color: #00a885;
+}
+
 .post-header {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
     font-weight: bold;
-    margin: 0 auto;
-    gap: 10px;
-    min-width: 1280px;
-    max-width: 1280px;
+    margin: 0 auto 10px;
+    min-width: 100%;
+    max-width: 100%;
 }
 
 .post-header span {
     text-align: center;
 }
 
-.header-title {
+.header-title{
     flex: 5; /* 제목이 50% 차지 */
 }
 
 .header-author,
 .header-date,
-.header-views,
-.header-likes {
-    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
+.header-match-count,
+.header-status,
+.header-review{
+    flex: 1;
 }
 
 .post-list {
-    border-top: 1px solid #ddd;
     margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
+    gap: 10px;
+    min-width: 100%;
+    max-width: 100%;
 }
 
 .post {
     display: flex;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    border-top: 1px solid #ccc;
     background-color: #ffffff;
     transition: background-color 0.3s ease;
+}
+
+.post-list > .post:last-child{
+    border-bottom: 1px solid #ccc;
+}
+
+.post-content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.post-left{
+    display: flex;
+    align-items: center;
+    flex: 5;
 }
 
 .post-thumbnail {
@@ -289,17 +332,8 @@ header {
     object-fit: cover;
 }
 
-.post-content {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-}
-
 .post-title {
     flex: 5; /* 제목이 50% 차지 */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -317,44 +351,54 @@ header {
     text-decoration: underline;
 }
 
-.post-title > a > span:nth-child(2){
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 410px;
-    display: block;
-}
-
-.comment-count{
-    color: red;
-    padding: 0;
-}
-
-.post-title > div{
-    border: none;
-    border-radius: 50%;
-    background-color: red;
-    color: white;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.post-meta {
+.post-right {
     display: flex;
     flex: 5;
     justify-content: space-between;
     align-items: center;
-    margin-left: 45px;
 }
 
-.post-meta span {
+.post-right > span,
+.post-right > a,
+.post-right > div{
     flex: 1;
     text-align: center;
+}
+
+.author, .date, .match-count{
     color: #6f6f6f;
-    white-space: nowrap;
+}
+
+div.status > span,
+.need-feedback,
+.matching{
+    border-radius: 15px;
+    text-decoration: none;
+    background-color: #00a885;
+    color: white;
+    font-weight: bolder;
+    padding: 7px;
+    text-decoration: none;
+}
+
+div.review > a{
+    text-decoration: none;
+}
+
+.need-feedback:hover {
+    cursor: pointer;
+    color: #00a885;
+    border: 1px solid #00a885;
+    background-color: white;
+}
+
+.complete-feedback{
+    border-radius: 15px;
+    text-decoration: none;
+    background-color: #6f6f6f;
+    color: white;
+    font-weight: bolder;
+    padding: 7px;
 }
 
 .pagination > ul{

@@ -64,12 +64,6 @@ public class ReviewService {
                 .build();
     }
 
-    @Transactional(readOnly = true)
-    public Post getPostByPostId(Long postId) {
-        Optional<Post> post = reviewRepository.findById(postId);
-        return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
-    }
-
     @Transactional
     public void deletePost(Long postId) {
         Post post = reviewRepository.findById(postId)

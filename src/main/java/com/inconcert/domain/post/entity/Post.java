@@ -44,6 +44,12 @@ public class Post extends BaseEntity {
     @Column(name = "view_count")
     private int viewCount = 0;
 
+    @Column(name = "is_end")
+    private boolean isEnd = false;
+
+    @ElementCollection
+    private List<Long> matchUserIds = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -78,5 +84,13 @@ public class Post extends BaseEntity {
 
     public boolean hasChatRoom() {
         return this.chatRoom != null;
+    }
+
+    public void toggleIsEnd(){
+        this.isEnd = !this.isEnd;
+    }
+
+    public void updateMatchUserIds(List<Long> matchUserIds) {
+        this.matchUserIds = matchUserIds;
     }
 }

@@ -57,39 +57,62 @@
         </div>
 
         <div class="post-info">
-            <img id="profileImage" th:src="${post.user.profileImage}" class="profile-img" alt="프로필 이미지">
             <div>
-                <div class="author-row">
-                    <span class="author" th:text="${post.nickname}"></span>
-                    <button class="chat-button" th:if="${user.isPresent() && post.user.username != user.get().username}" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
-                    <button class="chat-button" th:if="${categoryTitle == 'match' && user.isPresent() && post.user.username != user.get().username}" th:data-chat-room-id="${post.chatRoomId}" onclick="requestJoinChatRoom(this)">동행 요청</button>
-                    <button class="chat-button"
-                            th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}"
-                            th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
-                            th:attr="data-has-chat-room=${hasChatRoom}"
-                            onclick="location.href=this.getAttribute('href');">
-                        수정
-                    </button>
-
-                    <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/delete|}" method="post"
-                          th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
-                        <button type="submit" class="chat-button" id="delete-button"
+                <img id="profileImage" th:src="${post.user.profileImage}" class="profile-img" alt="프로필 이미지">
+                <div>
+                    <div class="author-row">
+                        <span class="author" th:text="${post.nickname}"></span>
+                        <button class="chat-button"
+                                th:if="${user.isPresent() && post.user.username != user.get().username}"
+                                th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
+                        <button class="chat-button"
+                                th:if="${categoryTitle == 'match' && user.isPresent() && post.user.username != user.get().username && !post.end}"
+                                th:data-chat-room-id="${post.chatRoomId}" onclick="requestJoinChatRoom(this)">동행 요청</button>
+                        <button class="chat-button"
+                                th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname && !post.end}"
+                                th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/edit|}"
                                 th:attr="data-has-chat-room=${hasChatRoom}"
-                                onclick="return confirmDelete(this)">
-                            삭제
+                                onclick="location.href=this.getAttribute('href');">
+                            수정
                         </button>
-                    </form>
-                    <input type="hidden" id="chatRoomId" th:value="${post.chatRoomId}">
-                    <div th:if="${errorMessage}" id="errorMessage" th:text="${errorMessage}" style="display: none;"></div>
-                    <a th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/report|}"
-                       th:if="${user?.isPresent() && post?.nickname != user.get().nickname}"
-                       class="report-button">
-                        신고
-                    </a>
+                        <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/delete|}" method="post"
+                              th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname && !post.end}">
+                            <button type="submit" class="chat-button" id="delete-button"
+                                    th:attr="data-has-chat-room=${hasChatRoom}"
+                                    onclick="return confirmDelete(this)">
+                                삭제
+                            </button>
+                        </form>
+
+                        <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/complete|}" method="post"
+                              th:if="${user.isPresent() &&
+                                    post.user.username == user.get().username &&
+                                    #temporals.format(post.endDate, 'yyyy-MM-dd') < #temporals.format(#temporals.createNow(), 'yyyy-MM-dd') && !post.end}">
+                            <button class="chat-button" type="submit" onclick="matchComplete()"> 동행 완료 </button>
+                        </form>
+
+                        <input type="hidden" id="chatRoomId" th:value="${post.chatRoomId}">
+                        <div th:if="${errorMessage}" id="errorMessage" th:text="${errorMessage}" style="display: none;"></div>
+                        <a th:href="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/report|}"
+                           th:if="${user?.isPresent() && post?.nickname != user.get().nickname}"
+                           class="report-button">
+                            신고
+                        </a>
+                    </div>
+                    <div class="date-row">
+                        <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                        <span class="views" th:text="${post.viewCount}"></span>
+                    </div>
                 </div>
-                <div class="date-row">
-                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-                    <span class="views" th:text="${post.viewCount}"></span>
+            </div>
+            <div class="post-info-detail" th:if="${categoryTitle == 'match'}">
+                <div>
+                    <p>마감 날짜:</p>
+                    <p th:text="${#temporals.format(post.endDate, 'yyyy-MM-dd')}"></p>
+                </div>
+                <div>
+                    <p>현재 인원: </p>
+                    <p th:text="${post.chatRoomUserSize + '/' + post.matchCount}"></p>
                 </div>
             </div>
         </div>

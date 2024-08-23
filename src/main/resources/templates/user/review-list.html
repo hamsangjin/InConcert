@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>알림 설정</title>
+    <link rel="stylesheet" href="/css/user/review-list.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="title-container">
+        <h1>평가 목록</h1>
+    </div>
+
+    <div class="review-container">
+        <div class="post-header" th:if="${myReviewee.size() > 0}">
+            <span class="header-image">프로필 이미지</span>
+            <span class="header-nickname">닉네임</span>
+            <span class="header-birth">생년월일</span>
+            <span class="header-mbti">mbti</span>
+            <span class="header-gender">성별</span>
+            <span class="header-review"></span>
+        </div>
+        <div th:each="reviewee, iterStat : ${myReviewee}">
+            <div class="reviewee-img">
+                <img th:src="@{${reviewee.profileImage}}">
+            </div>
+            <p class="reviewee-nickname" th:text="${reviewee.nickname}"></p>
+            <p class="reviewee-birth" th:text="${#temporals.format(reviewee.birth, 'yyyy-MM-dd')}"></p>
+            <p class="reviewee-mbti" th:text="${reviewee.mbti}"></p>
+            <p class="reviewee-gender" th:text="${reviewee.gender.name() == 'MALE' ? '남성' : '여성'}"></p>
+            <div class="reviewee-review">
+                <button class="openReviewPopupBtn" th:if="${!myReviewStatuses.get(iterStat.index)}"
+                        th:data-index="${iterStat.index}"> 평가하기 </button>
+                <span class="disabledPopupBtn" th:if="${myReviewStatuses.get(iterStat.index)}"> 평가완료 </span>
+
+                <input th:id="'reviewerId' + ${iterStat.index}" type="hidden" th:value="${reviewee.reviewerId}">
+                <input th:id="'revieweeId' + ${iterStat.index}" type="hidden" th:value="${reviewee.revieweeId}">
+                <input th:id="'postId' + ${iterStat.index}" type="hidden" th:value="${reviewee.postId}">
+
+<!--                <input th:data-reviewer-id="${reviewee.reviewerId}" type="hidden">-->
+<!--                <input th:data-post-id="${reviewee.postId}" type="hidden">-->
+<!--                <input th:data-reviewee-id="${reviewee.revieweeId}" type="hidden">-->
+            </div>
+
+            <div class="popup" style="display: none;" th:id="'reviewPopup' + ${iterStat.index}">
+                <div class="popup-content">
+                    <span class="close" th:data-index="${iterStat.index}">&times;</span>
+                    <h2 th:text="${reviewee.nickname + '님 평가'}"></h2>
+                    <form th:data-index="${iterStat.index}" class="reviewForm">
+                        <label>평가 점수</label>
+                        <div class="rating-buttons">
+                            <th:block th:each="i : ${#numbers.sequence(1, 10)}">
+                                <input type="radio" th:id="'rating-' + ${i} + '-' + ${iterStat.index}"
+                                       th:name="'rating' + ${iterStat.index}" th:value="${i}">
+                                <label th:for="'rating-' + ${i} + '-' + ${iterStat.index}"
+                                       th:text="${i}"></label>
+                            </th:block>
+                        </div>
+                        <button type="submit" class="submit-btn">제출</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const openPopup = (index) => {
+            const popup = document.querySelector(`#reviewPopup${index}`);
+            popup.style.display = 'block';
+
+            popup.querySelector('.close').addEventListener('click', () => {
+                popup.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === popup) {
+                    popup.style.display = 'none';
+                }
+            });
+
+            popup.querySelector('.reviewForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const rating = this.querySelector(`input[name="rating${index}"]:checked`).value;
+                if (!rating) {
+                    alert("평가 점수를 선택해주세요.");
+                    return;
+                }
+                console.log(rating);
+
+                let reviewerId = document.getElementById('reviewerId' + index).value;
+                let revieweeId = document.getElementById('revieweeId' + index).value;
+                let postId = document.getElementById('postId' + index).value;
+
+                fetch(`/mypage/match/${reviewerId}/complete/${postId}/${revieweeId}?rating=${rating}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("평가가 완료되었습니다.");
+                            popup.style.display = 'none';
+                            location.reload(); // 페이지 갱신
+                        } else {
+                            throw new Error('평가 제출 중 오류가 발생했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert(error.message);
+                    });
+            });
+        };
+
+        document.querySelectorAll('.openReviewPopupBtn').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                openPopup(index);
+            });
+        });
+    });
+</script>
+</body>
+</html>

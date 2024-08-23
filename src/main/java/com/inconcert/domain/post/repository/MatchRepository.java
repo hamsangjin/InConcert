@@ -2,15 +2,19 @@ package com.inconcert.domain.post.repository;
 
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
+import com.inconcert.domain.user.dto.response.MatchRspDTO;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
+import com.inconcert.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +28,7 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'match' " +
+            "WHERE c.title = 'match' AND p.isEnd = false " +
             "ORDER BY p.createdAt DESC")
     List<PostDTO> findPostsByCategoryTitle(Pageable pageable);
 
@@ -36,7 +40,7 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle")
+            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false ")
     List<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /match/categoryTitle에서 게시물들 알맞게 불러오기
@@ -47,7 +51,7 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle")
+            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false ")
     Page<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
                                                Pageable pageable);
 
@@ -66,7 +70,8 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
             "AND p.createdAt BETWEEN :startDate AND :endDate " +
             "AND (:gender IS NULL OR u.gender = :gender) " +
-            "AND (:mbti IS NULL OR u.mbti = :mbti)")
+            "AND (:mbti IS NULL OR u.mbti = :mbti)" +
+            "AND p.isEnd = false")
     Page<PostDTO> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                           @Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,
@@ -75,4 +80,17 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
                                           @Param("gender") Gender gender,
                                           @Param("mbti") Mbti mbti,
                                           Pageable pageable);
+
+    @Query("SELECT p FROM Post p WHERE p.endDate < :currentDate AND p.isEnd = true AND p.postCategory.category.title = 'match'")
+    List<Post> findAllByEndDateBeforeAndIsEndFalse(@Param("currentDate") LocalDate currentDate);
+
+    @Modifying
+    @Query("UPDATE Post p SET p.isEnd = :isEnd WHERE p.id = :postId")
+    void updateByIsEnd(@Param("postId") Long postId, @Param("isEnd") boolean isEnd);
+
+    @Query("SELECT new com.inconcert.domain.user.dto.response.MatchRspDTO" +
+            "(p.id, p.chatRoom.id, p.title, p.endDate, size(p.chatRoom.users), p.matchCount, p.isEnd, p.thumbnailUrl, p.postCategory.category.title, p.postCategory.title, p.chatRoom.hostUser.nickname) " +
+            "FROM Post p JOIN p.user u " +
+            "WHERE u.id = :userId AND p.isEnd = true")
+    Page<MatchRspDTO> findAllByUserIdANDEndMatch(@Param("userId") Long userId, Pageable pageable);
 }
