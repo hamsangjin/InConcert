@@ -42,10 +42,6 @@
                 <input th:id="'reviewerId' + ${iterStat.index}" type="hidden" th:value="${reviewee.reviewerId}">
                 <input th:id="'revieweeId' + ${iterStat.index}" type="hidden" th:value="${reviewee.revieweeId}">
                 <input th:id="'postId' + ${iterStat.index}" type="hidden" th:value="${reviewee.postId}">
-
-<!--                <input th:data-reviewer-id="${reviewee.reviewerId}" type="hidden">-->
-<!--                <input th:data-post-id="${reviewee.postId}" type="hidden">-->
-<!--                <input th:data-reviewee-id="${reviewee.revieweeId}" type="hidden">-->
             </div>
 
             <div class="popup" style="display: none;" th:id="'reviewPopup' + ${iterStat.index}">
@@ -89,18 +85,18 @@
 
             popup.querySelector('.reviewForm').addEventListener('submit', function(event) {
                 event.preventDefault();
-                const rating = this.querySelector(`input[name="rating${index}"]:checked`).value;
+                const rating = this.querySelector(`input[name="rating${index}"]:checked`);
+
                 if (!rating) {
                     alert("평가 점수를 선택해주세요.");
                     return;
                 }
-                console.log(rating);
 
                 let reviewerId = document.getElementById('reviewerId' + index).value;
                 let revieweeId = document.getElementById('revieweeId' + index).value;
                 let postId = document.getElementById('postId' + index).value;
 
-                fetch(`/mypage/match/${reviewerId}/complete/${postId}/${revieweeId}?rating=${rating}`, {
+                fetch(`/mypage/match/${reviewerId}/complete/${postId}/${revieweeId}?rating=${rating.value}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
