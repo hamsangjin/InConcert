@@ -1,5 +1,7 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.domain.chat.entity.ChatMessage;
+import com.inconcert.domain.chat.repository.ChatMessageRepository;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
@@ -25,6 +27,7 @@ import java.util.*;
 public class MatchService {
     private final MatchRepository matchRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public List<PostDTO> getAllMatchPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
@@ -112,22 +115,24 @@ public class MatchService {
         post.updateMatchUserIds(matchUserIds);  // post에 위에서 저장한 id들 저장
         post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
         matchRepository.save(post);
+
+        ChatMessage saveMessage = ChatMessage.builder()
+                .chatRoom(post.getChatRoom())
+                .sender(post.getUser())
+                .message("동행이 완료되었습니다. 내 동행 목록에서 서로에 대한 평가를 남겨보세요 !")
+                .isNotice(true)
+                .build();
+
+        chatMessageRepository.save(saveMessage);
     }
 
     // 매일 자정에 endDate 확인해 자동 마감 처리
     @Transactional
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 1 23 * * ?")
     public void updatePostStatus() {
-        // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 Post들 불러오기
-        List<Post> posts = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
-        for (Post post : posts) {
+        // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 PostId들 불러오기
+        List<Long> postIds = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
 
-            // 해당 게시글 id를 가진 chatroom의 유저들의 id를 불러옴
-            List<Long> matchUserIds = chatRoomRepository.findUserIdsByPostId(post.getId());
-
-            post.updateMatchUserIds(matchUserIds);  // post에 위에서 저장한 id들 저장
-            post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
-            matchRepository.save(post);
-        }
+        postIds.forEach(this::completeMatch);
     }
 }
