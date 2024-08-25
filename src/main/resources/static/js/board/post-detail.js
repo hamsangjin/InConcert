@@ -108,8 +108,11 @@ function validateSearch() {
 }
 
 function matchComplete() {
-    if(confirm("현재 채팅방 인원으로 동행 정보를 저장합니다.")) {
-        alert("동행이 완료되었습니다.")
+    if (!confirm("현재 채팅방 인원으로 동행 정보를 저장합니다.")) {
+        return false;
+    } else{
+        alert("동행이 완료되었습니다.");
+        return true;
     }
 }
 

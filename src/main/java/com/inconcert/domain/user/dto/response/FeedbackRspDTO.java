@@ -21,12 +21,14 @@ public class FeedbackRspDTO {
     private Mbti mbti;
     private Gender gender;
 
-    public FeedbackRspDTO(Long revieweeId, String profileImage, String nickname, LocalDate birth, Mbti mbti, Gender gender) {
+    public FeedbackRspDTO(Long revieweeId, String profileImage, String nickname, LocalDate birth, Mbti mbti, Gender gender, Long reviewerId, Long postId) {
         this.revieweeId = revieweeId;
         this.profileImage = profileImage;
         this.nickname = nickname;
         this.birth = birth;
         this.mbti = mbti;
         this.gender = gender;
+        this.reviewerId = reviewerId;
+        this.postId = postId;
     }
 }

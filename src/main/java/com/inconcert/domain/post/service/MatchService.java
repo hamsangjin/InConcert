@@ -1,6 +1,5 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
@@ -8,7 +7,6 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
-import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -103,33 +100,33 @@ public class MatchService {
         return post.hasChatRoom();
     }
 
+    // 동행 완료
     @Transactional
     public void completeMatch(Long postId){
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
-        ChatRoom chatRoom = chatRoomRepository.findByPostId(postId);
 
-        List<Long> matchUserIds = chatRoom.getUsers()
-                .stream()
-                .map(User::getId)
-                .collect(Collectors.toList());
-        post.updateMatchUserIds(matchUserIds);
-        post.toggleIsEnd();
+        // 해당 게시글 id를 가진 chatroom의 유저들의 id를 불러옴
+        List<Long> matchUserIds = chatRoomRepository.findUserIdsByPostId(postId);
+
+        post.updateMatchUserIds(matchUserIds);  // post에 위에서 저장한 id들 저장
+        post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
         matchRepository.save(post);
     }
 
+    // 매일 자정에 endDate 확인해 자동 마감 처리
     @Transactional
-    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updatePostStatus() {
+        // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 Post들 불러오기
         List<Post> posts = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
         for (Post post : posts) {
-            ChatRoom chatRoom = chatRoomRepository.findByPostId(post.getId());
-            List<Long> matchUserIds = chatRoom.getUsers()
-                    .stream()
-                    .map(User::getId)
-                    .collect(Collectors.toList());
-            post.updateMatchUserIds(matchUserIds);
-            post.toggleIsEnd();
+
+            // 해당 게시글 id를 가진 chatroom의 유저들의 id를 불러옴
+            List<Long> matchUserIds = chatRoomRepository.findUserIdsByPostId(post.getId());
+
+            post.updateMatchUserIds(matchUserIds);  // post에 위에서 저장한 id들 저장
+            post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
             matchRepository.save(post);
         }
     }

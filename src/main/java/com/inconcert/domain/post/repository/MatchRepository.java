@@ -5,11 +5,9 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
-import com.inconcert.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -84,13 +82,18 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p WHERE p.endDate < :currentDate AND p.isEnd = true AND p.postCategory.category.title = 'match'")
     List<Post> findAllByEndDateBeforeAndIsEndFalse(@Param("currentDate") LocalDate currentDate);
 
-    @Modifying
-    @Query("UPDATE Post p SET p.isEnd = :isEnd WHERE p.id = :postId")
-    void updateByIsEnd(@Param("postId") Long postId, @Param("isEnd") boolean isEnd);
-
     @Query("SELECT new com.inconcert.domain.user.dto.response.MatchRspDTO" +
             "(p.id, p.chatRoom.id, p.title, p.endDate, size(p.chatRoom.users), p.matchCount, p.isEnd, p.thumbnailUrl, p.postCategory.category.title, p.postCategory.title, p.chatRoom.hostUser.nickname) " +
             "FROM Post p JOIN p.user u " +
             "WHERE u.id = :userId AND p.isEnd = true")
     Page<MatchRspDTO> findAllByUserIdANDEndMatch(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("SELECT id " +
+            "FROM User " +
+            "WHERE id IN (" +
+            "    SELECT p.matchUserIds " +
+            "    FROM Post p" +
+            "    WHERE p.id = :postId) " +
+            "AND id <> :userId")
+    List<Long> findMatchUsersByPostId(@Param("postId") Long postId, @Param("userId") Long userId);
 }

@@ -120,9 +120,11 @@ public class MyPageController {
                                      @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Page<MatchRspDTO> matchRspDTOS = myPageService.presentMatch(userId, page, size);
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
         model.addAttribute("matchRspDTOs", matchRspDTOS);
-        model.addAttribute("user", userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
+        model.addAttribute("user", user);
         model.addAttribute("activeTab", "present");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", matchRspDTOS.getTotalPages());
@@ -137,23 +139,20 @@ public class MyPageController {
                                       @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Page<MatchRspDTO> matchRspDTOS = myPageService.completeMatch(userId, page, size);
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        List<Boolean> isEndFeedback = myPageService.isEndFeedback(userId, matchRspDTOS
+                .stream()
+                .map(MatchRspDTO::getPostId)
+                .collect(Collectors.toList()));
+
         model.addAttribute("matchRspDTOs", matchRspDTOS);
-        model.addAttribute("user", userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
+        model.addAttribute("user", user);
         model.addAttribute("activeTab", "complete");
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", matchRspDTOS.getTotalPages());
-        model.addAttribute("isEndFeedback", myPageService.isEndFeedback(userId, matchRspDTOS
-                .stream()
-                .map(MatchRspDTO::getPostId)
-                .collect(Collectors.toList())));
+        model.addAttribute("isEndFeedback", isEndFeedback);
 
-        for (boolean b : myPageService.isEndFeedback(userId, matchRspDTOS
-                .stream()
-                .map(MatchRspDTO::getPostId)
-                .collect(Collectors.toList()))){
-            System.out.println(b);
-        }
         return "/user/match-list";
     }
 
@@ -163,6 +162,10 @@ public class MyPageController {
                                  @PathVariable(name = "postId") Long postId) {
         List<FeedbackRspDTO> myReviewee = myPageService.getMyReviewee(userId, postId);
         List<Boolean> myReviewStatuses = myPageService.getUsersReviewStatuses(userId, postId);
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
+        model.addAttribute("user", user);
         model.addAttribute("myReviewee", myReviewee);
         model.addAttribute("myReviewStatuses", myReviewStatuses);
         return "/user/review-list";

@@ -218,7 +218,7 @@ header {
 .title-container{
     width: 60%;
     max-width: 60%;
-    margin: 0 auto 20px;
+    margin: 0 auto;
 }
 
 .title-container h1{
@@ -228,6 +228,27 @@ header {
 
 .title-container > p{
     color: #6f6f6f;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: 0 auto 50px;
+    width: 60%;
+    max-width: 60%;
+}
+
+.button-container > a{
+    text-decoration: none;
+    color: #00a885;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.button-container > a:hover{
+    color: black;
+    cursor: pointer;
 }
 
 .review-container{

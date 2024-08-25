@@ -369,7 +369,7 @@ header {
     color: #6f6f6f;
 }
 
-div.status > span,
+div.status > .status-ing,
 .need-feedback,
 .matching{
     border-radius: 15px;
@@ -378,7 +378,15 @@ div.status > span,
     color: white;
     font-weight: bolder;
     padding: 7px;
+}
+
+div.status > .status-end{
+    border-radius: 15px;
     text-decoration: none;
+    background-color: red;
+    color: white;
+    font-weight: bolder;
+    padding: 7px;
 }
 
 div.review > a{

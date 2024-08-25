@@ -27,7 +27,10 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("select c.users from ChatRoom c where c.id = :chatRoomId")
     List<User> findAllById(@Param("chatRoomId") Long chatRoomId);
 
-    ChatRoom findByPostId(Long postId);
+    @Query("SELECT u.id " +
+            "FROM ChatRoom c JOIN c.users u " +
+            "WHERE c.post.id = :postId")
+    List<Long> findUserIdsByPostId(@Param("postId") Long postId);
 
     @Query("SELECT new com.inconcert.domain.user.dto.response.MatchRspDTO" +
             "(c.post.id, c.id, c.post.title, c.post.endDate, size(c.users), c.post.matchCount, c.post.isEnd, c.post.thumbnailUrl, c.post.postCategory.category.title, c.post.postCategory.title, c.hostUser.nickname) " +

@@ -87,8 +87,8 @@
                         <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/complete|}" method="post"
                               th:if="${user.isPresent() &&
                                     post.user.username == user.get().username &&
-                                    #temporals.format(post.endDate, 'yyyy-MM-dd') < #temporals.format(#temporals.createNow(), 'yyyy-MM-dd') && !post.end}">
-                            <button class="chat-button" type="submit" onclick="matchComplete()"> 동행 완료 </button>
+                                    #temporals.format(post.endDate, 'yyyy-MM-dd') <= #temporals.format(#temporals.createNow(), 'yyyy-MM-dd') && !post.end}">
+                            <button class="chat-button" type="submit" onclick="return matchComplete()"> 동행 완료 </button>
                         </form>
 
                         <input type="hidden" id="chatRoomId" th:value="${post.chatRoomId}">
@@ -139,7 +139,7 @@
                onclick="toggleLike(this)"></i>
             <span id="like-count" th:text="${post.likeCount}"></span>
             <span th:text="'댓글 '+ ${post.commentCount}"></span>
-            <a id="kakaotalk-sharing-btn" href="javascript:;">
+            <a id="kakaotalk-sharing-btn" href="javascript:">
                 <img src="/images/sns/kakao.png"
                      alt="카카오톡 공유 보내기 버튼" />
             </a>

@@ -23,10 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameAndEmail(String username, String email);
 
     @Query("SELECT new com.inconcert.domain.user.dto.response.FeedbackRspDTO" +
-            "(u.id, u.profileImage, u.nickname, u.birth, u.mbti, u.gender) " +
+            "(u.id, u.profileImage, u.nickname, u.birth, u.mbti, u.gender, :userId, :postId) " +
             "FROM User u " +
-            "WHERE u.id IN :matchUserIds AND u.id != :userId")
-    List<FeedbackRspDTO> getFeedbackRspDTOByMatchUserIds(@Param("userId") Long userId, @Param("matchUserIds") List<Long> matchUserIds);
+            "WHERE u.id IN :matchUserIds")
+    List<FeedbackRspDTO> getFeedbackRspDTOByMatchUserIds(@Param("userId") Long userId,
+                                                         @Param("postId") Long postId,
+                                                         @Param("matchUserIds") List<Long> matchUserIds);
 
 
 }

@@ -13,6 +13,10 @@
         <h1>평가 목록</h1>
     </div>
 
+    <div class="button-container">
+        <a th:href="@{|/mypage/match/${user.id}/complete|}">내 동행 목록</a>
+    </div>
+
     <div class="review-container">
         <div class="post-header" th:if="${myReviewee.size() > 0}">
             <span class="header-image">프로필 이미지</span>
@@ -33,7 +37,7 @@
             <div class="reviewee-review">
                 <button class="openReviewPopupBtn" th:if="${!myReviewStatuses.get(iterStat.index)}"
                         th:data-index="${iterStat.index}"> 평가하기 </button>
-                <span class="disabledPopupBtn" th:if="${myReviewStatuses.get(iterStat.index)}"> 평가완료 </span>
+                <button class="disabledPopupBtn" th:if="${myReviewStatuses.get(iterStat.index)}" disabled> 평가완료 </button>
 
                 <input th:id="'reviewerId' + ${iterStat.index}" type="hidden" th:value="${reviewee.reviewerId}">
                 <input th:id="'revieweeId' + ${iterStat.index}" type="hidden" th:value="${reviewee.revieweeId}">
