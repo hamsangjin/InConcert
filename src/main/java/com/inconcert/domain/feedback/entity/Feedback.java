@@ -31,6 +31,7 @@ public class Feedback{
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
 
+    @Builder
     public Feedback(int point, User reviewer, User reviewee, Post post) {
         this.point = point;
         this.reviewer = reviewer;

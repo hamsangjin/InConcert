@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>메인 화면</title>
+    <title>게시글 상세보기</title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
@@ -86,7 +86,7 @@
 
                         <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/complete|}" method="post"
                               th:if="${user.isPresent() &&
-                                    post.user.username == user.get().username &&
+                                    post.user.username == user.get().username && categoryTitle == 'match' &&
                                     #temporals.format(post.endDate, 'yyyy-MM-dd') <= #temporals.format(#temporals.createNow(), 'yyyy-MM-dd') && !post.end}">
                             <button class="chat-button" type="submit" onclick="return matchComplete()"> 동행 완료 </button>
                         </form>
@@ -224,7 +224,7 @@
                                 <p>매너 점수</p>
                             </div>
                             <div>
-                                <p th:text="${post.user.mannerPoint}"></p>
+                                <p th:text="${post.user.mannerPoint != null ? post.user.mannerPoint : '진행된 동행 정보가 없습니다.'}"></p>
                             </div>
                         </div>
                     </div>

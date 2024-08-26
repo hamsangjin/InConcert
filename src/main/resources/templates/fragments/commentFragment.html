@@ -13,7 +13,7 @@
                              th:data-birth="${comment.user.birth}"
                              th:data-email="${comment.user.email}"
                              th:data-mbti="${comment.user.mbti}"
-                             th:data-manner="${comment.user.mannerPoint}"
+                             th:data-manner="${comment.user.mannerPoint != null ? comment.user.mannerPoint : '진행된 동행 정보가 없습니다.'}"
                              th:data-intro="${comment.user.intro}">
                         <div>
                             <p class="author" th:text="${comment.user.nickname}">댓글 작성한 유저</p>

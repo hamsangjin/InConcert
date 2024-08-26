@@ -89,7 +89,7 @@ public class MyPageService {
     public Page<MatchRspDTO> completeMatch(Long userId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
 
-        return matchRepository.findAllByUserIdANDEndMatch(userId, pageable);
+        return matchRepository.findAllByUserIdInMatchUserIdsAndEndMatch(userId, pageable);
     }
 
     // 해당 게시글의 평가할 유저들 불러오기

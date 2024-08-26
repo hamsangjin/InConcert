@@ -58,7 +58,7 @@ public class User {
     private Gender gender;
 
     @Column
-    private Double mannerPoint = 5.0;
+    private Double mannerPoint;
 
     @Column
     private String intro = "안녕하세요";
@@ -106,7 +106,7 @@ public class User {
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,
-                LocalDate birth, String profileImage, Gender gender, Double mannerPoint, String intro, Mbti mbti, Integer point, Set<Role> roles) {
+                LocalDate birth, String profileImage, Gender gender, String intro, Mbti mbti, Integer point, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -116,7 +116,6 @@ public class User {
         this.birth = birth;
         this.profileImage = profileImage != null ? profileImage : this.profileImage;
         this.gender = gender;
-        this.mannerPoint = mannerPoint != null ? mannerPoint : this.mannerPoint;
         this.intro = intro != null ? intro : this.intro;
         this.mbti = mbti;
         this.point = point != null ? point : this.point;
