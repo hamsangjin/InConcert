@@ -234,6 +234,7 @@ header {
     aspect-ratio: 1 / 1;
     border-radius: 20px;
     margin: 20px;
+    cursor: pointer;
 }
 
 .profile-container {
@@ -323,4 +324,19 @@ textarea {
 
 .check-btn:hover {
     background-color: #ddd;
+}
+
+.default-profile-btn {
+    background-color: #00A885;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+.default-profile-btn:hover {
+    cursor: pointer;
 }

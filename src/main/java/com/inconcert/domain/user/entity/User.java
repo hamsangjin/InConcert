@@ -129,6 +129,10 @@ public class User {
 
     public void updateBanDate(LocalDate newBanDate) {this.banDate = newBanDate;}
 
+    public void setBasicImage() {
+        this.profileImage = "/images/profile.png";
+    }
+
     // 유저 정보 수정
     public void updateUser(MyPageEditReqDto reqDto, String password, String profileImageUrl) {
         this.nickname = reqDto.getNickname();

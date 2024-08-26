@@ -56,7 +56,7 @@
                         <img class="notification-img" src="/images/notification.png" alt="No Posts"/>
                     </a>
                     <div class="dropdown">
-                        <img class="profile-img" src="/images/profile.png" alt="No Posts"/>
+                        <img class="profile-img" th:src="${#authentication.principal.profileImage}" alt="No Posts"/>
                         <div class="dropdown-content">
                             <a th:href="@{/mypage}">마이페이지</a>
                             <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/report}">신고 목록</a>

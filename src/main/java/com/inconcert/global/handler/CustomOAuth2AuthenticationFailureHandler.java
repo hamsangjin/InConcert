@@ -21,8 +21,19 @@ public class CustomOAuth2AuthenticationFailureHandler implements AuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.error("OAuth2 authentication failed", exception);
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.getWriter().write("{\"error\": \"인증에 실패했습니다. 다시 시도해 주세요.\"}");
+
+        // OAuth2 인증 실패 시 예외 메시지 확인
+        String errorMessage = exception.getMessage();
+
+        // 사용자가 인증을 취소한 경우 home으로 리디이렉션
+        if (errorMessage != null && errorMessage.contains("access_denied")) {
+            redirectStrategy.sendRedirect(request, response, "/home");
+        }
+        // 그 외의 오류에 대해서는 에러 메시지 반환
+        else {
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("{\"error\": \"인증에 실패했습니다. 다시 시도해 주세요.\"}");
+        }
     }
 }

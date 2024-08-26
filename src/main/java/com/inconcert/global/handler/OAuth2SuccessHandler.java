@@ -8,8 +8,8 @@ import com.inconcert.global.auth.CustomNaverUser;
 import com.inconcert.global.auth.jwt.token.entity.Token;
 import com.inconcert.global.auth.jwt.token.service.TokenService;
 import com.inconcert.global.auth.jwt.util.JwtTokenizer;
+import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.RoleNotFoundException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             // 기본 역할 가져오기 (ROLE_USER)
             Role userRole = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RoleNotFoundException("기본 역할을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new RoleNotFoundException(ExceptionMessage.ROLE_NOT_FOUND.getMessage()));
 
             // User 객체 생성
             User tokenUser = userRepository.findByUsername(username)

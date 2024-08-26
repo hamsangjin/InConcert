@@ -19,10 +19,10 @@ public class Token {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "access_token_value", nullable = false)
+    @Column(name = "access_token_value", nullable = false, columnDefinition = "longtext")
     private String accessTokenValue;
 
-    @Column(name = "refresh_token_value", nullable = false)
+    @Column(name = "refresh_token_value", nullable = false, columnDefinition = "longtext")
     private String refreshTokenValue;
 
     @Builder

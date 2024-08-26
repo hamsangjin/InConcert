@@ -44,7 +44,11 @@ spring:
             authorization-grant-type: authorization_code
             scope:
               - name
+              - gender
               - email
+              - mobile
+              - birthday
+              - birthyear
             client-name: Naver
         provider:
           naver:

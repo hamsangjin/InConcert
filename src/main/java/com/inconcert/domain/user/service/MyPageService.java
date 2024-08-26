@@ -78,6 +78,16 @@ public class MyPageService {
         userRepository.save(user);
     }
 
+    // 기본 이미지로 변경
+    @Transactional
+    public void resetToDefaultProfileImage() {
+        User user = userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
+        user.setBasicImage();
+        userRepository.save(user);
+    }
+
     // 동행중
     public Page<MatchRspDTO> presentMatch(Long userId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
