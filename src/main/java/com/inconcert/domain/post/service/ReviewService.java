@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -62,12 +61,6 @@ public class ReviewService {
                 .createdAt(post.getCreatedAt())
                 .user(post.getUser())
                 .build();
-    }
-
-    @Transactional(readOnly = true)
-    public Post getPostByPostId(Long postId) {
-        Optional<Post> post = reviewRepository.findById(postId);
-        return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
 
     @Transactional

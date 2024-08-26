@@ -107,6 +107,15 @@ function validateSearch() {
     return true;
 }
 
+function matchComplete() {
+    if (!confirm("현재 채팅방 인원으로 동행 정보를 저장합니다.")) {
+        return false;
+    } else{
+        alert("동행이 완료되었습니다.");
+        return true;
+    }
+}
+
 // 동행 요청
 function requestJoinChatRoom(button) {
     const chatRoomId = button.getAttribute("data-chat-room-id");
@@ -149,6 +158,8 @@ function requestOneToOneChat(button) {
         .then(response => {
             if (response.status === 409) {
                 throw new Error('이미 해당 유저와의 채팅방이 존재합니다.');
+            } else if(response.status === 400){
+                throw new Error('본인에게는 1대1 채팅을 보낼 수 없습니다.');
             } else if (!response.ok) {
                 throw new Error('알 수 없는 오류가 발생했습니다.');
             }

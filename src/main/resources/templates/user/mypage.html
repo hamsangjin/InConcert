@@ -49,7 +49,7 @@
                     <a class="link-btn" th:href="@{'/mypage/like/' + ${user.id}}">
                         <h3> 좋아요한 글 보기 </h3>
                     </a>
-                    <a class="link-btn" th:href="@{/mypage/with}">
+                    <a class="link-btn" th:href="@{'/mypage/match/' + ${user.id} + '/present'}">
                         <h3> 내 동행 목록 </h3>
                     </a>
                 </div>

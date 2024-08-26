@@ -1,5 +1,9 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.domain.chat.dto.ChatMessageDTO;
+import com.inconcert.domain.chat.entity.ChatMessage;
+import com.inconcert.domain.chat.repository.ChatMessageRepository;
+import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -11,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +28,9 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class MatchService {
     private final MatchRepository matchRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<PostDTO> getAllMatchPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
@@ -75,12 +84,9 @@ public class MatchService {
                 .isNew(Duration.between(post.getCreatedAt(), LocalDateTime.now()).toDays() < 1)
                 .createdAt(post.getCreatedAt())
                 .user(post.getUser())
+                .chatRoomUserSize(post.getChatRoom().getUsers().size())
+                .isEnd(post.isEnd())
                 .build();
-    }
-
-    public Post getPostByPostId(Long postId) {
-        Optional<Post> post = matchRepository.findById(postId);
-        return post.orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
     }
 
     @Transactional
@@ -98,5 +104,49 @@ public class MatchService {
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         return post.hasChatRoom();
+    }
+
+    // 동행 완료
+    @Transactional
+    public void completeMatch(Long postId){
+        Post post = matchRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+
+        // 해당 게시글 id를 가진 chatroom의 유저들의 id를 불러옴
+        List<Long> matchUserIds = chatRoomRepository.findUserIdsByPostId(postId);
+
+        post.updateMatchUserIds(matchUserIds);  // post에 위에서 저장한 id들 저장
+        post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
+        matchRepository.save(post);
+
+        // 입장 메시지 최초 전송
+        ChatMessageDTO enterMessage = ChatMessageDTO.builder()
+                .chatRoomId(post.getChatRoom().getId())
+                .username(post.getUser().getUsername())
+                .message("동행이 완료되었습니다. 내 동행 목록에서 서로에 대한 평가를 남겨보세요 !")
+                .type(ChatMessageDTO.MessageType.ENTER)
+                .isNotice(true)
+                .build();
+
+
+        ChatMessage saveMessage = ChatMessage.builder()
+                .chatRoom(post.getChatRoom())
+                .sender(post.getUser())
+                .message(enterMessage.getMessage())
+                .isNotice(true)
+                .build();
+
+        chatMessageRepository.save(saveMessage);
+        messagingTemplate.convertAndSend("/topic/chat/room/" + enterMessage.getChatRoomId(), enterMessage);
+    }
+
+    // 매일 자정에 endDate 확인해 자동 마감 처리
+    @Transactional
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void updatePostStatus() {
+        // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 PostId들 불러오기
+        List<Long> postIds = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
+
+        postIds.forEach(this::completeMatch);
     }
 }

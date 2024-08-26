@@ -85,6 +85,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
+    // 본인에게 1대1 채팅을 시도할 때
+    @ExceptionHandler(SelfChatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleSelfChatException(SelfChatException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     // 채팅방이 모집 완료되었을 때
     @ExceptionHandler(AlreadyFullChatRoomException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

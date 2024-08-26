@@ -103,9 +103,10 @@ public class ChatApiController {
         try {
             ChatRoom chatRoom = chatService.createOneToOneChatRoom(receiverId);
             return ResponseEntity.ok(chatRoom.getId()); // 채팅방 ID 반환
-        }
-        catch (AlreadyInChatRoomException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()); // 이미 존재하는 경우 메시지 반환
+        } catch (AlreadyInChatRoomException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());     // 이미 존재하는 경우 메시지 반환
+        } catch (SelfChatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());  // 본인에게 1대1 채팅을 보내는 경우
         }
     }
 

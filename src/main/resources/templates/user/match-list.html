@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내 동행 목록</title>
+    <link rel="stylesheet" href="/css/user/match-list.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="title-container">
+        <h1>내 동행 목록</h1>
+        <p th:text="${activeTab == 'present' ? matchRspDTOs.getTotalElements() + '개의 동행을 함께 하고 있습니다 !' :  '지금까지 총 ' + matchRspDTOs.getTotalElements() + '번의 동행을 완료했습니다!' }"> </p>
+    </div>
+
+    <section>
+        <nav>
+            <ul class="nav-tabs">
+                <li th:classappend="${activeTab} == 'present' ? 'active'">
+                    <a th:href="@{'/mypage/match/' + ${user.id} + '/present'}">동행중</a>
+                </li>
+                <li th:classappend="${activeTab} == 'complete' ? 'active'">
+                    <a th:href="@{'/mypage/match/' + ${user.id} + '/complete'}">동행 완료</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div th:if="${activeTab == 'present'}">
+            <div class="post-header" th:if="${matchRspDTOs.getTotalElements() > 0}">
+                <span class="header-title">제목</span>
+                <span class="header-author">작성자</span>
+                <span class="header-date">마감 날짜</span>
+                <span class="header-match-count">인원 수</span>
+                <span class="header-status">모집 상태</span>
+                <span class="header-review">상호 평가</span>
+
+            </div>
+
+            <div class="post-list">
+                <div class="post" th:each="matchRspDTO : ${matchRspDTOs.content}">
+                    <div class="post-content">
+                        <div class="post-left">
+                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl != null}">
+                                <img th:src="@{${matchRspDTO.thumbnailUrl}}">
+                            </div>
+                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl == null}">
+                                <img src="/images/logo.png" alt="No Posts"/>
+                            </div>
+                            <div class="post-title">
+                                <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
+                                    <span th:switch="${matchRspDTO.postCategoryTitle}">
+                                        <span th:case="'musical'">[뮤지컬]</span>
+                                        <span th:case="'concert'">[콘서트]</span>
+                                        <span th:case="'theater'">[연극]</span>
+                                        <span th:case="'etc'">[기타]</span>
+                                    </span>
+                                    <span th:text="${#strings.length(matchRspDTO.title) > 23 ? #strings.substring(matchRspDTO.title, 0, 23) + '...' : matchRspDTO.title}">Post Title</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="post-right">
+                            <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
+                            <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
+                            <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
+                            <div class="status">
+                                <span class="status-ing">모집중</span>
+                            </div>
+                            <div class="review">
+                                <span class="matching">동행중</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${totalPages > 0}" class="pagination">
+                <ul>
+                    <!-- 이전 페이지 -->
+                    <li th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a th:if="${currentPage > 0}"
+                           th:href="@{|/mypage/match/${user.id}/present?page=${currentPage - 1}&size=${matchRspDTOs.size}|}">
+                            이전</a>
+                        <span th:if="${currentPage == 0}">이전</span>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:if="${i >= (currentPage / 10) * 10 && i < ((currentPage / 10) + 1) * 10}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a th:href="@{|/mypage/match/${user.id}/present?page=${i}&size=${matchRspDTOs.size}|}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <!-- 다음 페이지 -->
+                    <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a th:if="${currentPage + 1 < totalPages}"
+                           th:href="@{|/mypage/match/${user.id}/present?page=${currentPage + 1}&size=${matchRspDTOs.size}|}">
+                            다음</a>
+                        <span th:if="${currentPage + 1 >= totalPages}">다음</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div th:if="${activeTab == 'complete'}">
+            <div class="post-header" th:if="${matchRspDTOs.getTotalElements() > 0}">
+                <span class="header-title">제목</span>
+                <span class="header-author">작성자</span>
+                <span class="header-date">마감 날짜</span>
+                <span class="header-match-count">인원 수</span>
+                <span class="header-status">모집 상태</span>
+                <span class="header-review">상호 평가</span>
+            </div>
+
+            <div class="post-list" th:each="matchRspDTO, iterStat : ${matchRspDTOs.content}">
+                <div class="post">
+                    <div class="post-content">
+                        <div class="post-left">
+                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl != null}">
+                                <img th:src="@{${matchRspDTO.thumbnailUrl}}">
+                            </div>
+                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl == null}">
+                                <img src="/images/logo.png" alt="No Posts"/>
+                            </div>
+                            <div class="post-title">
+                                <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
+                                    <span th:switch="${matchRspDTO.postCategoryTitle}">
+                                        <span th:case="'musical'">[뮤지컬]</span>
+                                        <span th:case="'concert'">[콘서트]</span>
+                                        <span th:case="'theater'">[연극]</span>
+                                        <span th:case="'etc'">[기타]</span>
+                                    </span>
+                                    <span th:text="${#strings.length(matchRspDTO.title) > 23 ? #strings.substring(matchRspDTO.title, 0, 23) + '...' : matchRspDTO.title}">Post Title</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="post-right">
+                            <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
+                            <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
+                            <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
+                            <div class="status">
+                                <span class="status-end"> 모집 종료 </span>
+                            </div>
+                            <div class="review">
+                                <a th:href="${'/mypage/match/' + user.id + '/complete/' + matchRspDTO.postId}">
+                                    <span class="need-feedback" th:if="${!isEndFeedback.get(iterStat.index)}">평가하기</span>
+                                </a>
+                                <span class="complete-feedback" th:if="${isEndFeedback.get(iterStat.index)}">평가완료</span>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${totalPages > 0}" class="pagination">
+                <ul>
+                    <!-- 이전 페이지 -->
+                    <li th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a th:if="${currentPage > 0}"
+                           th:href="@{|/mypage/match/${user.id}/complete?page=${currentPage - 1}&size=${matchRspDTOs.size}|}">
+                            이전</a>
+                        <span th:if="${currentPage == 0}">이전</span>
+                    </li>
+
+                    <!-- 페이지 번호 -->
+                    <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:if="${i >= (currentPage / 10) * 10 && i < ((currentPage / 10) + 1) * 10}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a th:href="@{|/mypage/match/${user.id}/complete?page=${i}&size=${matchRspDTOs.size}|}"
+                           th:text="${i + 1}">1</a>
+                    </li>
+
+                    <!-- 다음 페이지 -->
+                    <li th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                        <a th:if="${currentPage + 1 < totalPages}"
+                           th:href="@{|/mypage/match/${user.id}/complete?page=${currentPage + 1}&size=${matchRspDTOs.size}|}">
+                            다음</a>
+                        <span th:if="${currentPage + 1 >= totalPages}">다음</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

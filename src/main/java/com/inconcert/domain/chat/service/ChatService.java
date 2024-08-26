@@ -185,6 +185,7 @@ public class ChatService {
 
             messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, enterMessage);
             chatMessageRepository.save(saveMessage);
+
         }
 
         // 사용자에게 채팅방 입장이 승인되었음을 알림
@@ -210,27 +211,25 @@ public class ChatService {
             }
             else {
                 chatRoomRepository.save(chatRoom);
+                // 완전히 나간 경우 퇴장 메시지 전송
+                ChatMessageDTO leaveMessage = ChatMessageDTO.builder()
+                        .chatRoomId(chatRoomId)
+                        .username(leavingUser.getUsername())
+                        .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
+                        .type(ChatMessageDTO.MessageType.LEAVE)
+                        .isNotice(true)
+                        .build();
+
+                ChatMessage saveMessage = ChatMessage.builder()
+                        .chatRoom(chatRoom)
+                        .sender(leavingUser)
+                        .message(leaveMessage.getMessage())
+                        .isNotice(true)
+                        .build();
+                chatMessageRepository.save(saveMessage);
+
+                messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, leaveMessage);
             }
-
-            // 완전히 나간 경우 퇴장 메시지 전송
-            ChatMessageDTO leaveMessage = ChatMessageDTO.builder()
-                    .chatRoomId(chatRoomId)
-                    .username(leavingUser.getUsername())
-                    .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
-                    .type(ChatMessageDTO.MessageType.LEAVE)
-                    .isNotice(true)
-                    .build();
-
-            ChatMessage saveMessage = ChatMessage.builder()
-                    .chatRoom(chatRoom)
-                    .sender(leavingUser)
-                    .message(leaveMessage.getMessage())
-                    .isNotice(true)
-                    .build();
-
-            messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, leaveMessage);
-            chatMessageRepository.save(saveMessage);
-
         }
         else {
             throw new AlreadyOutOfChatRoomException("채팅방에 속해 있지 않습니다.");
@@ -332,6 +331,8 @@ public class ChatService {
 
         if (!existingRooms.isEmpty()) {
             throw new AlreadyInChatRoomException(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());
+        } else if(receiverId.equals(requestingUser.getId())) {
+            throw new SelfChatException(ExceptionMessage.SELF_CHAT.getMessage());
         }
 
         // 채팅방 생성
