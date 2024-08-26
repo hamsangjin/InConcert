@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.domain.chat.dto.ChatMessageDTO;
 import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.repository.ChatMessageRepository;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<PostDTO> getAllMatchPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
@@ -116,19 +119,30 @@ public class MatchService {
         post.toggleIsEnd();                     // isEnd 필드 값 true로 변경
         matchRepository.save(post);
 
+        // 입장 메시지 최초 전송
+        ChatMessageDTO enterMessage = ChatMessageDTO.builder()
+                .chatRoomId(post.getChatRoom().getId())
+                .username(post.getUser().getUsername())
+                .message("동행이 완료되었습니다. 내 동행 목록에서 서로에 대한 평가를 남겨보세요 !")
+                .type(ChatMessageDTO.MessageType.ENTER)
+                .isNotice(true)
+                .build();
+
+
         ChatMessage saveMessage = ChatMessage.builder()
                 .chatRoom(post.getChatRoom())
                 .sender(post.getUser())
-                .message("동행이 완료되었습니다. 내 동행 목록에서 서로에 대한 평가를 남겨보세요 !")
+                .message(enterMessage.getMessage())
                 .isNotice(true)
                 .build();
 
         chatMessageRepository.save(saveMessage);
+        messagingTemplate.convertAndSend("/topic/chat/room/" + enterMessage.getChatRoomId(), enterMessage);
     }
 
     // 매일 자정에 endDate 확인해 자동 마감 처리
     @Transactional
-    @Scheduled(cron = "0 1 23 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void updatePostStatus() {
         // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 PostId들 불러오기
         List<Long> postIds = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
