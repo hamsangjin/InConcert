@@ -67,6 +67,14 @@ public class MyPageController {
         return "redirect:/mypage";
     }
 
+    // 기본 프로필로 변경
+    @PostMapping("/reset-profile-image")
+    @ResponseBody
+    public ResponseEntity<Void> resetProfileImage() {
+        myPageService.resetToDefaultProfileImage();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/board/{userId}")
     public String showMyPosts(Model model,
                               @PathVariable("userId") Long userId,

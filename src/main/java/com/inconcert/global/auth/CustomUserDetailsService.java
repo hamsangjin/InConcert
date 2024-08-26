@@ -27,6 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword(),
                 user.getEmail(),
+                user.getProfileImage(),
                 user.getRoles().stream().map(Role::getName).collect(Collectors.toList())
         );
     }

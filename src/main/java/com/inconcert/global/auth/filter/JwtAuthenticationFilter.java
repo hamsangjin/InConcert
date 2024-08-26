@@ -1,8 +1,11 @@
 package com.inconcert.global.auth.filter;
 
+import com.inconcert.domain.user.entity.User;
+import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.global.auth.CustomUserDetails;
 import com.inconcert.global.auth.jwt.token.JwtAuthenticationToken;
 import com.inconcert.global.auth.jwt.util.JwtTokenizer;
+import com.inconcert.global.exception.ExceptionMessage;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenizer jwtTokenizer;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -75,13 +80,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Long userId = claims.get("userId", Long.class);
         String username = claims.get("username", String.class);
-        List<GrantedAuthority> authorities = getGrantedAuthorities(claims);
+        List<GrantedAuthority> authorities = getGrantedAuthorities(claims); // 권한 리스트
 
-        CustomUserDetails userDetails = new CustomUserDetails(userId, username, "", email, authorities
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
+        CustomUserDetails userDetails = new CustomUserDetails(
+                userId,
+                username,
+                "",
+                email,
+                user.getProfileImage(),
+                authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()));
+
+        // Authentication 객체 생성 및 SecurityContext에 저장
         Authentication authentication = new JwtAuthenticationToken(authorities, userDetails, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);   // contextholder에 인증 설정
     }

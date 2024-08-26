@@ -45,9 +45,7 @@
                         <label for="email">이메일</label>
                         <input type="email" id="email" name="email" th:value="${user.email}" required
                                oninput="enableCheckEmailBtn()">
-                        <button class="check-btn" type="button" id="checkEmailBtn" onclick="checkEmail()" disabled>중복
-                            확인
-                        </button>
+                        <button class="check-btn" type="button" id="checkEmailBtn" onclick="checkEmail()" disabled>중복 확인</button>
                     </div>
                     <div>
                         <label for="phoneNumber">전화번호</label>
@@ -63,6 +61,7 @@
                                     th:selected="${type == user.mbti}"></option>
                         </select>
                     </div>
+                    <button type="button" class="default-profile-btn" onclick="resetToDefaultProfile()">기본 이미지로 변경</button>
                 </div>
             </div>
             <div>
@@ -81,8 +80,15 @@
 <div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message" style="display:none;"></div>
 
 <script>
+    let isNicknameChecked = false; // 닉네임 중복 확인 여부
+    let isEmailChecked = false; // 이메일 중복 확인 여부
+    let isDefaultProfile = false; // 기본 프로필 이미지 여부
+
+    const initialNickname = document.getElementById('nickname').value;
+    const initialEmail = document.getElementById('email').value;
+
     window.onload = function() {
-        var errorMessageElement = document.querySelector('.error-message');
+        let errorMessageElement = document.querySelector('.error-message');
         if (errorMessageElement && errorMessageElement.textContent.trim() !== "") {
             alert(errorMessageElement.textContent);
         }
@@ -93,22 +99,34 @@
     }
 
     function previewImage(event) {
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.onload = function () {
-            var output = document.getElementById('profileImagePreview');
+            let output = document.getElementById('profileImagePreview');
             output.src = reader.result;
         };
         reader.readAsDataURL(event.target.files[0]);
     }
 
+    // 닉네임 변경 시 중복 확인 플래그 초기화
+    document.getElementById('nickname').addEventListener('input', function () {
+        isNicknameChecked = false; // 닉네임이 변경되면 중복 확인 필요
+        enableCheckNicknameBtn();
+    });
+
+    // 이메일 변경 시 중복 확인 플래그 초기화
+    document.getElementById('email').addEventListener('input', function () {
+        isEmailChecked = false; // 이메일이 변경되면 중복 확인 필요
+        enableCheckEmailBtn();
+    });
+
     function enableCheckNicknameBtn() {
-        var nickname = document.getElementById('nickname').value;
-        document.getElementById('checkNicknameBtn').disabled = nickname.trim() === "";
+        let nickname = document.getElementById('nickname').value;
+        document.getElementById('checkNicknameBtn').disabled = nickname.trim() === "" || nickname === initialNickname;
     }
 
     function enableCheckEmailBtn() {
-        var email = document.getElementById('email').value;
-        document.getElementById('checkEmailBtn').disabled = email.trim() === "";
+        let email = document.getElementById('email').value;
+        document.getElementById('checkEmailBtn').disabled = email.trim() === "" || email === initialEmail;
     }
 
     function checkNickname() {
@@ -124,8 +142,10 @@
             .then(data => {
                 if (data.code === "SU") {
                     alert('사용 가능한 닉네임입니다.');
+                    isNicknameChecked = true; // 중복 확인 성공
                 } else {
                     alert('이미 존재하는 닉네임입니다.');
+                    isNicknameChecked = false; // 중복 확인 실패
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -144,12 +164,68 @@
             .then(data => {
                 if (data.code === "SU") {
                     alert('사용 가능한 이메일입니다.');
+                    isEmailChecked = true; // 중복 확인 성공
                 } else {
                     alert('이미 존재하는 이메일입니다.');
+                    isEmailChecked = false; // 중복 확인 실패
                 }
             })
             .catch(error => console.error('Error:', error));
     }
+
+    // 기본 프로필 이미지로 변경
+    function resetToDefaultProfile() {
+        const defaultProfileImageUrl = '/images/profile.png'; // 기본 프로필 이미지 경로
+        document.getElementById('profileImagePreview').src = defaultProfileImageUrl;
+        document.getElementById('profileImageInput').value = ''; // 파일 선택 필드 비우기
+
+        isDefaultProfile = true; // 기본 프로필 이미지가 선택됨
+
+        // 서버에 기본 프로필로 변경 요청
+        fetch('/mypage/reset-profile-image', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('기본 프로필 이미지로 변경되었습니다.');
+                } else {
+                    alert('이미지 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다. 다시 시도해 주세요.');
+            });
+    }
+
+    // 폼 제출 시 기본 프로필 이미지 상태 전송
+    document.querySelector('form').addEventListener('submit', function (e) {
+        // 닉네임 중복 확인이 되지 않았으면 경고 후 제출 방지
+        if (!isNicknameChecked) {
+            alert("닉네임 중복 확인을 해주세요.");
+            e.preventDefault(); // 폼 제출 중지
+            return;
+        }
+
+        // 이메일 중복 확인이 되지 않았으면 경고 후 제출 방지
+        if (!isEmailChecked) {
+            alert("이메일 중복 확인을 해주세요.");
+            e.preventDefault(); // 폼 제출 중지
+            return;
+        }
+
+        // 기본 프로필 이미지 사용 중일 경우 이를 서버에 알림
+        if (isDefaultProfile) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'isDefaultProfile';
+            hiddenInput.value = 'true';
+            this.appendChild(hiddenInput);
+        }
+    });
 </script>
 </body>
 </html>

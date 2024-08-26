@@ -14,14 +14,16 @@ public class CustomUserDetails implements UserDetails {
     private final String username;
     private final String password;
     private final String email;
+    private final String profileImage;
     private final List<GrantedAuthority> authorities;
 
 
-    public CustomUserDetails(Long id, String username, String password, String email, List<String> roles) {
+    public CustomUserDetails(Long id, String username, String password, String email, String profileImage, List<String> roles) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.profileImage = profileImage;
         this.authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
@@ -46,6 +48,10 @@ public class CustomUserDetails implements UserDetails {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
     }
 
     @Override
