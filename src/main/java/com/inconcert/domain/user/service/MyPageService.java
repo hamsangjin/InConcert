@@ -84,9 +84,7 @@ public class MyPageService {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        String defaultProfileImageUrl = "/images/profile.png";
-
-        user.setBasicImage(defaultProfileImageUrl);
+        user.setBasicImage();
         userRepository.save(user);
     }
 

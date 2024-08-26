@@ -129,8 +129,8 @@ public class User {
 
     public void updateBanDate(LocalDate newBanDate) {this.banDate = newBanDate;}
 
-    public void setBasicImage(String profileImage) {
-        this.profileImage = profileImage;
+    public void setBasicImage() {
+        this.profileImage = "/images/profile.png";
     }
 
     // 유저 정보 수정
