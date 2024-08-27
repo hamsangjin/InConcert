@@ -12,10 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +30,6 @@ public class HomeService {
     private final MatchRepository matchRepository;
     private final TransferRepository transferRepository;
     private final HomeRepository homeRepository;
-
-    public List<PostDTO> findLatestPostsByPostCategory(){
-        return infoRepository.findLatestPostsByPostCategory();
-    }
 
     public List<PostDTO> getAllCategoryPosts(String categoryTitle) {
         PageRequest pageable = PageRequest.of(0, 8);
@@ -47,5 +47,27 @@ public class HomeService {
         Pageable pageable = PageRequest.of(page, size);
 
         return homeRepository.findByKeyword(keyword, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDTO> getLatestPosts() {
+        PageRequest pageRequest = PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return infoRepository.findTop8LatestInfoPosts(pageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDTO> getPopularPosts() {
+        List<String> categories = Arrays.asList("musical", "concert", "theater", "etc");
+        List<PostDTO> popularPosts = new ArrayList<>();
+
+        for (String category : categories) {
+            PostDTO popularPost = infoRepository.findFirstPostByPostCategoryTitle(category)
+                    .orElse(null);
+            if (popularPost != null) {
+                popularPosts.add(popularPost);
+            }
+        }
+
+        return popularPosts;
     }
 }
