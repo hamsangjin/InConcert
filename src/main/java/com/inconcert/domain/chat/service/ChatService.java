@@ -138,9 +138,14 @@ public class ChatService {
 
         User hostUser = chatRoom.getHostUser();
 
+        // 이미 신청한 경우
+        if(chatNotificationRepository.existsByRequestUserAndChatRoom(requestingUser, chatRoom)) {
+            throw new AlreadyAppliedToChatRoomException(ExceptionMessage.ALREADY_APPLIED_TO_CHATROOM.getMessage());
+        }
+
         // DB에 저장
         ChatNotification chatNotificationEntity = ChatNotification.builder()
-                .message(requestingUser.getUsername() + "님이 채팅방 입장을 요청하였습니다.")
+                .message(requestingUser.getNickname() + "님이 채팅방 입장을 요청하였습니다.")
                 .chatRoom(chatRoom)
                 .user(hostUser)
                 .requestUser(requestingUser)
@@ -171,7 +176,8 @@ public class ChatService {
             ChatMessageDTO enterMessage = ChatMessageDTO.builder()
                     .chatRoomId(chatRoomId)
                     .username(requestUser.getUsername())
-                    .message(requestUser.getUsername() + "님이 입장하셨습니다.")
+                    .nickname(requestUser.getNickname())
+                    .message(requestUser.getNickname() + "님이 입장하셨습니다.")
                     .type(ChatMessageDTO.MessageType.ENTER)
                     .isNotice(true)
                     .build();
@@ -215,7 +221,8 @@ public class ChatService {
                 ChatMessageDTO leaveMessage = ChatMessageDTO.builder()
                         .chatRoomId(chatRoomId)
                         .username(leavingUser.getUsername())
-                        .message(leavingUser.getUsername() + "님이 퇴장하셨습니다.")
+                        .nickname(leavingUser.getNickname())
+                        .message(leavingUser.getNickname() + "님이 퇴장하셨습니다.")
                         .type(ChatMessageDTO.MessageType.LEAVE)
                         .isNotice(true)
                         .build();
@@ -253,7 +260,8 @@ public class ChatService {
         ChatMessageDTO kickedMessage = ChatMessageDTO.builder()
                 .chatRoomId(chatRoomId)
                 .username(kickedUser.getUsername())
-                .message(kickedUser.getUsername() + "님이 강퇴되었습니다.")
+                .nickname(kickedUser.getNickname())
+                .message(kickedUser.getNickname() + "님이 강퇴되었습니다.")
                 .type(ChatMessageDTO.MessageType.LEAVE)
                 .isNotice(true)
                 .build();
@@ -337,7 +345,7 @@ public class ChatService {
 
         // 채팅방 생성
         ChatRoom chatRoom = ChatRoom.builder()
-                .roomName("1:1 채팅: " + requestingUser.getUsername() + ", " + receiver.getUsername())
+                .roomName("1:1 채팅: " + requestingUser.getNickname() + ", " + receiver.getNickname())
                 .hostUser(requestingUser)
                 .build();
 
@@ -400,6 +408,7 @@ public class ChatService {
                 .id(chatMessage.getId())
                 .chatRoomId(chatMessage.getChatRoom().getId())
                 .username(chatMessage.getSender().getUsername())
+                .nickname(chatMessage.getSender().getNickname())
                 .message(chatMessage.getMessage())
                 .createdAt(chatMessage.getCreatedAt())
                 .type(ChatMessageDTO.MessageType.CHAT)

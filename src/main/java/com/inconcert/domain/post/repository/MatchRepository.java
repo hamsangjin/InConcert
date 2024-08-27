@@ -38,7 +38,8 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false ")
+            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false " +
+            "ORDER BY p.createdAt DESC")
     List<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /match/categoryTitle에서 게시물들 알맞게 불러오기
@@ -49,7 +50,8 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false ")
+            "WHERE c.title = 'match' AND pc.title = :postCategoryTitle AND p.isEnd = false " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
                                                Pageable pageable);
 
@@ -69,7 +71,8 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "AND p.createdAt BETWEEN :startDate AND :endDate " +
             "AND (:gender IS NULL OR u.gender = :gender) " +
             "AND (:mbti IS NULL OR u.mbti = :mbti)" +
-            "AND p.isEnd = false")
+            "AND p.isEnd = false " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                           @Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,

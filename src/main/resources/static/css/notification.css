@@ -6,6 +6,7 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
+    margin: 0 auto;
 }
 
 body {
@@ -17,15 +18,36 @@ body {
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 60%;
+    max-width: 60%;
     margin: 0 auto;
 }
 
+/* footer 설정 */
+#wrapper {
+    padding-bottom: 70px;
+}
+
+.footer {
+    height: 70px;
+    background-color: #6f6f6f;
+    color: white;
+    opacity: 0.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    margin: 3px 0;
+}
+
+/* 알림 설정*/
 header {
     display: flex;
-    min-width: 808px;
-    max-width: 808px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
     justify-content: center;
     align-items: center;
     padding: 10px;
@@ -53,8 +75,8 @@ header {
 }
 
 .title-container{
-    min-width: 828px;
-    max-width: 828px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto 50px;
 }
 
@@ -64,32 +86,12 @@ header {
     color: #00A885;
 }
 
-/* footer 설정 */
-#wrapper {
-    padding-bottom: 70px;
-}
-
-.footer {
-    height: 70px;
-    background-color: #6f6f6f;
-    color: white;
-    opacity: 0.5;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.footer p {
-    margin: 3px 0;
-}
-
 .tab-container {
     display: flex;
     justify-content: space-around;
     background-color: white;
-    min-width: 828px;
-    max-width: 828px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
     margin: 0 auto;
     padding: 10px;
 }
@@ -110,8 +112,8 @@ header {
 .tab-content {
     display: none;
     padding: 20px;
-    min-width: 808px;
-    max-width: 808px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     background-color: #ccc;
 }
@@ -162,7 +164,6 @@ header {
 }
 
 .delete-button:hover {
-    /*opacity: 0.8; !* 호버 시 투명도 변경 *!*/
     font-weight: bolder;
 
 }

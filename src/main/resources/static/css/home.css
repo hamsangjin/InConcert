@@ -6,46 +6,31 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p{
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    margin: 0;
+    margin: 0 auto;
 }
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
-}
-
-
-/* 헤더 설정 */
-.header-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .left {
@@ -58,7 +43,7 @@ header {
     display: flex;
     align-items: center;
     text-decoration: none;
-    margin-right: 30px;
+    margin-right: 10px;
 }
 
 .logo-text{
@@ -76,16 +61,26 @@ header {
 .category{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
 }
 
 .category a{
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
+    padding-right: 10px;
+    border-right: 1px solid #6f6f6f;
+}
+
+.category a:last-child{
+    border-right: none;
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -93,7 +88,7 @@ header {
     display: flex;
     align-items: center;
     text-align: right;
-    gap: 20px;
+    gap: 10px;
 }
 
 .right a{
@@ -127,7 +122,7 @@ header {
 
 .search input{
     border: none;
-    min-width: 240px;
+    min-width: 120px;
     min-height: 30px;
     margin-left: 10px;
     outline: none;
@@ -215,30 +210,43 @@ header {
     margin: 3px 0;
 }
 
+/* */
 .popular-info-container{
     border: #ccc 1px solid;
     border-radius: 10px;
     padding: 20px;
     margin: 0 auto;
-    min-width: 1260px;
-    max-width: 1260px;
+    width: calc(100% - 40px);
+    max-width: calc(100% - 40px);
 }
 
 .popular-info-container div h1{
     color: #00A885;
     padding: 0;
-    margin: 0 0 30px;
+    margin: 0 0 20px;
 }
 
 .popular-info-img-container{
     display: flex;
     justify-content: space-around;
-    align-items: center;
+    align-items: stretch;
     margin-bottom: 20px;
+    gap: 10px;
+}
+
+.popular-info-img-container > div{
+    text-align: center;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .popular-info{
-    text-align: center;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .popular-info > span{
@@ -247,8 +255,13 @@ header {
 }
 
 .popular-info-img-container img{
-    height: 400px;
-    width: 300px;
+    flex: 1;
+    object-fit: cover;
+    aspect-ratio: 3/4;
+    height: 100%;
+    max-height: 100%;
+    width: 100%;
+    max-width: 100%;
     display: block;
     margin-bottom: 20px;
     border: 1px solid #ccc;
@@ -264,9 +277,11 @@ header {
 
 .board-container{
     display: flex;
+    justify-content: space-between;
     margin: 50px auto;
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
+    gap: 50px;
 }
 
 .board-container > div{
@@ -302,30 +317,35 @@ header {
     border-bottom: 1px solid #6f6f6f;
     padding-top: 3px;
     padding-bottom: 3px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.post-list p{
+    margin-bottom: 3px;
+    margin-top: 3px;
 }
 
 .post-left{
     flex: 6;
     display: flex;
     align-items: center;
+    gap: 5px;
+    max-width: 70%;
 }
 
-.post-left a{
+.post-title{
     text-decoration: none;
     color: black;
     padding: 0;
+    max-width: 80%;
+    white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
+    overflow: hidden;  /* 넘치는 텍스트는 숨김 */
+    text-overflow: ellipsis;  /* 넘치는 부분에 생략부호(...) 표시 */
 }
 
 .post-left a:hover{
     text-decoration: underline;
-}
-
-.post-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 360px;
-    display: block;
 }
 
 .comment-count{

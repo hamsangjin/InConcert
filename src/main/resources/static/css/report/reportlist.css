@@ -6,6 +6,7 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
+    margin: 0 auto;
 }
 
 body {
@@ -72,8 +73,8 @@ header {
     margin: 3px 0;
 }
 
-/* chat 화면 */
 
+/* 신고 목록 */
 .title-container{
     width: 100%;
     max-width: 100%;
@@ -99,26 +100,18 @@ header {
     border: 1px solid #ccc;
     border-radius: 15px;
     margin-bottom: 20px;
-    padding: 10px;
-}
-
-.report-container > div > div{
-    display: flex;
-    align-items: center;
+    padding: 20px;
 }
 
 .report-container > div > div > div{
     display: flex;
     align-items: center;
     justify-content: left;
+    margin-bottom: 15px;
 }
 
-.report-container > div > div > div:first-child{
-    flex: 5;
-}
-
-.report-container > div > div > div:nth-child(2){
-    flex: 5;
+.report-container > div > div > div:last-child{
+    margin-bottom: 5px;
 }
 
 .report-title{
@@ -127,7 +120,7 @@ header {
     font-weight: bold;
     padding-right: 10px;
     border-right: 1px solid #ccc;
-    flex: 1;
+    flex: 1.5;
     text-align: right;
 }
 
@@ -136,7 +129,11 @@ header {
     font-size: 18px;
     padding-left: 10px;
     text-decoration: none;
-    flex: 4;
+    flex: 9;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 a.report-content:hover{
@@ -144,19 +141,19 @@ a.report-content:hover{
     text-decoration: underline;
 }
 
-.report-container > div > div:nth-child(3){
+.report-container > div > div:nth-child(2){
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 5px;
 }
 
-.report-container > div > div:nth-child(3) > a{
+.report-container > div > div:nth-child(2) > a{
     margin-right: 5px;
 }
 
-.report-container > div > div:nth-child(3) > form > button,
-.report-container > div > div:nth-child(3) > a{
+.report-container > div > div:nth-child(2) > form > button,
+.report-container > div > div:nth-child(2) > a{
     border: none;
     background-color: transparent;
     color: #6f6f6f;
@@ -165,8 +162,8 @@ a.report-content:hover{
     font-weight: bold;
 }
 
-.report-container > div > div:nth-child(3) > form > button:hover,
-.report-container > div > div:nth-child(3) > a:hover{
+.report-container > div > div:nth-child(2) > form > button:hover,
+.report-container > div > div:nth-child(2) > a:hover{
     color: #00a885;
     cursor: pointer;
 }

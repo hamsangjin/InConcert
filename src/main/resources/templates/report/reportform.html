@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>채팅방 목록</title>
+    <title>신고하기</title>
     <link rel="stylesheet" href="/css/report/reportform.css">
     <script>
         function handleSubmit() {
@@ -27,14 +27,14 @@
 
     <div class="report-container">
         <div class="report-title">
-                <div>
-                    <p> 작성자 </p>
-                    <p th:text="${post.nickname}"></p>
-                </div>
-                <div>
-                    <p> 제목 </p>
-                    <p th:text="${post.title}"></p>
-                </div>
+            <div>
+                <span> 게시글 </span>
+                <span th:text="${post.title}"></span>
+            </div>
+            <div>
+                <span> 작성자 </span>
+                <span th:text="${post.nickname}"></span>
+            </div>
         </div>
         <form class="report-content" method="post" th:object="${reportDTO}"
             th:action="@{'/' + ${categoryTitle} + '/' + ${post.postCategory.title} + '/' + ${post.id} + '/report'}"

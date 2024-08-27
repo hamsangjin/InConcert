@@ -123,6 +123,7 @@ public class MatchService {
         ChatMessageDTO enterMessage = ChatMessageDTO.builder()
                 .chatRoomId(post.getChatRoom().getId())
                 .username(post.getUser().getUsername())
+                .nickname(post.getUser().getNickname())
                 .message("동행이 완료되었습니다. 내 동행 목록에서 서로에 대한 평가를 남겨보세요 !")
                 .type(ChatMessageDTO.MessageType.ENTER)
                 .isNotice(true)

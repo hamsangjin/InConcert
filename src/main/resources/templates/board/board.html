@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>카테고리</title>
+    <title th:text="${categoryTitle == 'info' ? '공연 정보 게시판' : categoryTitle == 'match' ? '동행 모집 게시판' : '양도 모집 게시판'}"></title>
     <link rel="stylesheet" href="/css/board/board.css">
     <script>
         function validateSearch() {
@@ -36,12 +36,10 @@
         </div>
     </div>
 
-    <div class="review-block" th:if="${categoryTitle} == 'review'">
-
-    </div>
+    <div class="review-block" th:if="${categoryTitle} == 'review'"> </div>
 
     <div class="board-container">
-        <div style="margin-right: 230px">
+        <div>
             <div class="board-header">
                 <h1> 뮤지컬 </h1>
                 <a th:href="@{'/' + ${categoryTitle} + '/musical'}">
@@ -50,8 +48,8 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Musicalposts}">
                 <div class="post-left">
-                    <a th:href="@{'/' + ${categoryTitle} + '/musical/' + ${post.id}}">
-                        <p class="post-title" th:text="'[뮤지컬] '+ ${post.title}">Post Title</p>
+                    <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/musical/' + ${post.id}}">
+                        <span th:text="'[뮤지컬] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${categoryTitle != 'info' && post.isNew}">
@@ -65,7 +63,6 @@
                 </div>
             </div>
         </div>
-
         <div>
             <div class="board-header">
                 <h1> 콘서트 </h1>
@@ -75,8 +72,8 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Concertposts}">
                 <div class="post-left">
-                    <a th:href="@{'/' + ${categoryTitle} + '/concert/' + ${post.id}}">
-                        <p class="post-title" th:text="'[콘서트] '+ ${post.title}">Post Title</p>
+                    <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/concert/' + ${post.id}}">
+                        <span th:text="'[콘서트] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${categoryTitle != 'info' && post.isNew}">
@@ -91,9 +88,8 @@
             </div>
         </div>
     </div>
-
     <div class="board-container">
-        <div style="margin-right: 230px">
+        <div>
             <div class="board-header">
                 <h1> 연극 </h1>
                 <a th:href="@{'/' + ${categoryTitle} + '/theater'}">
@@ -102,8 +98,8 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Theaterposts}">
                 <div class="post-left">
-                    <a th:href="@{'/' + ${categoryTitle} + '/theater/' + ${post.id}}">
-                        <p class="post-title" th:text="'[연극] '+ ${post.title}">Post Title</p>
+                    <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/theater/' + ${post.id}}">
+                        <span th:text="'[연극] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${categoryTitle != 'info' && post.isNew}">
@@ -126,8 +122,8 @@
             </div>
             <div class="post-list" th:if="${idx.index} < 8" th:each="post, idx : ${Etcposts}">
                 <div class="post-left">
-                    <a th:href="@{'/' + ${categoryTitle} + '/etc/' + ${post.id}}">
-                        <p class="post-title" th:text="'[기타] '+ ${post.title}">Post Title</p>
+                    <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/etc/' + ${post.id}}">
+                        <span th:text="'[기타] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
                     <div th:if="${categoryTitle != 'info' && post.isNew}">

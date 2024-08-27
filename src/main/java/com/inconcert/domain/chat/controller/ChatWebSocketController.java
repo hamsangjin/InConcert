@@ -18,7 +18,7 @@ public class ChatWebSocketController {
     @MessageMapping("/chat/enterUser")
     public void enterUser(@Payload ChatMessageDTO message) {
         message.setType(ChatMessageDTO.MessageType.ENTER);
-        message.setMessage(message.getUsername() + "님이 입장하셨습니다.");
+        message.setMessage(message.getNickname() + "님이 입장하셨습니다.");
 
         // 입장 메시지를 해당 채팅방의 모든 사용자에게 전송
         messagingTemplate.convertAndSend("/topic/chat/room/" + message.getChatRoomId(), message);
@@ -40,7 +40,7 @@ public class ChatWebSocketController {
     @MessageMapping("/chat/leaveUser")
     public void leaveUser(@Payload ChatMessageDTO message) {
         message.setType(ChatMessageDTO.MessageType.LEAVE);
-        message.setMessage(message.getUsername() + "님이 퇴장하셨습니다.");
+        message.setMessage(message.getNickname() + "님이 퇴장하셨습니다.");
 
         // 퇴장 메시지를 해당 채팅방의 모든 사용자에게 전송
         messagingTemplate.convertAndSend("/topic/chat/room/" + message.getChatRoomId(), message);

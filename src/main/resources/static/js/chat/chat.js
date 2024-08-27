@@ -13,13 +13,14 @@ function connect(userId, chatRoomId) {
 
     // 사용자 정보 로드
     const username = document.getElementById('username').value;
+    const nickname = document.getElementById('nickname').value;
 
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         isConnected = true;
 
         // 사용자 정보가 있는지 확인하고 연결 처리
-        if (userId && username) {
+        if (userId && username && nickname) {
             // 알림 구독
             subscribeToNotifications(userId);
 
@@ -37,7 +38,7 @@ function connect(userId, chatRoomId) {
                 const hasEntered = localStorage.getItem(`entered_${chatRoomId}_${username}`);
 
                 if (!hasEntered) {
-                    sendEnterMessage(username, chatRoomId); // 처음 입장 시에만 메시지 전송
+                    sendEnterMessage(username, nickname, chatRoomId); // 처음 입장 시에만 메시지 전송
                     localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
                 }
             }
@@ -122,7 +123,7 @@ function isUserInChatRoom(chatRoomId) {
 }
 
 // 입장 메시지
-function sendEnterMessage(username, chatRoomId) {
+function sendEnterMessage(username, nickname, chatRoomId) {
     if (!isConnected) {
         console.error('Cannot send message: Not connected');
         return;
@@ -131,6 +132,7 @@ function sendEnterMessage(username, chatRoomId) {
     stompClient.send("/app/chat/enterUser", {},
         JSON.stringify({
             'username': username,
+            'nickname': nickname,
             'chatRoomId': chatRoomId,
             'message': '' // 빈 메시지 (입장 메시지는 공백)
         })
@@ -140,6 +142,7 @@ function sendEnterMessage(username, chatRoomId) {
 // 메시지 전송
 function sendMessage() {
     const username = document.getElementById('username').value;
+    const nickname = document.getElementById('nickname').value;
     const chatRoomId = document.getElementById('chatRoomId').value;
     const message = document.getElementById('message').value;
 
@@ -154,6 +157,7 @@ function sendMessage() {
             JSON.stringify({
                 'chatRoomId': chatRoomId,
                 'username': username, // username 전송
+                'nickname': nickname, // username 전송
                 'message': message,
                 'type': 'CHAT' // 메시지 타입은 CHAT
             })
@@ -167,7 +171,7 @@ function sendMessage() {
 }
 
 // 퇴장 메시지
-function sendLeaveMessage(username, chatRoomId) {
+function sendLeaveMessage(username, nickname, chatRoomId) {
     if (!isConnected) {
         console.error('Cannot send message: Not connected');
         return;
@@ -177,6 +181,7 @@ function sendLeaveMessage(username, chatRoomId) {
     stompClient.send("/app/chat/leaveUser", {},
         JSON.stringify({
             'username': username, // 퇴장하는 사용자의 username
+            'nickname': nickname, // 퇴장하는 사용자의 username
             'chatRoomId': chatRoomId,
             'message': '' // 빈 메시지로 보냄
         })
@@ -279,14 +284,14 @@ function loadUserList() {
 
                 // 채팅방 제목이 '1:1 채팅'으로 시작하는 경우 호스트 표시와 강퇴 버튼을 생략
                 if (chatRoomTitle.startsWith('1:1 채팅')) {
-                    listItem.textContent = user.username;
+                    listItem.textContent = user.nickname;
                 }
                 else {
-                    // 호스트인 경우 'username (호스트)'로 표시
+                    // 호스트인 경우 'nickname (호스트)'로 표시
                     if (user.id == hostUserId) {
-                        listItem.textContent = `${user.username} (호스트)`;
+                        listItem.textContent = `${user.nickname} (호스트)`;
                     } else {
-                        listItem.textContent = user.username;
+                        listItem.textContent = user.nickname;
                     }
                     // 현재 유저가 호스트인 경우, 본인을 제외한 다른 유저에게만 강퇴 버튼 추가
                     if (currentUserId == hostUserId && user.id != currentUserId) {
@@ -356,13 +361,14 @@ window.addEventListener('load', function () {
 
 window.addEventListener('beforeunload', function () {
     const username = document.getElementById('username').value;
+    const nickname = document.getElementById('nickname').value;
     const chatRoomId = document.getElementById('chatRoomId').value;
 
     // 이미 퇴장한 경우 퇴장 메시지를 보내지 않음
     const hasLeft = localStorage.getItem(`left_${chatRoomId}_${username}`);
 
     if (!hasLeft) {
-        sendLeaveMessage(username, chatRoomId); // 처음 퇴장 시에만 메시지 전송
+        sendLeaveMessage(username, nickname, chatRoomId); // 처음 퇴장 시에만 메시지 전송
         localStorage.setItem(`left_${chatRoomId}_${username}`, true); // 퇴장 플래그 설정
     }
     disconnect();

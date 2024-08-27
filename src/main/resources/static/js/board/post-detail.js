@@ -127,14 +127,21 @@ function requestJoinChatRoom(button) {
         }
     })
         .then(response => {
-            if (response.status === 409) { // 이미 채팅방에 속해 있음
-                throw new Error('이미 채팅방에 속해 있습니다.');
-            } else if (response.status === 400) { // 모집이 완료된 경우
-                throw new Error('이미 인원이 모집 완료된 포스트입니다.');
-            } else if (!response.ok) {
-                throw new Error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
-            }
-            return response.text(); // 성공 시 응답 처리
+            return response.text().then(resMsg => {
+                if (response.status === 409) {
+                    if (resMsg.startsWith("이미 채팅방에")) {
+                        throw new Error('이미 채팅방에 속해 있습니다.');
+                    } else if (resMsg.startsWith("이미 동행 신청을 보냈습니다")) {
+                        throw new Error('이미 동행 신청을 보냈습니다.');
+                    }
+                } else if (response.status === 400) {
+                    throw new Error('이미 인원이 모집 완료된 포스트입니다.');
+                } else if (!response.ok) {
+                    throw new Error('알 수 없는 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+
+                return resMsg; // 성공 시 응답 처리
+            });
         })
         .then(data => {
             alert(data); // 요청 성공 시 메시지 출력

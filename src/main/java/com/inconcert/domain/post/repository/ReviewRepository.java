@@ -34,7 +34,8 @@ public interface ReviewRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'review'")
+            "WHERE c.title = 'review' " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findPostsByPostCategoryTitle(Pageable pageable);
 
     // /review/categoryTitle에서 검색한 경우 검색 결과 불러오기
@@ -50,7 +51,8 @@ public interface ReviewRepository extends JpaRepository<Post, Long> {
             "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
             "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
-            "AND p.createdAt BETWEEN :startDate AND :endDate")
+            "AND p.createdAt BETWEEN :startDate AND :endDate " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findByKeywordAndFilters(@Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,
                                           @Param("endDate") LocalDateTime endDate,

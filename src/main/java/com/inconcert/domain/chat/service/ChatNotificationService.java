@@ -31,10 +31,11 @@ public class ChatNotificationService {
 
         NotificationMessage notification = NotificationMessage.builder()
                 .id(null)   // ID는 null로 초기화, 필요시 DB에 저장 후 설정 가능
-                .message(requestingUser.getUsername() + "님이 채팅방 입장을 요청했습니다.")
+                .message(requestingUser.getNickname() + "님이 채팅방 입장을 요청했습니다.")
                 .chatRoomId(chatRoom.getId())
                 .userId(requestingUser.getId())
                 .build();
+
         messagingTemplate.convertAndSend(destination, notification);
     }
 

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>게시글 상세보기</title>
+    <title th:text="${post.title}"></title>
     <link rel="stylesheet" href="/css/board/post-detail.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
@@ -177,8 +177,10 @@
     <div class="popup" id="profilePopup">
         <div class="popup-content">
             <div class="card" id="profileCard">
-                <button class="chat-btn" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
-                <span class="close" id="closePopup">&times;</span>
+                <div class="popup-btn">
+                    <button class="chat-btn" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
+                    <span class="close" id="closePopup">&times;</span>
+                </div>
                 <div class="profile-container">
                     <div class="profile-left">
                         <img th:src="${post.user.profileImage}" alt="Profile Picture" class="profile-img3">
