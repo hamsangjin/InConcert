@@ -19,154 +19,129 @@
 <div class="container">
     <div th:replace="~{fragments/header :: header}"></div>
 
-    <div class="popular-info-container">
-        <div>
-            <h1> 실시간 인기 공연</h1>
-        </div>
-        <div class="popular-info-img-container">
-            <div th:each="post : ${popularPosts}">
-                <div class="popular-info">
-                    <span th:switch="${post.postCategoryTitle}">
-                        <span th:case="'musical'">뮤지컬</span>
-                        <span th:case="'concert'">콘서트</span>
-                        <span th:case="'theater'">연극</span>
-                        <span th:case="'etc'">기타</span>
-                    </span>
-                    <img class="popular-info-img" th:src="@{${post.thumbnailUrl}}">
-                    <a th:href="@{'/info/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span> 자세히 보기 </span>
-                    </a>
-                </div>
-            </div>
-        </div>
+    <div id="crawling-status" style="display: none;">
+        로딩중입니다...
     </div>
 
-    <div class="board-container">
-        <div>
-            <div class="board-header">
-                <h1> 공연 소식 </h1>
-                <a th:href="@{/info}">
-                    <p> + 더보기</p>
-                </a>
+    <div id="content">
+        <div class="popular-info-container">
+            <div>
+                <h1> 실시간 인기 공연</h1>
             </div>
-            <div class="post-list" th:each="post : ${infoPosts}">
-                <div class="post-left">
-                    <a class="post-title"  th:href="@{'/info/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                </div>
-
-                <div class="post-right">
-                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewCount}"></span></p>
-                </div>
+            <div class="popular-info-img-container">
+                <!-- 인기 공연 이미지 컨테이너 -->
             </div>
         </div>
 
-        <div>
-            <div class="board-header">
-                <h1> 공연 후기 </h1>
-                <a th:href="@{/review}">
-                    <p> + 더보기</p>
-                </a>
+        <div class="board-container">
+            <div>
+                <div class="board-header">
+                    <h1> 공연 소식 </h1>
+                    <a th:href="@{/info}">
+                        <p> + 더보기</p>
+                    </a>
+                </div>
             </div>
 
-            <div class="post-list" th:each="post : ${reviewPosts}">
-                <div class="post-left">
-                    <a class="post-title"  th:href="@{'/review/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+            <div>
+                <div class="board-header">
+                    <h1> 공연 후기 </h1>
+                    <a th:href="@{/review}">
+                        <p> + 더보기</p>
+                    </a>
+                </div>
+
+                <div class="post-list" th:each="post : ${reviewPosts}">
+                    <div class="post-left">
+                        <a class="post-title" th:href="@{'/review/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
                         <span th:switch="${post.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
                             <span th:case="'etc'">[기타]</span>
                         </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${post.isNew}">
-                        <p class="new"> N </p>
+                            <span th:text="${post.title}">Post Title</span>
+                        </a>
+                        <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
+                        <div th:if="${post.isNew}">
+                            <p class="new"> N </p>
+                        </div>
+                    </div>
+
+                    <div class="post-right">
+                        <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></p>
+                        <p><span th:text="${post.viewCount}"></span></p>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="post-right">
-                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewCount}"></span></p>
+        <div class="board-container">
+            <div>
+                <div class="board-header">
+                    <h1> 동행 모집 </h1>
+                    <a th:href="@{/match}">
+                        <p> + 더보기</p>
+                    </a>
+                </div>
+                <div class="post-list" th:each="post : ${matchPosts}">
+                    <div class="post-left">
+                        <a class="post-title" th:href="@{'/match/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
+                            <span th:case="'musical'">[뮤지컬]</span>
+                            <span th:case="'concert'">[콘서트]</span>
+                            <span th:case="'theater'">[연극]</span>
+                            <span th:case="'etc'">[기타]</span>
+                        </span>
+                            <span th:text="${post.title}">Post Title</span>
+                        </a>
+                        <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
+                        <div th:if="${post.isNew}">
+                            <p class="new"> N </p>
+                        </div>
+                    </div>
+
+                    <div class="post-right">
+                        <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></p>
+                        <p><span th:text="${post.viewCount}"></span></p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="board-header">
+                    <h1> 양도 모집 </h1>
+                    <a th:href="@{/transfer}">
+                        <p> + 더보기</p>
+                    </a>
+                </div>
+                <div class="post-list" th:each="post : ${transferPosts}">
+                    <div class="post-left">
+                        <a class="post-title" th:href="@{'/transfer/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                        <span th:switch="${post.postCategoryTitle}">
+                            <span th:case="'musical'">[뮤지컬]</span>
+                            <span th:case="'concert'">[콘서트]</span>
+                            <span th:case="'theater'">[연극]</span>
+                            <span th:case="'etc'">[기타]</span>
+                        </span>
+                            <span th:text="${post.title}">Post Title</span>
+                        </a>
+                        <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
+                        <div th:if="${post.isNew}">
+                            <p class="new"> N </p>
+                        </div>
+                    </div>
+
+                    <div class="post-right">
+                        <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></p>
+                        <p><span th:text="${post.viewCount}"></span></p>
+                    </div>
                 </div>
             </div>
         </div>
+        <div id='wrapper'></div>
     </div>
-
-    <div class="board-container">
-        <div>
-            <div class="board-header">
-                <h1> 동행 모집 </h1>
-                <a th:href="@{/match}">
-                    <p> + 더보기</p>
-                </a>
-            </div>
-            <div class="post-list" th:each="post : ${matchPosts}">
-                <div class="post-left">
-                    <a class="post-title"  th:href="@{'/match/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${post.isNew}">
-                        <p class="new"> N </p>
-                    </div>
-                </div>
-
-                <div class="post-right">
-                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewCount}"></span></p>
-                </div>
-            </div>
-        </div>
-        <div>
-            <div class="board-header">
-                <h1> 양도 모집 </h1>
-                <a th:href="@{/transfer}">
-                    <p> + 더보기</p>
-                </a>
-            </div>
-            <div class="post-list" th:each="post : ${transferPosts}">
-                <div class="post-left">
-                    <a class="post-title"  th:href="@{'/transfer/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${post.isNew}">
-                        <p class="new"> N </p>
-                    </div>
-                </div>
-
-                <div class="post-right">
-                    <p th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"> </p>
-                    <p><span th:text="${post.viewCount}"></span></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id='wrapper'></div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script src="/js/home.js"></script>
 </body>
 </html>
