@@ -43,11 +43,11 @@ public class ChatApiController {
             return ResponseEntity.ok("요청을 성공적으로 전송하였습니다.");
         }
         // 채팅방에 이미 속한 경우
-        catch (AlreadyInChatRoomException e) {
+        catch (AlreadyInChatRoomException | AlreadyAppliedToChatRoomException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
         // 채팅방 인원이 가득 찬 경우
-        catch (AlreadyFullChatRoomException | AlreadyAppliedToChatRoomException e) {
+        catch (AlreadyFullChatRoomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
