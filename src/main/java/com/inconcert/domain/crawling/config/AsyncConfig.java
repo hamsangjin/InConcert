@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableAsync
@@ -35,7 +36,8 @@ public class AsyncConfig implements AsyncConfigurer {
         return new WebMvcConfigurer() {
             @Override
             public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
-                configurer.setDefaultTimeout(Long.MAX_VALUE);
+                // 30분으로 타임아웃 설정
+                configurer.setDefaultTimeout(TimeUnit.MINUTES.toMillis(30));
             }
         };
     }
