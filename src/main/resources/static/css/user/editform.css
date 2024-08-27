@@ -6,46 +6,31 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p{
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    margin: 0;
+    margin: 0 auto;
 }
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
-}
-
-
-/* 헤더 설정 */
-.header-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .left {
@@ -58,7 +43,7 @@ header {
     display: flex;
     align-items: center;
     text-decoration: none;
-    margin-right: 30px;
+    margin-right: 10px;
 }
 
 .logo-text{
@@ -76,16 +61,26 @@ header {
 .category{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
 }
 
 .category a{
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
+    padding-right: 10px;
+    border-right: 1px solid #6f6f6f;
+}
+
+.category a:last-child{
+    border-right: none;
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -93,7 +88,7 @@ header {
     display: flex;
     align-items: center;
     text-align: right;
-    gap: 20px;
+    gap: 10px;
 }
 
 .right a{
@@ -127,7 +122,7 @@ header {
 
 .search input{
     border: none;
-    min-width: 240px;
+    min-width: 120px;
     min-height: 30px;
     margin-left: 10px;
     outline: none;
@@ -215,26 +210,33 @@ header {
     margin: 3px 0;
 }
 
+/*mypage Edit*/
 .mypage-container {
-    border: 1px solid #6f6f6f;
+    border: 1px solid #ccc;
     border-radius: 10px;
     margin: 0 auto;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
 }
 
 .top-container {
     display: flex;
     align-items: flex-start;
+    margin-bottom: 20px;
 }
 
 .profile-img2 {
     width: calc(20%);
-    height: auto;
+    height: calc(20%);
     aspect-ratio: 1 / 1;
+    border: 1px solid transparent;
     border-radius: 20px;
     margin: 20px;
+}
+
+.profile-img2:hover{
     cursor: pointer;
+    border: 1px solid #00a885;
 }
 
 .profile-container {
@@ -253,9 +255,10 @@ label {
 .intro-edit-p {
     font-weight: bold;
     font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
     margin-left: 35px;
     color: #00a885;
-    text-decoration: underline;
 }
 
 input[type="text"],
@@ -264,21 +267,22 @@ input[type="email"] {
     width: 200px;
     padding: 8px;
     margin-bottom: 15px;
-    border: 1px solid #6f6f6f;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
 }
 
 textarea {
-    font-family: Arial, sans-serif;
-    width: 1208px;
+    width: calc(100% - 70px);
+    max-width: calc(100% - 30px);
     height: 200px;
     padding: 15px;
-    margin: 10px 20px 20px 20px;
-    border: 1px solid #6f6f6f;
+    margin: 0 20px 20px 20px;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
     resize: none;
+    outline: none;
 }
 
 .submit-btn-container {
@@ -289,20 +293,22 @@ textarea {
 .submit-btn {
     background-color: #00A885;
     color: white;
-    border: 1px #6f6f6f solid;
+    border: 1px solid transparent;
     border-radius: 15px;
-    padding: 10px 20px;
+    padding: 5px 10px;
     font-size: 18px;
 }
 
 .submit-btn:hover {
-    background-color: #0BA885;
+    color: #00a885;
+    border: 1px solid #00a885;
+    background-color: white;
     cursor: pointer;
 }
 
 .mbti-select {
     padding: 8px;
-    border: 1px solid #6f6f6f;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
 }

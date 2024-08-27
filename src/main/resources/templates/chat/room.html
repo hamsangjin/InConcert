@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <title th:text="${chatRoom.roomName}">Chat Room</title>
@@ -38,10 +38,10 @@
 
     <ul id="chat" class="chat-list">
         <li th:each="message : ${messages}">
-            <div class="not-my-message" th:if="${message.username != user.username && !message.notice}">
+            <div class="not-my-message" th:if="${message.nickname != user.nickname && !message.notice}">
                 <div class="message-header">
                     <img th:src="@{${message.profileImage}}" alt="No Posts"/>
-                    <p th:text="${message.username}"></p>
+                    <p th:text="${message.nickname}"></p>
                 </div>
                 <div class="message-content">
                     <p th:text="${message.message}">Message</p>
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="my-message" th:if="${message.username == user.username && !message.notice}">
+            <div class="my-message" th:if="${message.nickname == user.nickname && !message.notice}">
                 <div class="message-content">
                     <p th:text="${#temporals.format(message.createdAt, 'HH:mm')}"> </p>
                     <p th:text="${message.message}">Message</p>
@@ -68,6 +68,7 @@
     </form>
 
     <input type="hidden" id="username" th:value="${user.username}"/>
+    <input type="hidden" id="nickname" th:value="${user.nickname}"/>
     <input type="hidden" id="userId" th:value="${user.id}"/>
     <input type="hidden" id="chatRoomId" th:value="${chatRoom.id}"/>
     <input type="hidden" id="hostUserId" th:value="${chatRoom.hostUserId}"/>

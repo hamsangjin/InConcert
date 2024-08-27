@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인 폼</title>
+    <title>로그인</title>
     <link rel="stylesheet" href="/css/loginform.css">
 
 </head>
@@ -21,10 +21,6 @@
             <div>
                 <input type="password" name="password" id="password" placeholder="비밀번호" required>
             </div>
-<!--            <div class="login-remember">-->
-<!--                <input type="checkbox" id="rememberMe" name="rememberMe">-->
-<!--                <label for="rememberMe">로그인 상태 유지</label>-->
-<!--            </div>-->
             <div class="default-login">
                 <button type="submit">로그인</button>
             </div>
@@ -114,7 +110,7 @@
             }
         }
 
-        // 이거 왜 있는 건지 설명해주세요 혜원 희정
+        // 이거 왜 있는 건지 설명해주세요 혜원 희정 2트
         function makeAuthenticatedRequest(url, method = 'GET', body = null) {
             const token = localStorage.getItem('accessToken');
             return fetch(url, {

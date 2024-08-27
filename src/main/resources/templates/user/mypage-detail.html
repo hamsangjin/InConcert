@@ -2,7 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>메인 화면</title>
+    <title th:text="
+    ${title == 'board' ? '내 글 보기' :
+    title == 'comment' ? '댓글 작성한 글 보기' :
+    '내가 좋아요한 글 보기'}">
+</title>
     <link rel="stylesheet" href="/css/user/mypage-detail.css">
     <script>
         function validateSearch() {

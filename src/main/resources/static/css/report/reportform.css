@@ -6,6 +6,7 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
+    margin: 0 auto;
 }
 
 body {
@@ -72,8 +73,7 @@ header {
     margin: 3px 0;
 }
 
-/* chat 화면 */
-
+/* 신고 폼 */
 .title-container{
     width: 100%;
     max-width: 100%;
@@ -126,16 +126,15 @@ header {
 
 .report-title > div{
     display: flex;
-    gap: 10px;
     align-items: center;
     text-align: left;
 }
 
-.report-title > div > p{
+.report-title > div > span{
     margin: 5px 0;
 }
 
-.report-title > div > p:first-child{
+.report-title > div > span:first-child{
     flex: 0.5;
     color: #00a885;
     font-weight: bold;
@@ -145,10 +144,15 @@ header {
     border-right: 1px solid #ccc;
 }
 
-.report-title > div > p:nth-child(2){
+.report-title > div > span:nth-child(2){
+    padding-left: 10px;
     flex: 5;
     color: #6f6f6f;
     font-size: 16px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .report-content{
@@ -194,4 +198,3 @@ header {
     color: #00a885;
     cursor: pointer;
 }
-

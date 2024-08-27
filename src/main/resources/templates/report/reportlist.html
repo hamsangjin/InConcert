@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>채팅방 목록</title>
+    <title>신고 목록</title>
     <link rel="stylesheet" href="/css/report/reportlist.css">
     <script>
         function handleSubmit() {
@@ -26,11 +26,11 @@
         <div th:each="report : ${reports}">
             <div>
                 <div>
-                    <p class="report-title"> 신고자 </p>
-                    <p class="report-content" th:text="${report.reporter.nickname}"></p>
+                    <span class="report-title"> 신고자 </span>
+                    <span class="report-content" th:text="${report.reporter.nickname}"></span>
                 </div>
                 <div>
-                    <p class="report-title"> 신고 내용 </p>
+                    <span class="report-title"> 사유 </span>
                     <span class="report-content" th:switch="${report.type}">
                         <span th:case="'spam'"> 스팸 홍보/도배입니다. </span>
                         <span th:case="'pornography'">음란물입니다.</span>
@@ -40,24 +40,17 @@
                         <span th:case="'personalInformation'">개인정보가 노출되었습니다.</span>
                     </span>
                 </div>
-            </div>
-
-            <div>
                 <div>
-                    <p class="report-title"> 게시글 </p>
+                    <span class="report-title"> 게시글 </span>
                     <a class="report-content" th:href="@{'/' + ${report.post.postCategory.category.title} + '/' + ${report.post.postCategory.title} + '/' + ${report.post.id}}">
-                        <p th:text="${#strings.length(report.post.title) > 23 ? #strings.substring(report.post.title, 0, 23) + '...' : report.post.title}"></p>
+                        <span th:text="${report.post.title}"></span>
                     </a>
                 </div>
                 <div>
-                    <p class="report-title"> 작성자 </p>
-                    <p class="report-content" th:text="${report.post.user.nickname}"></p>
+                    <span class="report-title"> 작성자 </span>
+                    <span class="report-content" th:text="${report.post.user.nickname}"></span>
                 </div>
             </div>
-            <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/reject|}" method="post"
-                  th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname}">
-                <button type="submit" class="chat-button" onclick="return confirmDelete()">삭제</button>
-            </form>
 
             <div>
                 <form th:action="@{|report/${report.id}/delete|}" method="post" onsubmit="return handleSubmit()">

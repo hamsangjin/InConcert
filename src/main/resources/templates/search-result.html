@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>메인 화면</title>
+    <title th:text="${headerKeyword + '의 검색결과'}"></title>
     <link rel="stylesheet" href="/css/search-result.css">
     <script>
         function validateSearch() {
@@ -61,7 +61,7 @@
                             <span th:case="'theater'">[연극]</span>
                             <span th:case="'etc'">[기타]</span>
                         </span>
-                        <span th:text="${post.title}">Post Title</span>
+                        <span th:text="${#strings.length(post.title) > 23 ? #strings.substring(post.title, 0, 23) + '...' : post.title}">Post Title</span>
                     </a>
                     <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
                     <div th:if="${post.isNew}">

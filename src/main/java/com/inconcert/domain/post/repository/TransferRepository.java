@@ -34,7 +34,8 @@ public interface TransferRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle")
+            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle " +
+            "ORDER BY p.createdAt DESC")
     List<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /transfer/categoryTitle에서 게시물들 알맞게 불러오기
@@ -45,7 +46,8 @@ public interface TransferRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle")
+            "WHERE c.title = 'transfer' AND pc.title = :postCategoryTitle " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findPostsByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle,
                                                Pageable pageable);
 
@@ -62,7 +64,8 @@ public interface TransferRepository extends JpaRepository<Post, Long> {
             "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
             "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
             "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
-            "AND p.createdAt BETWEEN :startDate AND :endDate")
+            "AND p.createdAt BETWEEN :startDate AND :endDate " +
+            "ORDER BY p.createdAt DESC")
     Page<PostDTO> findByKeywordAndFilters(@Param("postCategoryTitle") String postCategoryTitle,
                                           @Param("keyword") String keyword,
                                           @Param("startDate") LocalDateTime startDate,

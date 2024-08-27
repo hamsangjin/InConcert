@@ -9,10 +9,11 @@ import lombok.Getter;
 public class UserDto {
     private Long id;
     private String username;
+    private String nickname;
     private String profileImage;
 
     // 엔티티로부터 DTO 생성하는 팩토리 메소드
     public static UserDto from(User user) {
-        return new UserDto(user.getId(), user.getUsername(), user.getProfileImage());
+        return new UserDto(user.getId(), user.getUsername(), user.getNickname(), user.getProfileImage());
     }
 }

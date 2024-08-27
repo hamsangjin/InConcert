@@ -35,10 +35,9 @@ public enum ExceptionMessage {
     ALREADY_FULL_CHATROOM("이미 채팅방이 가득 찼습니다."),
     HOST_EXIT("호스트는 채팅방에 본인만 존재할 때 퇴장할 수 있습니다."),
     ALREADY_OUT_OF_CHATROOM("채팅방에 속해있지 않습니다."),
+    ALREADY_APPLIED_TO_CHATROOM("이미 동행 신청을 보냈습니다."),
     EXIST_CHAT_POST_DELETE("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다."),
     SELF_CHAT("본인에게는 1대1 채팅을 보낼 수 없습니다.");
-
-
 
 
     private final String message;

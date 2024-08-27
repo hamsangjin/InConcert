@@ -131,11 +131,11 @@ header {
     text-align: left;
 }
 
-.report-title > div > p{
+.report-title > div > span{
     margin: 5px 0;
 }
 
-.report-title > div > p:first-child{
+.report-title > div > span:first-child{
     flex: 0.5;
     color: #00a885;
     font-weight: bold;
@@ -145,10 +145,15 @@ header {
     border-right: 1px solid #ccc;
 }
 
-.report-title > div > p:nth-child(2){
+.report-title > div > span:nth-child(2){
     flex: 5;
+    padding-left: 10px;
     color: #6f6f6f;
     font-size: 16px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .report-content{

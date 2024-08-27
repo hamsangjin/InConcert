@@ -47,7 +47,7 @@ public class ChatApiController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
         // 채팅방 인원이 가득 찬 경우
-        catch (AlreadyFullChatRoomException e) {
+        catch (AlreadyFullChatRoomException | AlreadyAppliedToChatRoomException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

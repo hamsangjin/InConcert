@@ -6,11 +6,7 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p{
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
@@ -22,9 +18,39 @@ body {
 
 .container {
     flex: 1;
-    min-width: calc(100% - 900px);
-    max-width: calc(100% - 900px);
+    width: 60%;
+    max-width: 60%;
     margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
 }
 
 /* footer 설정 */
@@ -47,12 +73,11 @@ body {
     margin: 3px 0;
 }
 
-
 /* login 설정 */
 header {
     display: flex;
-    min-width: 808px;
-    max-width: 808px;
+    width: 100%;
+    max-width: 100%;
     justify-content: center;
     align-items: center;
     padding: 10px;
@@ -85,8 +110,8 @@ header {
     border: 1px solid #ccc;
     border-radius: 15px;
     padding: 60px;
-    min-width: 708px;
-    max-width: 708px;
+    width: calc(100% - 120px);
+    max-width: calc(100% - 120px);
     margin: 0 auto;
 }
 
@@ -102,52 +127,6 @@ header {
 
 #username:focus, #password:focus {
     background-color: transparent;
-}
-
-.login-remember{
-    max-width: calc(50%);
-    min-width: calc(50%);
-    margin: 0 auto 20px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 5px;
-}
-
-.login-remember input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    outline: none;
-    cursor: pointer;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-remember input[type="checkbox"]:checked::before {
-    content:'✔';
-    min-width: 21px;
-    min-height: 21px;
-    max-width: 21px;
-    max-height: 21px;
-    background-color: #00A885;
-    color: white;
-    font-size: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.login-remember > label{
-    margin-top: 2px;
-    color: #6f6f6f;
 }
 
 .default-login, .naver-login{

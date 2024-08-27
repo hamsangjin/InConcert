@@ -22,8 +22,8 @@ body {
 
 .container {
     flex: 1;
-    min-width: calc(100% - 900px);
-    max-width: calc(100% - 900px);
+    width: 60%;
+    max-width: 60%;
     margin: 0 auto;
 }
 
@@ -51,8 +51,8 @@ body {
 /* login 설정 */
 header {
     display: flex;
-    min-width: 808px;
-    max-width: 808px;
+    width: 100%;
+    max-width: 100%;
     justify-content: center;
     align-items: center;
     padding: 10px;
@@ -85,31 +85,30 @@ header {
     border: 1px solid #ccc;
     border-radius: 15px;
     padding: 60px;
-    min-width: 708px;
-    max-width: 708px;
+    width: calc(100% - 120px);
+    max-width: calc(100% - 120px);
     margin: 0 auto;
 }
 
 .find-container label {
     display: inline-block;
-    width: 55px; /* 필요에 따라 너비 조정 */
-    height: 20px; /* 필요에 따라 높이 조정 */
-    vertical-align: middle; /* 텍스트와 인풋이 수직으로 정렬 */
+    width: 55px;
+    height: 20px;
+    vertical-align: middle;
     text-align: right;
 }
 
 #name, #email, #username{
     border: 1px solid #00A885;
+    width: calc(30%);
     max-width: calc(30%);
-    min-width: calc(30%);
     margin: 15px;
     font-size: 16px;
     outline: none;
     padding: 5px;
-    height: 20px; /* 인풋 필드의 고정된 높이 */
-    line-height: 30px; /* 인풋 필드의 line-height를 높이와 동일하게 설정 */
-    font-family: Arial, sans-serif; /* 글꼴 설정 */
-    vertical-align: middle; /* input 필드와 label이 수직으로 정렬 */
+    height: 20px;
+    line-height: 30px;
+    vertical-align: middle;
 }
 
 #username:focus, #email:focus {
@@ -117,30 +116,26 @@ header {
 }
 
 .default-find {
-    background-color: #00A885;
-    opacity: 0.6;
-    color: white;
-    border-radius: 10px;
-    max-width: calc(20% - 20px);
-    min-width: calc(20% - 20px);
+    width: 10%;
+    max-width: 10%;
     margin: 20px auto 20px;
-    padding: 10px;
     align-items: center;
+    display: flex;
+    justify-content: center;
 }
 
 .default-find > button {
     background-color: #00A885;
+    opacity: 0.6;
+    border-radius: 20px;
     color: white;
     border: none;
     font-size: 16px;
     font-weight: bold;
     align-items: center;
+    padding: 10px;
 }
 
 .default-find > button:hover {
     cursor: pointer;
-}
-
-.find-username {
-    /*margin-left: 16px;*/
 }

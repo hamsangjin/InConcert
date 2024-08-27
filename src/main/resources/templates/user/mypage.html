@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>MyPage</title>
+    <title th:text="${user.nickname} + '님의 마이페이지'"></title>
     <link rel="stylesheet" href="/css/user/mypage.css">
     <script type="text/javascript">
         function confirmDeletion() {

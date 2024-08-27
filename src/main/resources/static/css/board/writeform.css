@@ -6,46 +6,31 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p{
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    margin: 0;
+    margin: 0 auto;
 }
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
-}
-
-
-/* 헤더 설정 */
-.header-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .left {
@@ -58,7 +43,7 @@ header {
     display: flex;
     align-items: center;
     text-decoration: none;
-    margin-right: 30px;
+    margin-right: 10px;
 }
 
 .logo-text{
@@ -76,16 +61,26 @@ header {
 .category{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
 }
 
 .category a{
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
+    padding-right: 10px;
+    border-right: 1px solid #6f6f6f;
+}
+
+.category a:last-child{
+    border-right: none;
 }
 
 .category a:hover{
+    color: #00A885;
+}
+
+.category a.selected{
     color: #00A885;
 }
 
@@ -93,7 +88,7 @@ header {
     display: flex;
     align-items: center;
     text-align: right;
-    gap: 20px;
+    gap: 10px;
 }
 
 .right a{
@@ -127,7 +122,7 @@ header {
 
 .search input{
     border: none;
-    min-width: 240px;
+    min-width: 120px;
     min-height: 30px;
     margin-left: 10px;
     outline: none;
@@ -216,14 +211,15 @@ header {
 }
 
 
+
 /* 게시글 작성 설정 */
 .write-container{
     border: 1px solid #ccc;
     padding: 20px;
     background-color: #9f9f9f;
     border-radius: 5px;
-    min-width: 1240px;
-    max-width: 1240px;
+    width: calc(100% - 40px);
+    max-width: calc(100% - 40px);
     margin: 0 auto;
 }
 
@@ -231,14 +227,16 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: calc(100%);
+    max-width: 100%;
+    width: 100%;
 }
 
 select{
     border: 1px solid #6f6f6f;
     font-size: 18px;
     padding: 10px;
-    min-width: calc(46% - 10px);
+    width: 45%;
+    max-width: 45%;
     margin: 10px 0;
 }
 
@@ -252,7 +250,8 @@ option {
     background-color: white;
     font-size: 18px;
     padding: 10px;
-    min-width: calc(46% - 32px);
+    width: calc(45% - 22px);
+    max-width: calc(45% - 22px);
     display: flex;
     justify-content: space-between;
     align-items: center;

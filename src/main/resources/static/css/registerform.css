@@ -6,25 +6,51 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p{
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    margin: 0 ;
+    margin: 0;
 }
 
 .container {
     flex: 1;
-    min-width: calc(100% - 700px);
-    max-width: calc(100% - 700px);
+    width: 60%;
+    max-width: 60%;
     margin: 0 auto;
+}
+
+header {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin: 0 auto;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bolder;
+    margin: 30px 0;
+}
+
+.logo-text{
+    font-weight: bolder;
+    font-style: italic;
+    color: #00A885;
+    margin: 0;
+}
+
+.logo-text:hover{
+    cursor: pointer;
 }
 
 /* footer 설정 */
@@ -51,8 +77,8 @@ body {
 header {
     display: flex;
     flex-direction: column;
-    min-width: 1008px;
-    max-width: 1008px;
+    width: 100%;
+    max-width: 100%;
     text-align: center;
     justify-content: center;
     align-items: center;
@@ -95,15 +121,17 @@ header {
     justify-content: space-between;
     align-items: center;
     text-align: center;
-    min-width: 988px;
-    max-width: 988px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
     padding: 20px;
 }
 
 .input-container{
     text-align: left;
-    width: 50%;
+    width: 60%;
+    max-width: 60%;
+    flex: 6;
 }
 
 .form-group{
@@ -114,7 +142,6 @@ header {
 .form-group > label{
     width: 100px;
     text-align: right;
-
 }
 
 #username, #password, #password-confirm,
@@ -122,8 +149,8 @@ header {
 #nickname, #phoneNumber, #birth,
 #gender, #mbti{
     border: 1px solid #00A885;
-    max-width: calc(50%);
-    min-width: calc(50%);
+    max-width: 40%;
+    width: 40%;
     margin: 10px;
     padding: 5px;
     font-size: 14px;
@@ -131,10 +158,10 @@ header {
 }
 
 #gender, #mbti{
-    min-width: 249px;
-    max-width: 249px;
-    min-height: 31px;
-    max-height: 31px;
+    max-width: calc(40% + 12px);
+    width: calc(40% + 12px);
+    max-height: 20%;
+    height: 20%;
 }
 
 #checkIdBtn, #checkEmailBtn,
@@ -167,13 +194,14 @@ header {
 }
 
 .logo-img{
-    padding: 20px;
-    width: 50%;
+    width: 40%;
+    max-width: 40%;
+    flex: 4;
 }
 
 .logo-img > img{
-    min-width: calc(80%);
-    max-width: calc(80%);
+    width: 100%;
+    max-width: 100%;
 }
 
 .error-message {

@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org/" lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Edit MyPage</title>
+    <title th:text="${user.nickname} + '님의 내 정보 수정'"></title>
+
     <link rel="stylesheet" href="/css/user/editform.css">
     <script>
         function validateSearch() {

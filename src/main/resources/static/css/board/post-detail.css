@@ -6,45 +6,31 @@ html {
     overflow-x: auto;
     overflow-y: auto;
     flex-shrink: 0;
-}
-
-p {
-    margin: 5px;
-    padding: 0;
+    margin: 0 auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    margin: 0;
+    margin: 0 auto;
 }
 
 .container {
     flex: 1;
-    min-width: calc(100% - 300px);
-    max-width: calc(100% - 300px);
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
-}
-
-/* 헤더 설정 */
-.header-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    min-width: 1300px;
-    max-width: 1300px;
 }
 
 header {
     display: flex;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: 100%;
+    max-width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .left {
@@ -53,42 +39,48 @@ header {
     gap: 10px;
 }
 
-.logo {
+.logo{
     display: flex;
     align-items: center;
     text-decoration: none;
-    margin-right: 30px;
+    margin-right: 10px;
 }
 
-.logo-text {
+.logo-text{
     font-weight: bolder;
     font-style: italic;
     color: #00A885;
 }
 
-.logo-img {
+.logo-img{
     width: 40px;
     height: 40px;
     margin-right: 5px;
 }
 
-.category {
+.category{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 10px;
 }
 
-.category a {
+.category a{
     color: #6f6f6f;
     text-decoration: none;
     margin-top: 2px;
+    padding-right: 10px;
+    border-right: 1px solid #6f6f6f;
 }
 
-.category a:hover {
+.category a:last-child{
+    border-right: none;
+}
+
+.category a:hover{
     color: #00A885;
 }
 
-.category a.selected {
+.category a.selected{
     color: #00A885;
 }
 
@@ -96,31 +88,31 @@ header {
     display: flex;
     align-items: center;
     text-align: right;
-    gap: 20px;
+    gap: 10px;
 }
 
-.right a {
+.right a{
     color: #6f6f6f;
     text-decoration: none;
 }
 
-.search {
+.search{
     display: flex;
     align-items: center;
     border: #6f6f6f 1px solid;
     border-radius: 10px;
 }
 
-.search > button {
+.search  > button{
     border: none;
     background-color: transparent;
 }
 
-.search > button:hover {
+.search  > button:hover{
     cursor: pointer;
 }
 
-.search img {
+.search img{
     width: 20px;
     height: 20px;
     margin-top: 2px;
@@ -128,15 +120,15 @@ header {
     margin-left: 5px;
 }
 
-.search input {
+.search input{
     border: none;
-    min-width: 240px;
+    min-width: 120px;
     min-height: 30px;
     margin-left: 10px;
     outline: none;
 }
 
-.user-header > div {
+.user-header > div{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -152,16 +144,16 @@ header {
     padding: 5px 10px;
 }
 
-.profile-img, .notification-img, .chat-img {
+.profile-img, .notification-img, .chat-img{
     width: 30px;
     height: 30px;
 }
 
-.profile-img {
+.profile-img{
     border-radius: 50%;
 }
 
-.profile-img:hover {
+.profile-img:hover{
     cursor: pointer;
 }
 
@@ -219,12 +211,12 @@ header {
 }
 
 /* tab 설정 */
-.tabs-container {
+.tabs-container{
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -235,8 +227,8 @@ header {
     padding: 10px 10px;
     margin-bottom: 20px;
     border-radius: 30px;
-    min-width: 1280px;
-    max-width: 1280px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
 }
 
 .tab-button {
@@ -256,7 +248,7 @@ header {
     cursor: pointer;
 }
 
-.tab-button.selected {
+.tab-button.selected{
     color: #00A885;
 }
 
@@ -269,8 +261,8 @@ header {
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -290,8 +282,8 @@ header {
 }
 
 .post-container {
-    min-width: 1300px;
-    max-width: 1300px;
+    width: 100%;
+    max-width: 100%;
     margin: 0 auto;
 }
 
@@ -473,7 +465,8 @@ header {
     align-items: center;
 }
 
-.comment-header > div > .author, .comment-header > div > .date {
+.comment-author-info > div > .author,
+.comment-author-info > div > .date {
     margin: 0 0 0 5px;
 }
 
@@ -644,10 +637,14 @@ header {
     display: block;
 }
 
+.popup-btn{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    gap: 20px;
+}
+
 .chat-btn {
-    position: absolute;
-    top: 20px;
-    right: 50px;
     background-color: #ddd;
     border: none;
     border-radius: 5px;
@@ -661,9 +658,6 @@ header {
 
 .close {
     color: #aaa;
-    position: absolute;
-    right: 20px;
-    top: 20px;
     font-size: 28px;
     font-weight: bold;
 }
@@ -737,6 +731,7 @@ header {
 .manner > div:first-child{
     flex: 3;
     text-align: right;
+    margin-right: 5px;
 }
 
 .space > div:first-child > p,
