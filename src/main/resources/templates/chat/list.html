@@ -30,7 +30,7 @@
         <div>
             <img src="/images/ChatMembers.png" alt="No Posts"/>
             <span th:text="${chatRoom.userCount}"></span>
-            <span th:switch="${chatRoom.timeSince}">
+            <span th:if="chatRoom.timeSince != null" th:switch="${chatRoom.timeSince}">
                 <span th:case="'day'" th:text="${chatRoom.diffTime + '일 전'}"></span>
                 <span th:case="'hour'" th:text="${chatRoom.diffTime + '시간 전'}"></span>
                 <span th:case="'minute'" th:text="${chatRoom.diffTime + '분 전'}"></span>

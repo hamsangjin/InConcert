@@ -92,7 +92,7 @@ public class MyPageService {
     public Page<MatchRspDTO> presentMatch(Long userId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
 
-        return chatRoomRepository.findAllByUserId(userId, pageable);
+        return chatRoomRepository.getChatRoomDTOsByUserId(userId, pageable);
     }
 
     // 동행 완료

@@ -16,7 +16,7 @@ public class CommentCreationDTO {
     private User user;
     private Post post;
     private boolean isSecret;
-    private Long parent;
+    private Comment parent;
 
     @NotEmpty(message = "내용은 필수항목입니다.")
     private String content;
@@ -26,6 +26,7 @@ public class CommentCreationDTO {
                 .id(getId())
                 .user(getUser())
                 .post(getPost())
+                .parent(getParent())
                 .content(getContent())
                 .isSecret(getIsSecret())
                 .build();

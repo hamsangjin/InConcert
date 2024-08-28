@@ -17,7 +17,7 @@ public interface HomeRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword%")
+            "WHERE p.title LIKE :keyword% OR p.content LIKE :keyword%")
     Page<PostDTO> findByKeyword(@Param("keyword") String keyword,
                                 Pageable pageable);
 }

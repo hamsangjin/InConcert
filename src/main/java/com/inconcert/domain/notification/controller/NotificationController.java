@@ -48,13 +48,12 @@ public class NotificationController {
 
     @GetMapping("/all")
     public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
-        List<NotificationDTO> notificationDTOS = notificationService.getAllNotifications();
-        return ResponseEntity.ok(notificationDTOS);
+        return ResponseEntity.ok(notificationService.getAllNotifications());
     }
 
     @GetMapping("/{type}")
-    public List<NotificationDTO> getNotificationsByType(@PathVariable("type") String type) {
-        return notificationService.getNotificationsByTypeAndUser(type);
+    public ResponseEntity<?> getNotificationsByType(@PathVariable("type") String type) {
+        return ResponseEntity.ok(notificationService.getNotificationsByTypeAndUser(type));
     }
 
     @DeleteMapping("/{id}/delete")

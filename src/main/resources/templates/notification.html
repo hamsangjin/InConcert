@@ -69,7 +69,12 @@
                 const list = document.getElementById(`${type}NotificationList`);
                 if (list) {
                     fetch(`/notifications/${type}`)
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
                         .then(notifications => {
                             list.innerHTML = ''; // 리스트 초기화
                             notifications.forEach(notification => {
@@ -93,7 +98,7 @@
         eventSource = new EventSource('/notifications/stream');
 
         eventSource.onopen = function(event) {
-            console.log("SSE connection opened");
+            console.log("SSE connection opened", event);
         };
 
         eventSource.onerror = function(event) {

@@ -110,7 +110,7 @@
             }
         }
 
-        // 이거 왜 있는 건지 설명해주세요 혜원 희정 2트
+        // 이거 왜 있는 건지 설명해주세요 혜원 희정 3트
         function makeAuthenticatedRequest(url, method = 'GET', body = null) {
             const token = localStorage.getItem('accessToken');
             return fetch(url, {
@@ -152,6 +152,22 @@
             if (parts.length === 2) return parts.pop().split(';').shift();
         }
     });
+
+    window.onload = function() {
+        // Flash attribute로 전달된 메시지를 확인
+        const message = "[[${message}]]";
+
+        // 세션 스토리지에서 'alerted' 키 확인
+        if (message && message !== "null" && !sessionStorage.getItem('alerted')) {
+            alert(message); // 알림 표시
+            sessionStorage.setItem('alerted', 'true'); // 'alerted' 키 설정
+        }
+    };
+
+    window.onunload = function() {
+        // 페이지를 떠날 때 세션 스토리지에서 'alerted' 키 제거
+        sessionStorage.removeItem('alerted');
+    };
 </script>
 </body>
 </html>

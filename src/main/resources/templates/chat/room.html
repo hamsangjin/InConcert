@@ -59,12 +59,14 @@
             <div th:if="${message.notice}" class="notice">
                 <p th:text="${message.message}">Message</p>
             </div>
+
+            <input type="hidden" id="createdAt" th:value="${#temporals.format(message.createdAt, 'HH:mm')}">
         </li>
     </ul>
 
     <form class="send-form" onsubmit="sendMessage(); return false;">
-        <input type="text" id="message" th:if="${chatRoom.hostUserId != null}" required />
-        <button type="submit" th:disabled="${chatRoom.hostUserId == null}">전송</button>
+        <input type="text" id="message" required />
+        <button type="submit">전송</button>
     </form>
 
     <input type="hidden" id="username" th:value="${user.username}"/>
@@ -72,6 +74,8 @@
     <input type="hidden" id="userId" th:value="${user.id}"/>
     <input type="hidden" id="chatRoomId" th:value="${chatRoom.id}"/>
     <input type="hidden" id="hostUserId" th:value="${chatRoom.hostUserId}"/>
+    <input type="hidden" id="profileImg" th:value="${user.profileImage}"/>
+    <input type="hidden" id="isOneToOne" th:value="${chatRoom.postId == null}"/>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

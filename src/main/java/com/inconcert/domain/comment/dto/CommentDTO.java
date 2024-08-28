@@ -17,7 +17,7 @@ public class CommentDTO {
     private User user;
     private Post post;
     private String content;
-    private boolean isSecret;
+    private Boolean isSecret;
     private Comment parent;
     private List<Comment> replies;
 }

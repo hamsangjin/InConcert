@@ -121,9 +121,9 @@ public class GlobalExceptionHandler {
     }
 
     // 채팅방 host가 아니면 강퇴 불가
-    @ExceptionHandler(KickException.class)
+    @ExceptionHandler(KickNotAllowedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<String> handleKickException(KickException ex) {
+    public ResponseEntity<String> handleKickException(KickNotAllowedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 

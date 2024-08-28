@@ -1,9 +1,14 @@
 let stompClient = null;
 let isConnected = false;
 
-window.onload = function() {
+// 메시지 추가 후 스크롤을 아래로 내리는 함수
+function scrollToBottom() {
     let chatList = document.getElementById('chat');
     chatList.scrollTop = chatList.scrollHeight;
+}
+
+window.onload = function() {
+    scrollToBottom()
 };
 
 // STOMP 연결
@@ -24,7 +29,7 @@ function connect(userId, chatRoomId) {
             // 알림 구독
             subscribeToNotifications(userId);
 
-            // 강퇴 알림 구독
+            // 강퇴 알림 구독(message 매개변수 사용 여부 확인 필요)
             stompClient.subscribe('/topic/chat/kicked/' + userId, function (message) {
                 alert('채팅방에서 강퇴되었습니다.');
                 window.location.href = '/chat/list';
@@ -34,12 +39,16 @@ function connect(userId, chatRoomId) {
             if (chatRoomId) {
                 subscribeToTopics(chatRoomId);
 
-                // 이미 입장 메시지를 보냈는지 확인 (로컬 스토리지나 상태 변수에서 확인)
-                const hasEntered = localStorage.getItem(`entered_${chatRoomId}_${username}`);
+                let isOneToOne = document.getElementById('isOneToOne').value;
 
-                if (!hasEntered) {
-                    sendEnterMessage(username, nickname, chatRoomId); // 처음 입장 시에만 메시지 전송
-                    localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
+                if(!isOneToOne){
+                    // 이미 입장 메시지를 보냈는지 확인 (로컬 스토리지나 상태 변수에서 확인)
+                    const hasEntered = localStorage.getItem(`entered_${chatRoomId}_${username}`);
+
+                    if (!hasEntered) {
+                        sendEnterMessage(username, nickname, chatRoomId); // 처음 입장 시에만 메시지 전송
+                        localStorage.setItem(`entered_${chatRoomId}_${username}`, true); // 입장 플래그 저장
+                    }
                 }
             }
         } else {
@@ -61,65 +70,13 @@ function subscribeToTopics(chatRoomId) {
     stompClient.subscribe('/topic/chat/room/' + chatRoomId, function (message) {
         console.log('Message received:', message.body);
         showMessage(JSON.parse(message.body));
-    });
-
-    // 참가 요청 승인 알림 구독
-    const userId = document.getElementById('userId').value;
-    stompClient.subscribe('/topic/notifications/' + userId, function (message) {
-        console.log('Approval notification received:', message.body);
-        const notification = JSON.parse(message.body);
-
-        if (notification.chatRoomId === chatRoomId) {
-            // 알림 메시지를 사용자에게 확인 창으로 보여줌
-            const userResponse = confirm(notification.message + "\n승인하려면 확인을 누르세요.");
-
-            if (userResponse) {
-                // 사용자가 "확인"을 눌렀을 때 입장 승인 API 호출
-                approveJoinRequest(chatRoomId, userId);
-            } else {
-                console.log('사용자가 요청을 거부했습니다.');
-            }
-        }
+        scrollToBottom()
     });
 }
 
 // 알림 구독
 function subscribeToNotifications(userId) {
-    stompClient.subscribe('/topic/notifications/' + userId, function (message) {
-        console.log('Approval notification received:', message.body);
-        const notification = JSON.parse(message.body);
-
-        // 로컬 스토리지에 메시지 저장
-        saveNotificationToLocalStorage(notification);
-
-        // 사용자가 채팅방에 있으면 바로 confirm 창을 띄움
-        if (isUserInChatRoom(notification.chatRoomId)) {
-            showNotificationConfirm(notification);
-        }
-    });
-}
-
-// 로컬 스토리지에 알림 저장
-function saveNotificationToLocalStorage(notification) {
-    let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-    notifications.push(notification);
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-}
-
-// 알림창 표시 (승인 요청 시)
-function showNotificationConfirm(notification) {
-    const userResponse = confirm(notification.message + "\n이 사용자의 입장을 승인하시겠습니까?");
-    if (userResponse) {
-        approveJoinRequest(notification.chatRoomId, notification.userId);
-    } else {
-        console.log('사용자가 요청을 거부했습니다.');
-    }
-}
-
-// 유저가 채팅방에 있는지 확인
-function isUserInChatRoom(chatRoomId) {
-    const currentChatRoomId = document.getElementById('chatRoomId')?.value;
-    return currentChatRoomId && currentChatRoomId === String(chatRoomId);
+    stompClient.subscribe('/topic/notifications/' + userId);
 }
 
 // 입장 메시지
@@ -146,6 +103,7 @@ function sendMessage() {
     const chatRoomId = document.getElementById('chatRoomId').value;
     const message = document.getElementById('message').value;
 
+
     if (!isConnected) {
         console.error('Cannot send message: Not connected');
         return;
@@ -157,7 +115,7 @@ function sendMessage() {
             JSON.stringify({
                 'chatRoomId': chatRoomId,
                 'username': username, // username 전송
-                'nickname': nickname, // username 전송
+                'nickname': nickname, // nickname 전송
                 'message': message,
                 'type': 'CHAT' // 메시지 타입은 CHAT
             })
@@ -177,38 +135,19 @@ function sendLeaveMessage(username, nickname, chatRoomId) {
         return;
     }
 
-    // 퇴장 메시지를 전송할 때 username을 포함하여 전송
-    stompClient.send("/app/chat/leaveUser", {},
-        JSON.stringify({
-            'username': username, // 퇴장하는 사용자의 username
-            'nickname': nickname, // 퇴장하는 사용자의 username
-            'chatRoomId': chatRoomId,
-            'message': '' // 빈 메시지로 보냄
-        })
-    );
-}
+    let isOneToOne = document.getElementById('isOneToOne').value;
 
-// 승인 요청 전송
-function approveJoinRequest(chatRoomId, userId) {
-    fetch(`/api/chat/approve-join/${chatRoomId}/${userId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        mode: 'no-cors'
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('승인 요청 실패: ' + response.statusText);
-            }
-            return response.text();
-        })
-        .then(data => {
-            alert("사용자의 입장 요청을 승인했습니다.");
-        })
-        .catch(error => {
-            console.error('승인 요청 중 문제가 발생했습니다:', error);
-        });
+    if(!isOneToOne) {
+        // 퇴장 메시지를 전송할 때 username을 포함하여 전송
+        stompClient.send("/app/chat/leaveUser", {},
+            JSON.stringify({
+                'username': username, // 퇴장하는 사용자의 username
+                'nickname': nickname, // 퇴장하는 사용자의 username
+                'chatRoomId': chatRoomId,
+                'message': '' // 빈 메시지로 보냄
+            })
+        );
+    }
 }
 
 // 채팅방 나가기 버튼을 눌렀을 때 실행되는 함수
@@ -363,31 +302,60 @@ window.addEventListener('beforeunload', function () {
     const username = document.getElementById('username').value;
     const nickname = document.getElementById('nickname').value;
     const chatRoomId = document.getElementById('chatRoomId').value;
+    const isOneToOne = document.getElementById('isOneToOne').value;
+    if(!isOneToOne){
+        // 이미 퇴장한 경우 퇴장 메시지를 보내지 않음
+        const hasLeft = localStorage.getItem(`left_${chatRoomId}_${username}`);
 
-    // 이미 퇴장한 경우 퇴장 메시지를 보내지 않음
-    const hasLeft = localStorage.getItem(`left_${chatRoomId}_${username}`);
-
-    if (!hasLeft) {
-        sendLeaveMessage(username, nickname, chatRoomId); // 처음 퇴장 시에만 메시지 전송
-        localStorage.setItem(`left_${chatRoomId}_${username}`, true); // 퇴장 플래그 설정
+        if (!hasLeft) {
+            sendLeaveMessage(username, nickname, chatRoomId); // 처음 퇴장 시에만 메시지 전송
+            localStorage.setItem(`left_${chatRoomId}_${username}`, true); // 퇴장 플래그 설정
+        }
+        disconnect();
     }
-    disconnect();
 });
 
 // 메시지 표시
 function showMessage(message) {
-    const messageElement = document.createElement('li');
-    messageElement.className = 'chat-message';
+    const chatContainer = document.getElementById('chat');
 
-    // 입퇴장 메시지인 경우
-    if (message.type === 'ENTER' || message.type === 'LEAVE') {
-        messageElement.innerText = `${message.message}`;
+    if(!message.notice){
+        const notMyMessage = document.createElement('div');
+        notMyMessage.className = 'not-my-message';
+
+        const messageHeader = document.createElement('div');
+        messageHeader.className = 'message-header';
+
+        const profileImg = document.createElement('img');
+        profileImg.src = document.getElementById('profileImg').value;
+
+        const nickname = document.createElement('p');
+        nickname.innerText = message.nickname;
+
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+
+        const messageValue = document.createElement('p');
+        messageValue.innerText = message.message;
+
+        const createdAt = document.createElement('p');
+        const now = new Date();
+        createdAt.innerText = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        messageHeader.append(profileImg, nickname);
+        messageContent.append(messageValue, createdAt);
+        notMyMessage.append(messageHeader, messageContent);
+        chatContainer.appendChild(notMyMessage);
+    } else {
+        const noticeMessage = document.createElement('div');
+        noticeMessage.className = 'notice'
+
+        const messageValue = document.createElement('p');
+        messageValue.innerText = message.message;
+
+        noticeMessage.appendChild(messageValue);
+        chatContainer.appendChild(noticeMessage);
     }
-    // 일반 채팅 메시지
-    else {
-        messageElement.innerText = `${message.username}: ${message.message}`;
-    }
-    document.getElementById('chat').appendChild(messageElement);
 }
 
 function disconnect() {

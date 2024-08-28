@@ -44,9 +44,5 @@ public class Notification extends BaseEntity {
         this.post = post;
         this.type = type;
     }
-
-    public void setIsRead(boolean isRead) {
-        this.isRead = isRead;
-    }
 }
 

@@ -27,13 +27,7 @@ public class ChatWebSocketController {
     // 사용자가 채팅방에서 메시지 전송
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload ChatMessageDTO message) {
-        message.setType(ChatMessageDTO.MessageType.CHAT);
-
-        // 메시지를 해당 채팅방의 모든 사용자에게 전송
-        messagingTemplate.convertAndSend("/topic/chat/room/" + message.getChatRoomId(), message);
-
-        // 채팅 내용 저장
-        chatService.sendMessage(message.getChatRoomId(), message.getUsername(), message.getMessage());
+        chatService.sendMessage(message);
     }
 
     // 사용자가 채팅방에서 퇴장할 때
