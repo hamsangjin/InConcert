@@ -47,8 +47,13 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
             "JOIN p.user u " +
-            "WHERE p.id = (SELECT MIN(p2.id) FROM Post p2 WHERE p2.postCategory = p.postCategory) " +
-            "AND p.postCategory.title = :postCategoryTitle")
+            "WHERE c.title = 'info' " +
+            "AND p.id = (SELECT MIN(p2.id) " +
+                        "FROM Post p2 " +
+                        "WHERE p2.postCategory = p.postCategory " +
+                        "AND p2.postCategory = pc " +
+                        "AND p2.postCategory.category = c) " +
+            "AND pc.title = :postCategoryTitle")
     Optional<PostDTO> findFirstPostByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /info에서 게시물들 카테고리에 맞게 불러오기
