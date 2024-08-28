@@ -587,7 +587,7 @@ header {
 }
 
 .comment-p.secret {
-    color: blue;
+    color: #00a885;
     font-weight: bold;
 }
 
