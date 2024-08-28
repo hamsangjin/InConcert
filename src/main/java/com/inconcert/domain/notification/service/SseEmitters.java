@@ -13,7 +13,7 @@ public class SseEmitters {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter createForUser(Long userId) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter emitter = new SseEmitter(1800000L);
         emitters.put(userId, emitter);
 
         emitter.onCompletion(() -> emitters.remove(userId));

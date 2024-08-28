@@ -84,9 +84,4 @@ public class InfoService {
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
         infoRepository.delete(post);
     }
-
-    @Transactional
-    public void crawlAndSavePosts(String type) {
-        performanceService.crawlPerformances(type);
-    }
 }

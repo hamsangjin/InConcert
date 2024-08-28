@@ -5,29 +5,16 @@ import com.inconcert.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface InfoRepository extends JpaRepository<Post, Long> {
-    // /home에서 인기 공연 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, pc.title, p.thumbnailUrl) " +
-            "FROM Post p " +
-            "JOIN p.postCategory pc " +
-            "JOIN pc.category c " +
-            "WHERE c.title = 'info' AND p.createdAt IN (" +
-            "SELECT MIN(p2.createdAt) FROM Post p2 " +
-            "JOIN p2.postCategory pc2 " +
-            "JOIN pc2.category c2 " +
-            "WHERE c2.title = 'info'" +
-            "GROUP BY pc2.id) ")
-    List<PostDTO> findLatestPostsByPostCategory();
-
     // /home에서 공연 소식 게시물 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
@@ -39,6 +26,30 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "WHERE c.title = 'info' " +
             "ORDER BY p.createdAt DESC")
     List<PostDTO> findPostsByCategoryTitle(Pageable pageable);
+
+    // info 포스트 상위 8개 불러오기
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "FROM Post p " +
+            "JOIN p.postCategory pc " +
+            "JOIN pc.category c " +
+            "JOIN p.user u " +
+            "WHERE c.title = 'info' " +
+            "ORDER BY p.createdAt DESC")
+    List<PostDTO> findTop8LatestInfoPosts(Pageable pageable);
+
+    // 실시간 인기 공연 게시글 불러오기
+    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
+            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "FROM Post p " +
+            "JOIN p.postCategory pc " +
+            "JOIN pc.category c " +
+            "JOIN p.user u " +
+            "WHERE p.id = (SELECT MIN(p2.id) FROM Post p2 WHERE p2.postCategory = p.postCategory) " +
+            "AND p.postCategory.title = :postCategoryTitle")
+    Optional<PostDTO> findFirstPostByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /info에서 게시물들 카테고리에 맞게 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
@@ -86,9 +97,4 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
                                           @Param("endDate") LocalDateTime endDate,
                                           @Param("type") String type,
                                           Pageable pageable);
-
-    // 크롤링 후 post category의 1~4번까지 지우기
-    @Modifying
-    @Query("DELETE Post p WHERE p.postCategory.id BETWEEN 1 AND 4")
-    void afterCrawling();
 }
