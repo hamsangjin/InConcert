@@ -62,10 +62,7 @@ public class PerformanceService {
             }
             isCrawling = true;
             // sse 에 시작 메시지 전송
-            crawlingSseEmitters.sendUpdate(PostDTO.builder()
-                    .title("Crawling started")
-                    .content("Crawling process has started")
-                    .build());
+            crawlingSseEmitters.sendStatusUpdate("started", "Crawling process has started");
         }
 
         CompletableFuture.runAsync(() -> {
@@ -78,10 +75,7 @@ public class PerformanceService {
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
                 // sse 에 완료 메시지 전송
-                crawlingSseEmitters.sendUpdate(PostDTO.builder()
-                        .title("Crawling completed")
-                        .content("All performances have been successfully crawled.")
-                        .build());
+                crawlingSseEmitters.sendStatusUpdate("completed", "All performances have been successfully crawled.");
                 log.info("Crawling process completed and notification sent");
             } finally {
                 synchronized (crawlingLock) {
@@ -164,7 +158,6 @@ public class PerformanceService {
                         // 실시간 업데이트 전송
                         PostDTO postDTO = convertToPostDTO(crawledPostDTO, savedPost);
                         postDTO.setId(savedPost.getId());   // id가 꼬이게 하지 않기 위함
-                        crawlingSseEmitters.sendUpdate(postDTO);
 
                         // 배치 처리를 위해 리스트에 추가
                         batchPostDTOs.add(postDTO);
@@ -213,7 +206,6 @@ public class PerformanceService {
                 .thumbnailUrl(crawledPostDTO.getThumbnailUrl())
                 .postCategory(postCategory)
                 .user(adminUser)
-                .viewCount(0)
                 .build();
     }
 
@@ -280,7 +272,7 @@ public class PerformanceService {
     }
 
     // 자정에 한번씩 새로 스크래핑
-    @Scheduled(cron = "0 27 2 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleCrawling() {
         startCrawlingAsync();
     }

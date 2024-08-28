@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
@@ -44,19 +45,17 @@ public class CrawlingSseEmitters {
         return emitter;
     }
 
-    // postDTO 를 json 형태로 sse 전송
-    public void sendUpdate(PostDTO postDTO) {
-        log.info("Attempting to send update for post: " + postDTO.getTitle());
-        log.info("Sending PostDTO: {}", postDTO);
+    // sse 에 스크래핑 시작/완료 메시지 전송
+    public void sendStatusUpdate(String status, String message) {
         List<SseEmitter> deadEmitters = new ArrayList<>();
 
         emitters.forEach(emitter -> {
             try {
-                String jsonPostDTO = objectMapper.writeValueAsString(postDTO);
-                emitter.send(SseEmitter.event().name("crawlingUpdate").data(jsonPostDTO, MediaType.APPLICATION_JSON));
-                log.info("Successfully sent update for post: " + postDTO.getTitle());
+                String jsonStatus = objectMapper.writeValueAsString(Map.of("status", status, "message", message));
+                emitter.send(SseEmitter.event().name("crawlingStatusUpdate").data(jsonStatus, MediaType.APPLICATION_JSON));
+                log.info("Successfully sent status update: {}", status);
             } catch (Exception e) {
-                log.error("Failed to send SSE update", e);
+                log.error("Failed to send SSE status update", e);
                 deadEmitters.add(emitter);
             }
         });
@@ -65,6 +64,7 @@ public class CrawlingSseEmitters {
         log.info("Removed {} dead emitters", deadEmitters.size());
     }
 
+    // postDTO 를 json 형태로 sse 전송
     public void sendBatchUpdate(List<PostDTO> postDTOs) {
         log.info("Current number of active SSE connections: {}", emitters.size());
         log.info("Sending batch update with {} posts", postDTOs.size());

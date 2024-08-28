@@ -18,7 +18,6 @@ function connectSSE() {
     };
 
     eventSource.addEventListener('crawlingUpdate', handleCrawlingUpdate);
-    eventSource.addEventListener('viewCountUpdate', handleViewCountUpdate);
 
     eventSource.onerror = function(error) {
         console.error("SSE Error:", error);
@@ -108,27 +107,6 @@ function handleCrawlingUpdate(event) {
     }
 
     renderPopularInfo();
-}
-
-// 공연 소식 업데이트
-function updateSpecificPostUI(post) {
-    const postElement = document.querySelector(`.post-title[href="/info/${post.postCategoryTitle}/${post.id}"]`);
-    if (postElement) {
-        postElement.innerHTML = `
-            <span>[${getPostCategoryTitle(post.postCategoryTitle)}]</span>
-            <span>${post.title}</span>
-        `;
-    }
-}
-
-// ViewCount 업데이트
-function handleViewCountUpdate(event) {
-    const update = JSON.parse(event.data);
-    const post = infoPosts.find(p => p.id === update.id);
-    if (post) {
-        post.viewCount = update.viewCount;
-        updateSpecificPostUI(post);
-    }
 }
 
 // 렌더링

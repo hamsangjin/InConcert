@@ -22,7 +22,6 @@ import java.util.List;
 public class HomeController {
     private final HomeService homeService;
     private final PerformanceService performanceService;
-    private final CrawlingSseEmitters crawlingSseEmitters;
 
     @GetMapping("/home")
     public String home(Model model) {
@@ -44,26 +43,6 @@ public class HomeController {
 
         model.addAttribute("isCrawling", performanceService.isCrawling());
         return "/home";
-    }
-
-    @GetMapping("/api/crawling/progress")
-    public SseEmitter streamCrawlingProgress() {
-        log.info("Received request for SSE connection");
-        SseEmitter emitter = crawlingSseEmitters.create();
-        log.info("Created new SSE emitter: {}", emitter);
-
-        // Send a test event immediately after connection
-        try {
-            emitter.send(SseEmitter.event()
-                    .name("test")
-                    .data("Test SSE connection")
-            );
-            log.info("Sent test SSE event");
-        } catch (IOException e) {
-            log.error("Error sending test SSE event", e);
-        }
-
-        return emitter;
     }
 
     @GetMapping("/search")
