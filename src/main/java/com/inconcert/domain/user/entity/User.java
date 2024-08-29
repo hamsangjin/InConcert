@@ -8,7 +8,7 @@ import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.role.entity.Role;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
-import com.inconcert.global.auth.jwt.token.entity.Token;
+import com.inconcert.common.auth.jwt.token.entity.Token;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,9 +67,6 @@ public class User {
     @Column(nullable = false)
     private Mbti mbti;
 
-    @Column
-    private Integer point = 10;
-
     @Column(name = "ban_date")
     private LocalDate banDate = LocalDate.now().minusDays(1);
 
@@ -106,7 +103,7 @@ public class User {
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,
-                LocalDate birth, String profileImage, Gender gender, String intro, Mbti mbti, Integer point, Set<Role> roles) {
+                LocalDate birth, String profileImage, Gender gender, String intro, Mbti mbti, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -118,7 +115,6 @@ public class User {
         this.gender = gender;
         this.intro = intro != null ? intro : this.intro;
         this.mbti = mbti;
-        this.point = point != null ? point : this.point;
         this.roles = roles;
     }
 

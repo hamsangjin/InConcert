@@ -10,7 +10,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -146,7 +146,7 @@ public class MatchService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void updatePostStatus() {
         // 다음 날이 되고 endDate가 오늘 이전인 Post 중 isEnd값이 false인 PostId들 불러오기
-        List<Long> postIds = matchRepository.findAllByEndDateBeforeAndIsEndFalse(LocalDate.now());
+        List<Long> postIds = matchRepository.getPostIdsByEndDateBeforeAndIsEndFalse(LocalDate.now());
 
         postIds.forEach(this::completeMatch);
     }

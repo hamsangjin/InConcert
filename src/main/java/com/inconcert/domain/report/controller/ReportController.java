@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.List;
-
 @Controller
 @RequiredArgsConstructor
 public class ReportController {
@@ -19,14 +17,14 @@ public class ReportController {
 
     @GetMapping("/report")
     public String reportList(Model model) {
-        List<ReportDTO> reportDTOS = reportService.getReportDTOAll();
-        model.addAttribute("reports", reportDTOS);
+        model.addAttribute("reports", reportService.getReportDTOAll());
         return "report/reportlist";
     }
 
     @PostMapping("/report/{id}/delete")
     public String deleteReport(@PathVariable("id") Long id) {
         reportService.deleteReportId(id);
+
         return "redirect:/report";
     }
 

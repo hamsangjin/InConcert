@@ -1,161 +1,36 @@
 package com.inconcert.domain.user.controller;
 
-import com.inconcert.domain.role.entity.Role;
 import com.inconcert.domain.user.dto.request.*;
 import com.inconcert.domain.user.dto.response.*;
-import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.auth.CustomUserDetails;
-import com.inconcert.global.auth.jwt.token.entity.Token;
-import com.inconcert.global.auth.jwt.token.service.TokenService;
-import com.inconcert.global.auth.jwt.util.JwtTokenizer;
-import com.inconcert.global.exception.UserNotFoundException;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class UserApiController {
     private final UserService userService;
-    private final TokenService tokenService;
-    private final JwtTokenizer jwtTokenizer;
-    private final AuthenticationManager authenticationManager;
 
     // 로그인
     @PostMapping("/api/login")
     public ResponseEntity<?> login(@RequestBody LogInReqDto reqDto, HttpServletResponse response) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(reqDto.getUsername(), reqDto.getPassword())
-            );
-
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userService.getUserByUsername(userDetails.getUsername());
-
-            // 이용 정지 당한 경우
-            if(user.getBanDate().isAfter(LocalDate.now())){
-                return ResponseEntity.status(HttpStatus.LOCKED).build();
-            }
-
-            List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-
-            String accessToken = jwtTokenizer.createAccessToken(
-                    userDetails.getId(),
-                    userDetails.getEmail(),
-                    userDetails.getUsername(),
-                    userDetails.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.toList())
-            );
-
-            String refreshToken = jwtTokenizer.createRefreshToken(userDetails.getId(), userDetails.getEmail(), userDetails.getUsername(), roles);
-
-            Token tokenEntity = Token.builder()
-                    .accessTokenValue(accessToken)
-                    .refreshTokenValue(refreshToken)
-                    .user(user)
-                    .build();
-
-            tokenService.saveToken(tokenEntity);
-
-            LoginRspDto loginRspDto = LoginRspDto.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .username(userDetails.getUsername())
-                    .build();
-
-            // 쿠키 설정
-            Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-            accessTokenCookie.setHttpOnly(true);
-            accessTokenCookie.setPath("/");
-            accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000));
-
-            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-            refreshTokenCookie.setHttpOnly(true);
-            refreshTokenCookie.setPath("/");
-            refreshTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT / 1000));
-
-            response.addCookie(accessTokenCookie);
-            response.addCookie(refreshTokenCookie);
-
-            return ResponseEntity.ok(loginRspDto);
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-        }
+        return userService.login(reqDto, response);
     }
 
     @PostMapping("/refreshToken")
     public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response) {
-
-        // 쿠키로부터 refresh Token을 얻어온다.
-        String refreshToken = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("refreshToken".equals(cookie.getName())) {
-                    refreshToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        // 없을 때 오류로 응답
-        if (refreshToken == null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-        // 있을 때 토큰으로부터 정보를 얻어온다.
-        Claims claims = jwtTokenizer.parseRefreshToken(refreshToken);
-        String username = (String) claims.get("username");
-
-        User user = userService.getUserByUsername(username);
-
-        if(user == null) {
-            throw new UserNotFoundException("사용자를 찾을 수 없습니다.");
-        }
-
-        // accessToken 생성.
-        List roles = (List) claims.get("roles");
-        String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), username, roles);
-
-
-        // 쿠키 생성 response로 보내기
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000)); // 초 단위로 넘어오니까 밀리로 바꾸기 위해 1000으로 나눔.
-
-        response.addCookie(accessTokenCookie);
-
-        LoginRspDto loginRspDto = LoginRspDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .username(user.getUsername())
-                .build();
-
-        return new ResponseEntity(loginRspDto, HttpStatus.OK);
+        return userService.getRefreshToken(request, response);
     }
 
     // 아이디 중복 확인
@@ -210,31 +85,18 @@ public class UserApiController {
     // 아이디 찾기
     @PostMapping("/idform")
     public ResponseEntity<String> findId(@RequestBody FindIdReqDto reqDto) {
-        try {
-            String username = userService.findUserId(reqDto);
-            return ResponseEntity.ok(username);
-        } catch (UserNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
+        return userService.findUserId(reqDto);
     }
 
     // 비밀번호 찾기
     @PostMapping("/findpw")
     public ResponseEntity<String> findId(@RequestBody FindPasswordReqDto reqDto) {
-        try {
-            User user = userService.findPassword(reqDto);
-            return ResponseEntity.ok(user.getEmail() + "로 임시 비밀번호를 전송하였습니다.");
-        }
-        catch (UserNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
-        }
+        return userService.findPassword(reqDto);
     }
 
     // 벤 날짜 반환
     @GetMapping("/api/user/{username}/banDate")
     public ResponseEntity<?> getBanDate(@PathVariable("username") String username) {
-        User user = userService.getUserByUsername(username);
-
-        return ResponseEntity.ok(Map.of("banDate", user.getBanDate()));
+        return ResponseEntity.ok(Map.of("banDate", userService.getUserByUsername(username).getBanDate()));
     }
 }

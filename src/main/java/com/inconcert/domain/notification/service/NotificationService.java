@@ -7,12 +7,13 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.KeywordNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.common.exception.ExceptionMessage;
+import com.inconcert.common.exception.KeywordNotFoundException;
+import com.inconcert.common.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -39,31 +40,35 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getCurrentKeywords() {
+    public ResponseEntity<Set<String>> getCurrentKeywords() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         String key = "keywords:" + user.getId();
-        return redisTemplate.opsForSet().members(key);
+        return ResponseEntity.ok(redisTemplate.opsForSet().members(key));
     }
 
     @Transactional(readOnly = true)
-    public void addKeyword(String keyword) {
+    public ResponseEntity<String> addKeyword(String keyword) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         String key = "keywords:" + user.getId();
         redisTemplate.opsForSet().add(key, keyword);
         redisTemplate.expire(key, 7, TimeUnit.DAYS);
+
+        return ResponseEntity.ok("키워드 등록 완료");
     }
 
     @Transactional(readOnly = true)
-    public void removeKeyword(String keyword) {
+    public ResponseEntity<String> removeKeyword(String keyword) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         String key = "keywords:" + user.getId();
         redisTemplate.opsForSet().remove(key, keyword);
+
+        return ResponseEntity.ok("키워드가 성공적으로 제거되었습니다.");
     }
 
     // Redis 에 저장된 키워드를 가진 사용자만을 대상으로 알림을 생성
@@ -146,30 +151,34 @@ public class NotificationService {
     }
 
     @Transactional
-    public void markAsRead(Long id) {
+    public ResponseEntity<String> markAsRead(Long id) {
         notificationRepository.markAsRead(id);
+
+        return ResponseEntity.ok("알림을 읽었습니다.");
     }
 
     @Transactional(readOnly = true)
-    public List<NotificationDTO> getAllNotifications() {
+    public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        return notificationRepository.findByUserOrderByIsReadAscCreatedAtDesc(user.getId());
+        return ResponseEntity.ok(notificationRepository.findByUserOrderByIsReadAscCreatedAtDesc(user.getId()));
     }
 
     @Transactional(readOnly = true)
-    public List<NotificationDTO> getNotificationsByTypeAndUser(String type) {
+    public ResponseEntity<List<NotificationDTO>> getNotificationsByTypeAndUser(String type) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        return notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId());
+        return ResponseEntity.ok(notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId()));
     }
 
     // 알림 삭제 로직
     @Transactional
-    public void deleteNotification(Long id){
+    public ResponseEntity<String> deleteNotification(Long id){
         notificationRepository.deleteById(id);
+
+        return ResponseEntity.ok("알림이 삭제되었습니다.");
     }
 
     private NotificationDTO convertToDTO(Notification notification) {

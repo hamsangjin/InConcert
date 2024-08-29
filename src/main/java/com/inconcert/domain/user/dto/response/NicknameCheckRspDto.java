@@ -1,8 +1,8 @@
 package com.inconcert.domain.user.dto.response;
 
-import com.inconcert.global.dto.ResponseDto;
-import com.inconcert.global.exception.ResponseCode;
-import com.inconcert.global.exception.ResponseMessage;
+import com.inconcert.common.dto.ResponseDto;
+import com.inconcert.common.exception.ResponseCode;
+import com.inconcert.common.exception.ResponseMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

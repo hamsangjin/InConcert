@@ -14,7 +14,7 @@ import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;

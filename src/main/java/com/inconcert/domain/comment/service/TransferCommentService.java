@@ -8,7 +8,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

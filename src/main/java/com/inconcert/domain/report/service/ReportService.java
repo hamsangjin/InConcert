@@ -10,7 +10,7 @@ import com.inconcert.domain.report.entity.Report;
 import com.inconcert.domain.report.repository.ReportRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,15 +32,7 @@ public class ReportService {
     // 신고 목록 불러오기
     @Transactional(readOnly = true)
     public List<ReportDTO> getReportDTOAll() {
-        List<Report> reportList = reportRepository.findAll();
-        return reportList.stream()
-                .map(report -> ReportDTO.builder()
-                        .id(report.getId())
-                        .type(report.getType())
-                        .post(report.getPost())
-                        .reporter(report.getReporter())
-                        .build())
-                .collect(Collectors.toList());
+        return reportRepository.getReportDTOs();
     }
 
     // 신고하기
@@ -51,11 +42,10 @@ public class ReportService {
         User reporter = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        Report report = ReportDTO.toEntity(new ReportDTO(type, reportPost, reporter));
-
         // 한 유저가 같은 게시글을 또 신고했을 경우에는 무시
         boolean isDuplicateReport = reportRepository.existsByReporterAndPost(reporter, reportPost);
         if(!isDuplicateReport){
+            Report report = ReportDTO.toEntity(new ReportDTO(type, reportPost, reporter));
             reportRepository.save(report);
         }
     }
@@ -69,15 +59,7 @@ public class ReportService {
     // 관리자가 신고 처리할 때 신고 내용 보기
     @Transactional(readOnly = true)
     public ReportDTO getReportDTOById(Long reportId){
-        Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new ReportNotFoundException(ExceptionMessage.REPORT_NOT_FOUND.getMessage()));
-
-        return ReportDTO.builder()
-                .id(report.getId())
-                .type(report.getType())
-                .reporter(report.getReporter())
-                .post(report.getPost())
-                .build();
+        return reportRepository.getReportDTOByReportId(reportId);
     }
 
     // 관리자가 신고 처리

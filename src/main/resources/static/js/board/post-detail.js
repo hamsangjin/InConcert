@@ -49,7 +49,7 @@ function confirmDelete(button) {
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("유저 목록을 불러오는 데 실패했습니다.");
+            // alert("유저 목록을 불러오는 데 실패했습니다.");
         });
 
     if (hasChatRoom && userCount >= 2) {

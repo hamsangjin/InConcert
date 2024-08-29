@@ -2,7 +2,7 @@ package com.inconcert.domain.notification.entity;
 
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.global.entity.BaseEntity;
+import com.inconcert.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

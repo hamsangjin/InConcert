@@ -6,10 +6,11 @@ import com.inconcert.domain.feedback.entity.Feedback;
 import com.inconcert.domain.feedback.repository.FeedbackRepository;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.PostNotFoundException;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.common.exception.ExceptionMessage;
+import com.inconcert.common.exception.PostNotFoundException;
+import com.inconcert.common.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class FeedbackService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public void feedback(Long postId, Long reviewerId, Long revieweeId, int point){
+    public ResponseEntity<String> feedback(Long postId, Long reviewerId, Long revieweeId, int point){
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
@@ -43,5 +44,7 @@ public class FeedbackService {
 
         // 피드백에서 reviewee의 평균점수를 매겨서 reviewee의 mannerPoint에 반영
         userRepository.updateMannerPointByRevieweeId(revieweeId);
+
+        return ResponseEntity.ok("피드백이 정상적으로 작성되었습니다.");
     }
 }

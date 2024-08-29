@@ -25,40 +25,36 @@ public class NotificationController {
 
     @GetMapping("/current-keywords")
     public ResponseEntity<Set<String>> getCurrentKeywords() {
-        return ResponseEntity.ok(notificationService.getCurrentKeywords());
+        return notificationService.getCurrentKeywords();
     }
 
     @PostMapping("/keyword")
-    public ResponseEntity<?> addKeyword(@RequestParam("keyword") String keyword) {
-        notificationService.addKeyword(keyword);
-        return ResponseEntity.ok("키워드 등록 완료");
+    public ResponseEntity<String> addKeyword(@RequestParam("keyword") String keyword) {
+        return notificationService.addKeyword(keyword);
     }
 
     @DeleteMapping("/keyword")
-    public ResponseEntity<?> removeKeyword(@RequestParam("keyword") String keyword) {
-        notificationService.removeKeyword(keyword);
-        return ResponseEntity.ok("키워드가 성공적으로 제거되었습니다.");
+    public ResponseEntity<String> removeKeyword(@RequestParam("keyword") String keyword) {
+        return notificationService.removeKeyword(keyword);
     }
 
     @PostMapping("/{id}/read")
-    public ResponseEntity<?> markAsRead(@PathVariable("id") Long id) {
-        notificationService.markAsRead(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> markAsRead(@PathVariable("id") Long id) {
+        return notificationService.markAsRead(id);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
-        return ResponseEntity.ok(notificationService.getAllNotifications());
+        return notificationService.getAllNotifications();
     }
 
     @GetMapping("/{type}")
-    public ResponseEntity<?> getNotificationsByType(@PathVariable("type") String type) {
-        return ResponseEntity.ok(notificationService.getNotificationsByTypeAndUser(type));
+    public ResponseEntity<List<NotificationDTO>> getNotificationsByType(@PathVariable("type") String type) {
+        return notificationService.getNotificationsByTypeAndUser(type);
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<?> deleteNotification(@PathVariable("id") Long id) {
-        notificationService.deleteNotification(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteNotification(@PathVariable("id") Long id) {
+        return notificationService.deleteNotification(id);
     }
 }

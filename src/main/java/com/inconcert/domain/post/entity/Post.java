@@ -6,7 +6,7 @@ import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.global.entity.BaseEntity;
+import com.inconcert.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -72,10 +72,6 @@ public class Post extends BaseEntity {
 
     public void incrementViewCount() {
         this.viewCount += 1;
-    }
-
-    public void addComment(Comment comment) {
-        comments.add(comment);
     }
 
     public void assignChatRoom(ChatRoom chatRoom) {

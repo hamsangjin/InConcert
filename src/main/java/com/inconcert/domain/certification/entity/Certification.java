@@ -1,6 +1,6 @@
 package com.inconcert.domain.certification.entity;
 
-import com.inconcert.global.entity.BaseEntity;
+import com.inconcert.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,10 +24,4 @@ public class Certification extends BaseEntity {
     private String certificationNumber;
 
     private String username;
-
-    public Certification(String email, String certificationNumber, String username) {
-        this.email = email;
-        this.certificationNumber = certificationNumber;
-        this.username = username;
-    }
 }
