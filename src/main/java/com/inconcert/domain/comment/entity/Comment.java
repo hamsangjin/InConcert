@@ -1,6 +1,5 @@
 package com.inconcert.domain.comment.entity;
 
-import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.global.entity.BaseEntity;
@@ -42,36 +41,4 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies = new ArrayList<>();
-
-    // 댓글 수정
-    public void update(String content, Boolean isSecret) {
-        this.content = content;
-        this.isSecret = isSecret;
-    }
-
-    public void confirmPost(Post post) {
-        this.post = post;
-        post.addComment(this);
-    }
-
-    public void addReply(Comment reply) {
-        replies.add(reply);
-    }
-
-    public void confirmParent(Comment parent) {
-        this.parent = parent;
-        parent.addReply(this);
-    }
-
-    public CommentDTO toCommentDto() {
-        return CommentDTO.builder()
-                .id(id)
-                .user(user)
-                .post(post)
-                .content(content)
-                .isSecret(isSecret)
-                .parent(parent)
-                .replies(replies)
-                .build();
-    }
 }

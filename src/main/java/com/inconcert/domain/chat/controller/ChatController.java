@@ -24,7 +24,7 @@ public class ChatController {
     // 사용자의 채팅 목록 보기
     @GetMapping("/list")
     public String getChatList(Model model) {
-        List<ChatRoomDTO> chatRooms = chatService.getChatRoomDtosByUserId();
+        List<ChatRoomDTO> chatRooms = chatService.getChatRoomDTOsByUserId();
         model.addAttribute("chatRooms", chatRooms);
         return "chat/list";
     }
@@ -47,8 +47,9 @@ public class ChatController {
         // 유저가 채팅방에 없으면 채팅방 리스트로 리다이렉트
         if(!chatService.isExistUser(chatRoomId)) return "redirect:/chat/list";
 
-        ChatRoomDTO chatRoom = chatService.getChatRoomDto(chatRoomId);
-        List<ChatMessageDTO> messages = chatService.getMessageDtosByChatRoom(chatRoomId);
+        ChatRoomDTO chatRoom = chatService.getChatRoomDTOByChatRoomId(chatRoomId);
+        List<ChatMessageDTO> messages = chatService.getChatMessageDTOsByChatRoomId(chatRoomId);
+
         model.addAttribute("chatRoom", chatRoom);
         model.addAttribute("messages", messages);
         model.addAttribute("user", user);

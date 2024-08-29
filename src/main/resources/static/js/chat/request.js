@@ -13,7 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const messageBody = JSON.parse(notification.body);
 
             // 실시간 알림이 들어오면 확인
-            const isRejection = messageBody.message.includes('입장이 거절되었습니다');
+            const isRejection = messageBody.message.includes('입장이 거절되었습니다') ? "거절" :
+                messageBody.message.includes('채팅방 입장') ? "요청" : "무시";
             const requestItem = createNotificationItem(messageBody.message, messageBody.chatRoomId, messageBody.id, isRejection);
             const requestList = document.getElementById('requestList');
             requestList.appendChild(requestItem);
@@ -26,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             const requestList = document.getElementById('requestList');
             data.forEach(request => {
-                const isRejection = request.message.includes('입장이 거절되었습니다');
+                const isRejection = request.message.includes('입장이 거절되었습니다') ? "거절" :
+                    request.message.includes('채팅방 입장') ? "요청" : "무시";
                 const requestItem = createNotificationItem(request.message, request.chatRoomId, request.id, isRejection);
                 requestList.appendChild(requestItem);
             });
@@ -41,9 +43,9 @@ function createNotificationItem(message, chatRoomId, notificationId, isRejection
     let innerHTML = `<span>${message}</span><div>`;
 
     // 알림이 거절되었을 경우 삭제 버튼만 표시
-    if (isRejection) {
+    if (isRejection == "거절") {
         innerHTML += `<button onclick="deleteNotification(${notificationId})">삭제</button>`;
-    } else {
+    } else if(isRejection == "요청"){
         // 요청일 경우 승낙/거절 버튼 표시
         innerHTML += `
             <button onclick="acceptRequest(${chatRoomId}, ${notificationId})">승낙</button>

@@ -9,7 +9,6 @@ import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.ExceptionMessage;
 import com.inconcert.global.exception.KeywordNotFoundException;
-import com.inconcert.global.exception.NotificationNotFoundException;
 import com.inconcert.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,10 +74,8 @@ public class NotificationService {
             for (String key : keys) {
                 Long userId = Long.parseLong(key.split(":")[1]);
                 if (userId.equals(post.getUser().getId())) continue;
-
                 Set<String> keywords = redisTemplate.opsForSet().members(key);
                 Set<String> matchedKeywords = new HashSet<>();
-
                 for (String keyword : keywords) {
                     if (post.getTitle().contains(keyword)) {
                         matchedKeywords.add(keyword);
@@ -114,17 +110,17 @@ public class NotificationService {
     @Transactional
     public void createCommentsNotification(Post post, String content) {
         String message = "[댓글 알림] " + content;
-        User user = userRepository.findById(post.getUser().getId()).get();
+        User postOwner = post.getUser();
 
         Notification notification = Notification.builder()
                 .message(message)
                 .isRead(false)
-                .user(user)
+                .user(postOwner)
                 .post(post)
                 .type("comment")
                 .build();
         notificationRepository.save(notification);
-        sseEmitters.sendToUser(user.getId(), convertToDTO(notification));
+        sseEmitters.sendToUser(postOwner.getId(), convertToDTO(notification));
     }
 
     // 좋아요 알림 생성
@@ -151,41 +147,29 @@ public class NotificationService {
 
     @Transactional
     public void markAsRead(Long id) {
-        Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new NotificationNotFoundException(ExceptionMessage.NOTIFICATION_NOT_FOUND.getMessage()));
-        notification.setIsRead(true);
-        notificationRepository.save(notification);
+        notificationRepository.markAsRead(id);
     }
 
     @Transactional(readOnly = true)
     public List<NotificationDTO> getAllNotifications() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        List<Notification> notifications = notificationRepository.findByUserOrderByIsReadAscCreatedAtDesc(user);
 
-        return notifications.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return notificationRepository.findByUserOrderByIsReadAscCreatedAtDesc(user.getId());
     }
 
     @Transactional(readOnly = true)
     public List<NotificationDTO> getNotificationsByTypeAndUser(String type) {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        List<Notification> notifications = notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId());
 
-        return notifications.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId());
     }
 
     // 알림 삭제 로직
     @Transactional
     public void deleteNotification(Long id){
-        Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new NotificationNotFoundException(ExceptionMessage.NOTIFICATION_NOT_FOUND.getMessage()));
-
-        notificationRepository.delete(notification);
+        notificationRepository.deleteById(id);
     }
 
     private NotificationDTO convertToDTO(Notification notification) {

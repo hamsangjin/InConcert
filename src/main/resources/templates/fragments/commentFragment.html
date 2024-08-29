@@ -21,13 +21,13 @@
                         </div>
                     </div>
                     <div class="comment-options"
-                         th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}">
+                         th:if="${!comment.isSecret or (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username))}">
                         <!-- 댓글 수정/삭제 링크 -->
-                        <form th:if="${(comment.user != null and (#authentication.name == comment.user.username))}"
+                        <form th:if="${(comment.user != null and (#authentication.principal != 'anonymousUser' and #authentication.principal.username == comment.user.username))}"
                               th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
                             <button type="button" class="comment-options-btn">수정</button>
                         </form>
-                        <form th:if="${(comment.user != null and (#authentication.name == comment.user.username)) or (post.nickname != null and (#authentication.name == post.nickname))}"
+                        <form th:if="${(comment.user != null and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}"
                               th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/delete/' + ${comment.id}}"
                               method="post"
                               onsubmit="return confirm('이 댓글을 삭제하시겠습니까?');">
@@ -36,11 +36,10 @@
                     </div>
                 </div>
                 <p class="comment-p"
-                   th:if="${!comment.isSecret or (#authentication.name == comment.user.username) or (#authentication.name == post.nickname)}"
-                   th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}">댓글 내용</p>
+                   th:if="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}"
+                   th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}"></p>
                 <p class="comment-p secret"
-                   th:if="${comment.isSecret and (#authentication.name != comment.user.username) and (#authentication.name != post.nickname)}">
-                    비밀 댓글입니다.</p>
+                   th:unless="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}">비밀 댓글입니다.</p>
 
                 <!-- 댓글 수정 폼 -->
                 <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">

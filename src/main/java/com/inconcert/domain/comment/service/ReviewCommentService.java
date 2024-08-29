@@ -1,7 +1,6 @@
 package com.inconcert.domain.comment.service;
 
 import com.inconcert.domain.comment.dto.CommentCreationDTO;
-import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.comment.repository.CommentRepository;
 import com.inconcert.domain.notification.service.NotificationService;
@@ -11,11 +10,11 @@ import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.global.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,115 +25,70 @@ public class ReviewCommentService implements CommentService {
     private final NotificationService notificationService;
 
     @Override
-    @Transactional(readOnly = true)
-    public List<CommentDTO> getCommentDTOsByPostId(String boardType, Long id, String sort) {
-        List<Comment> byPostId;
-        if ("desc".equals(sort)) {
-            byPostId = commentRepository.findByPostIdOrderByCreatedAtDesc(id);
-        } else {
-            byPostId = commentRepository.findByPostIdOrderByCreatedAtAsc(id);
-        }
-        List<CommentDTO> dtoList = new ArrayList<>();
-        for (Comment comment : byPostId) {
-            dtoList.add(comment.toCommentDto());
-        }
-        return dtoList;
-    }
-
-    @Override
     @Transactional
-    public Long saveComment(String boardType, Long id, CommentCreationDTO dto) {
+    public void saveComment(String categoryTitle, Long postId, CommentCreationDTO dto) {
+        // 인증 여부를 확인
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            // 인증되지 않은 경우 예외 발생
+            throw new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage());
+        }
+
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        Post post = getPostByCategoryAndId(boardType, id);
+        Post post = getPostById(postId);
 
-        Comment comment = dto.toEntity();
-        comment.setPost(post);
-        comment.setUser(user);
-
-        if (dto.getParent() != null) {
-            Comment parentComment = commentRepository.findById(dto.getParent())
-                    .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
-            comment.confirmParent(parentComment);
-        }
-
-        Comment saveComment = commentRepository.save(comment);
-        if(!saveComment.getUser().getId().equals(post.getUser().getId())) notificationService.createCommentsNotification(post, saveComment.getContent());
-
-        return comment.getId();
-    }
-
-    @Override
-    @Transactional
-    public void saveReply(String boardType, Long postId, Long parentId, CommentCreationDTO dto) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        Post post = getPostByCategoryAndId(boardType, postId);
+        dto.setPost(post);
         dto.setUser(user);
         Comment comment = dto.toEntity();
-
-        comment.confirmPost(post);
-
-        if (parentId != null) {
-            Comment parentComment = commentRepository.findById(parentId)
-                    .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
-            comment.confirmParent(parentComment);
-        }
-
         Comment saveComment = commentRepository.save(comment);
+
         if(!saveComment.getUser().getId().equals(post.getUser().getId())) notificationService.createCommentsNotification(post, saveComment.getContent());
     }
 
     @Override
     @Transactional
-    public Long updateComment(String boardType, Long id, CommentCreationDTO dto) {
+    public void saveReply(String categoryTitle, Long postId, Long parentId, CommentCreationDTO dto) {
+        // 인증 여부를 확인
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+            // 인증되지 않은 경우 예외 발생
+            throw new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage());
+        }
+
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        Comment comment = commentRepository.findById(id)
+        Post post = getPostById(postId);
+
+        dto.setUser(user);
+        dto.setPost(post);
+
+        Comment parentComment = commentRepository.findById(parentId)
                 .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
+        dto.setParent(parentComment);
 
-        validateCommentEditAuthorization(comment.toCommentDto(), user);
+        Comment comment = dto.toEntity();
+        Comment saveComment = commentRepository.save(comment);
 
-        comment.update(dto.getContent(), dto.getIsSecret());
-        commentRepository.save(comment);
-        return comment.getId();
+        if(!saveComment.getUser().getId().equals(post.getUser().getId())) notificationService.createCommentsNotification(post, saveComment.getContent());
     }
 
     @Override
     @Transactional
-    public void deleteComment(String boardType, Long id) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new CommentNotFoundException(ExceptionMessage.COMMENT_NOT_FOUND.getMessage()));
-        Post post = getPostByCategoryAndId(boardType, comment.getPost().getId());
+    public void updateComment(String categoryTitle, Long commentId, CommentCreationDTO dto) {
+        commentRepository.updateComment(commentId, dto.getContent(), dto.getIsSecret());
+    }
 
-        validateCommentDeletion(comment.toCommentDto(), post, user);
-
-        commentRepository.delete(comment);
+    @Override
+    @Transactional
+    public void deleteComment(String categoryTitle, Long commentId) {
+        commentRepository.deleteById(commentId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Post getPostByCategoryAndId(String categoryTitle, Long postId) {
+    public Post getPostById(Long postId) {
         return reviewRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
-    }
-
-    @Override
-    public void validateCommentDeletion(CommentDTO dto, Post post, User user) {
-        boolean isCommentAuthor = dto.getUser().getUsername().equals(user.getUsername());
-        boolean isPostAuthor = post.getUser().getUsername().equals(user.getUsername());
-
-        if (!isCommentAuthor && !isPostAuthor) {
-            throw new CommentDeleteUnauthorizedException(ExceptionMessage.COMMENT_DELETE_UNAUTHORIZED.getMessage());
-        }
-    }
-
-    @Override
-    public void validateCommentEditAuthorization(CommentDTO dto, User user) {
-        if (!dto.getUser().getUsername().equals(user.getUsername())) {
-            throw new CommentEditUnauthorizedException(ExceptionMessage.COMMENT_EDIT_UNAUTHORIZED.getMessage());
-        }
     }
 }

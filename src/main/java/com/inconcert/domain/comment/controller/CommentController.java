@@ -1,20 +1,18 @@
 package com.inconcert.domain.comment.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreationDTO;
-import com.inconcert.domain.comment.dto.CommentDTO;
 import com.inconcert.domain.comment.service.CommentService;
-import com.inconcert.global.exception.PostCategoryNotFoundException;
+import com.inconcert.global.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -39,19 +37,7 @@ public class CommentController {
     }
 
     private CommentService getService(String postCategoryTitle) {
-        CommentService service = this.commentServices.get(postCategoryTitle.toLowerCase());
-        if (service == null) {
-            throw new PostCategoryNotFoundException("Invalid post category title: " + postCategoryTitle);
-        }
-        return service;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("postCategoryTitle") String postCategoryTitle,
-                                                        @PathVariable("postId") Long postId,
-                                                        @RequestParam(defaultValue = "asc") String sort) {
-        List<CommentDTO> comments = getService(postCategoryTitle).getCommentDTOsByPostId(postCategoryTitle, postId, sort);
-        return ResponseEntity.ok(comments);
+        return this.commentServices.get(postCategoryTitle.toLowerCase());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -86,12 +72,17 @@ public class CommentController {
                                 @PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId,
                                 @Valid @ModelAttribute("createForm") CommentCreationDTO commentForm,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        getService(postCategoryTitle).saveComment(postCategoryTitle, postId, commentForm);
+        try {
+            getService(postCategoryTitle).saveComment(postCategoryTitle, postId, commentForm);
+        } catch (UserNotFoundException e) {
+            redirectAttributes.addFlashAttribute("message", "로그인 후 이용 가능합니다.");
+            return "redirect:/loginform";
+        }
 
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
@@ -103,13 +94,18 @@ public class CommentController {
                               @PathVariable("postId") Long postId,
                               @PathVariable("parentId") Long parentId,
                               @Valid @ModelAttribute("commentForm") CommentCreationDTO commentForm,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
         }
 
-        commentForm.setParent(parentId); // 부모 댓글 ID 설정
-        getService(postCategoryTitle).saveReply(postCategoryTitle, postId, parentId, commentForm);
+        try {
+            getService(postCategoryTitle).saveReply(postCategoryTitle, postId, parentId, commentForm);
+        } catch (UserNotFoundException e) {
+            redirectAttributes.addFlashAttribute("message", "로그인 후 이용 가능합니다.");
+            return "redirect:/loginform";
+        }
+
         return "redirect:/" + categoryTitle + "/" + postCategoryTitle + "/" + postId;
     }
 }

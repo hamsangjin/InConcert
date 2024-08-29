@@ -37,7 +37,8 @@ public enum ExceptionMessage {
     ALREADY_OUT_OF_CHATROOM("채팅방에 속해있지 않습니다."),
     ALREADY_APPLIED_TO_CHATROOM("이미 동행 신청을 보냈습니다."),
     EXIST_CHAT_POST_DELETE("연결된 채팅방이 있는 경우 포스트를 삭제할 수 없습니다."),
-    SELF_CHAT("본인에게는 1대1 채팅을 보낼 수 없습니다.");
+    SELF_CHAT("본인에게는 1대1 채팅을 보낼 수 없습니다."),
+    KICK_NOT_ALLOWED("호스트가 아니면 강퇴를 할 수 없습니다.");
 
 
     private final String message;
