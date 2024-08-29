@@ -6,6 +6,10 @@ import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.util.DateUtil;
 import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,11 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ImageService imageService;
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getAllInfoPostsByPostCategory(int page, int size) {
@@ -67,6 +74,52 @@ public class ReviewService {
     public void deletePost(Long postId) {
         Post post = reviewRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+
+        // 포스트에 포함된 모든 이미지 삭제
+        List<String> imageKeys = extractImageKeys(post.getContent());
+        for (String key : imageKeys) {
+            imageService.deleteImage(key);
+        }
+
         reviewRepository.delete(post);
+    }
+
+    private List<String> extractImageKeys(String content) {
+        List<String> imageKeys = new ArrayList<>();
+
+        // Jsoup을 사용하여 HTML 파싱
+        Document document = Jsoup.parse(content);
+
+        // <img> 태그를 모두 선택
+        Elements imgElements = document.select("img");
+
+        // 각 <img> 태그의 src 속성에서 S3 키 추출
+        for (Element img : imgElements) {
+            String imageUrl = img.attr("src");
+
+            // S3 키 추출: URL에서 마지막 '/' 이후의 부분이 파일 이름 (S3 키)라고 가정
+            String imageKey = extractKeyFromUrl(imageUrl);
+
+            if (imageKey != null) {
+                imageKeys.add(imageKey);
+            }
+        }
+
+        return imageKeys;
+    }
+
+    private String extractKeyFromUrl(String url) {
+        // 예: https://d12345678abcdef.cloudfront.net/your-bucket-name/image12345.png
+        // 위 URL에서 "image12345.png" 추출
+        try {
+            int lastSlashIndex = url.lastIndexOf('/');
+            if (lastSlashIndex != -1) {
+                return url.substring(lastSlashIndex + 1);
+            }
+        } catch (Exception e) {
+            // URL이 예상과 다를 경우 null 반환
+            return null;
+        }
+        return null;
     }
 }

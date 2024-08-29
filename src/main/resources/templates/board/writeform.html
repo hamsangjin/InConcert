@@ -92,7 +92,8 @@
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script>
-    var quill = new Quill('#editor', {
+    let imageFiles = [];  // 이미지 파일을 관리할 배열
+    let quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
             toolbar: [
@@ -105,46 +106,66 @@
     });
 
     function imageHandler() {
-        var input = document.createElement('input');
+        let input = document.createElement('input');
         input.setAttribute('type', 'file');
         input.setAttribute('accept', 'image/*');
         input.click();
 
         input.onchange = function() {
-            var file = input.files[0];
-            var formData = new FormData();
-            formData.append('file', file);
+            let file = input.files[0];
+            imageFiles.push(file);  // 배열에 파일 추가
+            console.log("imammamamamamama " + imageFiles[imageFiles.length-1]);
 
-            fetch('/uploadImage', {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-                .then(result => {
-                    var range = quill.getSelection();
-                    quill.insertEmbed(range.index, 'image', result.url);
-                    quill.setSelection(range.index + 1);
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let range = quill.getSelection();
+                quill.insertEmbed(range.index, 'image', e.target.result);
+                quill.setSelection(range.index + 1);
 
-                    // 첫 번째 이미지일 경우 썸네일로 설정
-                    if (!document.getElementById('thumbnailUrl').value) {
-                        document.getElementById('thumbnailUrl').value = result.url;
-                    }
-                }).catch(error => {
-                console.error('Error:', error);
-            });
+                // 첫 번째 이미지일 경우 썸네일로 설정
+                if (!document.getElementById('thumbnailUrl').value) {
+                    document.getElementById('thumbnailUrl').value = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
         };
     }
 
     quill.getModule('toolbar').addHandler('image', imageHandler);
 
+    // 이미지 삭제 핸들러: 에디터에서 이미지가 삭제되면 배열에서도 제거
+    quill.on('text-change', function(delta, oldDelta, source) {
+        if (source === 'user') {
+            let ops = delta.ops;
+            for (let i = 0; i < ops.length; i++) {
+                if (ops[i].delete) {
+                    let index = quill.getSelection().index;
+                    let [leaf] = quill.getLeaf(index - 1);
+                    if (leaf.domNode && leaf.domNode.tagName === 'IMG') {
+                        let src = leaf.domNode.src;
+                        // 이미지 경로가 배열의 파일과 일치하는 경우 삭제
+                        imageFiles = imageFiles.filter(file => {
+                            let reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            return reader.result !== src;
+                        });
+                    }
+                }
+            }
+        }
+    });
+
     document.getElementById('postForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // 폼 기본 제출 동작 중지
+
         document.getElementById('content').value = quill.root.innerHTML;
 
-        var categoryTitle = document.getElementById('categoryTitle');
-        var postCategoryTitle = document.getElementById('postCategoryTitle');
-        var matchCount = document.getElementById('matchCount');
-        var endDate = document.getElementById('endDate');
-        var title = document.getElementById('title');
-        var content = document.getElementById('content');
+        let categoryTitle = document.getElementById('categoryTitle');
+        let postCategoryTitle = document.getElementById('postCategoryTitle');
+        let matchCount = document.getElementById('matchCount');
+        let endDate = document.getElementById('endDate');
+        let title = document.getElementById('title');
+        let content = document.getElementById('content');
 
         if (
             categoryTitle.value === 'default' ||
@@ -153,11 +174,33 @@
             !title.value.trim() ||
             !content.value.trim()
         ) {
-            event.preventDefault();
             alert('모든 필드를 올바르게 입력해주세요.');
         } else {
-            var selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
-            this.action = '/' + selectedCategory + '/write';
+            // 글쓰기 버튼을 눌렀을 때 이미지들을 S3에 업로드
+            let formData = new FormData();
+            imageFiles.forEach(file => formData.append('images', file));
+
+            fetch('/uploadImages', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("datatatatat? ??? " + data.value);
+                    console.log("datatatatat? ??? " + data.message);
+                    if (data.ok) {
+                        // 이미지 업로드가 완료되면 실제 폼을 제출
+                        let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
+                        document.getElementById('postForm').action = '/' + selectedCategory + '/write';
+                        document.getElementById('postForm').submit();
+                    } else {
+                        alert('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('이미지 업로드 중 오류가 발생했습니다.');
+                });
         }
     });
 

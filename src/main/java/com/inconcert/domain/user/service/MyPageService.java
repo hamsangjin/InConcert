@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,8 +72,10 @@ public class MyPageService {
         // 이미지 처리
         String profileImageUrl = user.getProfileImage();
         if (reqDto.getProfileImage() != null && !reqDto.getProfileImage().isEmpty()) {
-            Map<String, String> uploadResult = imageService.uploadImage(reqDto.getProfileImage());
-            profileImageUrl = uploadResult.get("url");
+            ResponseEntity<?> uploadResult = imageService.uploadImages(Arrays.asList(reqDto.getProfileImage()));
+            Map<String, String> map = (Map<String, String>) uploadResult.getBody();
+            profileImageUrl = map.get("url");
+            System.out.println(profileImageUrl + " prorororororrororoororoifiififififiif");
         }
 
         user.updateUser(reqDto, encodedPassword, profileImageUrl);

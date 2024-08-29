@@ -15,8 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,8 +36,8 @@ public class ReviewController {
 
     @GetMapping
     public String detailReview(Model model,
-                         @RequestParam(name = "page", defaultValue = "0") int page,
-                         @RequestParam(name = "size", defaultValue = "10") int size) {
+                               @RequestParam(name = "page", defaultValue = "0") int page,
+                               @RequestParam(name = "size", defaultValue = "10") int size) {
 
         Page<PostDTO> postsPage = reviewService.getAllInfoPostsByPostCategory(page, size);
 
@@ -111,8 +113,9 @@ public class ReviewController {
     }
 
     @PostMapping("/write")
-    public String write(@ModelAttribute PostDTO postDto) {
-        Post post = writeService.save(postDto);
+    public String write(@ModelAttribute PostDTO postDto,
+                        @RequestParam("images") List<MultipartFile> images) {
+        Post post = writeService.save(postDto, images);
         return "redirect:/review/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 
