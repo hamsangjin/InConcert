@@ -93,6 +93,8 @@
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script>
     let imageFiles = [];  // 이미지 파일을 관리할 배열
+    let imageMap = new Map();  // 이미지 src와 파일 객체를 매핑할 맵
+
     let quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
@@ -113,20 +115,23 @@
 
         input.onchange = function() {
             let file = input.files[0];
-            imageFiles.push(file);  // 배열에 파일 추가
-            console.log("imammamamamamama " + imageFiles[imageFiles.length-1]);
-
             let reader = new FileReader();
+
             reader.onload = function(e) {
                 let range = quill.getSelection();
                 quill.insertEmbed(range.index, 'image', e.target.result);
                 quill.setSelection(range.index + 1);
+
+                // 파일 객체와 이미지 src를 매핑
+                imageMap.set(e.target.result, file);
+                imageFiles.push(file);
 
                 // 첫 번째 이미지일 경우 썸네일로 설정
                 if (!document.getElementById('thumbnailUrl').value) {
                     document.getElementById('thumbnailUrl').value = e.target.result;
                 }
             };
+
             reader.readAsDataURL(file);
         };
     }
@@ -143,12 +148,13 @@
                     let [leaf] = quill.getLeaf(index - 1);
                     if (leaf.domNode && leaf.domNode.tagName === 'IMG') {
                         let src = leaf.domNode.src;
-                        // 이미지 경로가 배열의 파일과 일치하는 경우 삭제
-                        imageFiles = imageFiles.filter(file => {
-                            let reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            return reader.result !== src;
-                        });
+                        let fileToRemove = imageMap.get(src);
+
+                        // 배열에서 해당 파일 제거
+                        imageFiles = imageFiles.filter(file => file !== fileToRemove);
+
+                        // 맵에서도 해당 항목 제거
+                        imageMap.delete(src);
                     }
                 }
             }
@@ -175,32 +181,44 @@
             !content.value.trim()
         ) {
             alert('모든 필드를 올바르게 입력해주세요.');
-        } else {
-            // 글쓰기 버튼을 눌렀을 때 이미지들을 S3에 업로드
-            let formData = new FormData();
-            imageFiles.forEach(file => formData.append('images', file));
+        }
+        else {
+            if (imageFiles.length > 0) {
+                // 글쓰기 버튼을 눌렀을 때 이미지들을 S3에 업로드
+                let formData = new FormData();
+                imageFiles.forEach(file => formData.append('images', file));
 
-            fetch('/uploadImages', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("datatatatat? ??? " + data.value);
-                    console.log("datatatatat? ??? " + data.message);
-                    if (data.ok) {
-                        // 이미지 업로드가 완료되면 실제 폼을 제출
-                        let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
-                        document.getElementById('postForm').action = '/' + selectedCategory + '/write';
-                        document.getElementById('postForm').submit();
-                    } else {
-                        alert('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
+                fetch('/uploadImages', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('이미지 업로드 중 오류가 발생했습니다.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            // 서버에서 받은 이미지 URL을 hidden input에 저장
+                            document.getElementById('thumbnailUrl').value = data[0].url;  // 첫 번째 이미지 URL을 썸네일로 설정
+
+                            // 실제 폼을 다시 전송
+                            let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
+                            document.getElementById('postForm').action = '/' + selectedCategory + '/write';
+                            document.getElementById('postForm').submit();
+                        } else {
+                            alert('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('이미지 업로드 중 오류가 발생했습니다.');
+                    });
+            }
+            else {
+                let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
+                document.getElementById('postForm').action = '/' + selectedCategory + '/write';
+                document.getElementById('postForm').submit();
+            }
         }
     });
 

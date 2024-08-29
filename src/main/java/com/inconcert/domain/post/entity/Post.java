@@ -89,4 +89,8 @@ public class Post extends BaseEntity {
     public void updateMatchUserIds(List<Long> matchUserIds) {
         this.matchUserIds = matchUserIds;
     }
+
+    public void updateThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
+    }
 }

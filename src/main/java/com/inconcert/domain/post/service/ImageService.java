@@ -50,20 +50,16 @@ public class ImageService {
                         software.amazon.awssdk.core.sync.RequestBody.fromBytes(image.getBytes()));
 
                 // CloudFront URL 생성
-                String fileDownloadUri = cloudFrontUrl + savedFileName;
+                String fileDownloadUri = cloudFrontUrl + "/" + savedFileName;
 
                 Map<String, String> result = new HashMap<>();
                 result.put("url", fileDownloadUri);
                 results.add(result);
-            }
-            catch (IOException e) {
+            } catch (IOException | S3Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionMessage.IMAGE_UPLOAD_BAD_REQUEST.getMessage());
             }
-            // S3 관련 예외 처리
-            catch (S3Exception e) {
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionMessage.IMAGE_UPLOAD_BAD_REQUEST.getMessage());
-            }
         }
+
         return ResponseEntity.ok(results);
     }
 
