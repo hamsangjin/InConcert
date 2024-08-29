@@ -33,9 +33,8 @@ public class CommentControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // createComment 메소드 테스트
     @Test
-    void testCreateComment() {
+    void 댓글_생성_테스트() {
         // Given
         // 댓글 생성용 DTO 객체를 생성하고, 테스트용 댓글 내용을 설정
         CommentCreationDTO commentCreationDTO = new CommentCreationDTO();
@@ -60,9 +59,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // createReply 메소드 테스트
     @Test
-    void testCreateReply() {
+    void 대댓글_생성_테스트() {
         // Given
         // 대댓글 생성용 DTO 객체를 생성하고, 테스트용 대댓글 내용을 설정
         CommentCreationDTO commentCreationDTO = new CommentCreationDTO();
@@ -87,9 +85,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // deleteComment 메소드 테스트
     @Test
-    void testDeleteComment() {
+    void 댓글_삭제_테스트() {
         // Given
         // 삭제할 댓글의 ID를 설정
         Long commentId = 1L;
@@ -108,9 +105,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // editComment 메소드 테스트
     @Test
-    void testEditComment() {
+    void 댓글_수정_테스트() {
         // Given
         // 수정할 댓글의 ID와 수정 내용을 설정
         Long commentId = 1L;
@@ -135,9 +131,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // 빈 댓글 생성 시도에 대한 테스트
     @Test
-    void testCreateEmptyComment() {
+    void 비어있는_댓글_생성_테스트() {
         // Given
         // 내용이 빈 댓글 생성용 DTO 객체를 생성
         CommentCreationDTO commentCreationDTO = new CommentCreationDTO();
@@ -159,9 +154,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // 존재하지 않는 댓글을 수정 테스트
     @Test
-    void testEditNonExistentComment() {
+    void 존재하지_않는_댓글_수정_테스트() {
         // Given
         // 존재하지 않는 댓글 ID와 수정 내용을 설정
         Long nonExistentCommentId = 999L;
@@ -183,9 +177,8 @@ public class CommentControllerTest {
         });
     }
 
-    // 댓글 생성 시 사용자가 인증되지 않은 경우
     @Test
-    void testCreateCommentUnauthorized() {
+    void 인증되지_않은_사용자의_댓글_생성_테스트() {
         // Given
         // 댓글 생성용 DTO 객체를 생성하고, 테스트용 댓글 내용을 설정
         CommentCreationDTO commentCreationDTO = new CommentCreationDTO();
@@ -213,9 +206,8 @@ public class CommentControllerTest {
         assertEquals("redirect:/loginform", result);
     }
 
-    // 대댓글 생성 시 사용자가 인증되지 않은 경우
     @Test
-    void testCreateReplyUnauthorized() {
+    void 인증되지_않은_사용자의_대댓글_생성_테스트() {
         // Given
         // 대댓글 생성용 DTO 객체를 생성하고, 테스트용 대댓글 내용을 설정
         CommentCreationDTO commentCreationDTO = new CommentCreationDTO();

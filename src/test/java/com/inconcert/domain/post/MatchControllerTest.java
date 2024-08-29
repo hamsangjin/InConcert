@@ -35,9 +35,8 @@ public class MatchControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // 채팅방이 연결된 게시글 삭제 시도에 대한 테스트
     @Test
-    void testDeletePostWithChatRoom() {
+    void 채팅방이_연결된_게시글_삭제_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "concert";
@@ -60,9 +59,8 @@ public class MatchControllerTest {
         assertEquals("redirect:/match/concert/1", result);
     }
 
-    // 채팅방이 연결된 게시글 수정 폼 조회 기능 테스트
     @Test
-    void testEditPostFormWithChatRoom() {
+    void 채팅방이_연결된_게시글_수정_폼_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "concert";
@@ -87,9 +85,8 @@ public class MatchControllerTest {
         assertEquals("board/editform", result);
     }
 
-    // 매칭 완료 기능 테스트
     @Test
-    void testCompleteMatch() {
+    void 매칭_완료_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "concert";

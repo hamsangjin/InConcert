@@ -48,9 +48,8 @@ public class InfoControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    // 게시글 작성 기능 테스트
     @Test
-    void testWritePost() {
+    void 게시글_작성_테스트() {
         // Given
         // 게시글 작성에 필요한 DTO 객체 생성 및 설정
         PostDTO postDto = new PostDTO();
@@ -81,9 +80,8 @@ public class InfoControllerTest {
         assertEquals("redirect:/info/musical/1", result);
     }
 
-    // 유효하지 않은 카테고리로 게시글 작성 시도에 대한 테스트
     @Test
-    void testWritePostWithInvalidCategory() {
+    void 유효하지_않은_카테고리에_게시글_작성_테스트() {
         // Given
         // 유효하지 않은 카테고리로 게시글 작성 DTO 설정
         PostDTO postDto = new PostDTO();
@@ -102,9 +100,8 @@ public class InfoControllerTest {
         });
     }
 
-    // 게시판 정보 조회 기능 테스트
     @Test
-    void testInfo() {
+    void 게시판_정보_조회_테스트() {
         // Given
         // 각 카테고리에 대한 게시글 목록 반환 설정
         when(infoService.getAllInfoPostsByPostCategory("musical")).thenReturn(List.of(new PostDTO()));
@@ -127,9 +124,8 @@ public class InfoControllerTest {
         assertEquals("board/board", result);
     }
 
-    // 게시글 상세보기 기능 테스트
     @Test
-    void testGetPostDetail() {
+    void 게시글_상세보기_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "musical";
@@ -155,9 +151,8 @@ public class InfoControllerTest {
         assertEquals("board/post-detail", result);
     }
 
-    // 게시글 삭제 기능 테스트
     @Test
-    void testDeletePost() {
+    void 게시글_삭제_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "musical";
@@ -173,9 +168,8 @@ public class InfoControllerTest {
         assertEquals("redirect:/info/musical", result);
     }
 
-    // 게시글 수정 폼 조회 기능 테스트
     @Test
-    void testEditPostForm() {
+    void 게시글_수정_폼_테스트() {
         // Given
         Long postId = 1L;
         String postCategoryTitle = "musical";
@@ -197,9 +191,8 @@ public class InfoControllerTest {
         assertEquals("board/editform", result);
     }
 
-    // 게시글 검색 기능 테스트
     @Test
-    void testSearch() {
+    void 게시글_검색_테스트() {
         // Given
         String postCategoryTitle = "musical";
         String keyword = "test";
@@ -223,9 +216,8 @@ public class InfoControllerTest {
         assertEquals("board/board-detail", result);
     }
 
-    // 게시글 신고 폼 조회 기능 테스트
     @Test
-    void testReportForm() {
+    void 게시글_신고_폼_테스트() {
         // Given
         Long postId = 1L;
         PostDTO postDTO = new PostDTO();
