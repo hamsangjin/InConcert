@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/search").permitAll()
                         .requestMatchers("/api/**","/css/**", "/js/**", "/images/**", "/images/uploads/**", "/uploads/images/**").permitAll()
                         .requestMatchers("/report").hasAnyRole("ADMIN")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()  // Swagger UI 접근 허용
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
