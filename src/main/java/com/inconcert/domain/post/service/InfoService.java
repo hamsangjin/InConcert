@@ -1,11 +1,10 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.crawling.service.PerformanceService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.util.DateUtil;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +19,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InfoService {
     private final InfoRepository infoRepository;
-    private final PerformanceService performanceService;
 
     @Transactional(readOnly = true)
     public List<PostDTO> getAllInfoPostsByPostCategory(String postCategoryTitle) {

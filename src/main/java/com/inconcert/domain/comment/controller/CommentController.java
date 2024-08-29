@@ -2,7 +2,7 @@ package com.inconcert.domain.comment.controller;
 
 import com.inconcert.domain.comment.dto.CommentCreationDTO;
 import com.inconcert.domain.comment.service.CommentService;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.common.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

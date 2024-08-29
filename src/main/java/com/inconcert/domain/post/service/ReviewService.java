@@ -4,7 +4,7 @@ import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.util.DateUtil;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

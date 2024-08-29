@@ -20,7 +20,7 @@ public class ChatApiController {
     // 채팅방에 속한 유저 목록
     @GetMapping("/users/{chatRoomId}")
     public ResponseEntity<List<UserDTO>> getUsersInChatRoom(@PathVariable("chatRoomId") Long chatRoomId) {
-        return ResponseEntity.ok(chatService.getUserDTOsByChatRoomId(chatRoomId));
+        return chatService.getUserDTOsByChatRoomId(chatRoomId);
     }
 
     // host에게 동행 요청 전송

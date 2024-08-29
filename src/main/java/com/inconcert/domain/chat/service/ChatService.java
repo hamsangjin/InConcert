@@ -13,7 +13,7 @@ import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +63,8 @@ public class ChatService {
 
     // 채팅방에 속한 유저 목록
     @Transactional(readOnly = true)
-    public List<UserDTO> getUserDTOsByChatRoomId(Long chatRoomId) {
-        return chatRoomRepository.findAllById(chatRoomId);
+    public ResponseEntity<List<UserDTO>> getUserDTOsByChatRoomId(Long chatRoomId) {
+        return ResponseEntity.ok(chatRoomRepository.findAllById(chatRoomId));
     }
 
     // 유저가 채팅방에 있는지 확인하는 메소드
@@ -73,7 +73,7 @@ public class ChatService {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
-        return getUserDTOsByChatRoomId(chatRoomId).stream()
+        return getUserDTOsByChatRoomId(chatRoomId).getBody().stream()
                 .anyMatch(userDto -> userDto.getId().equals(user.getId()));
     }
 

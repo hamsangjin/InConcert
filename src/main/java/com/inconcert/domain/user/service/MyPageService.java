@@ -11,12 +11,13 @@ import com.inconcert.domain.user.dto.response.FeedbackRspDTO;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.MyPageRepostory;
 import com.inconcert.domain.user.repository.UserRepository;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.common.exception.ExceptionMessage;
+import com.inconcert.common.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,21 +42,21 @@ public class MyPageService {
     public Page<PostDTO> getMyPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.findByUserId(userId, pageable);
+        return myPageRepostory.getPostDTOsByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getMyCommentPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.findPostsWithMyComments(userId, pageable);
+        return myPageRepostory.getPostDTOsWithMyComments(userId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getMyLikePosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.findPostsILiked(userId, pageable);
+        return myPageRepostory.getPostDTOsMyLiked(userId, pageable);
     }
 
     // 유저 정보 수정
@@ -80,12 +81,14 @@ public class MyPageService {
 
     // 기본 이미지로 변경
     @Transactional
-    public void resetToDefaultProfileImage() {
+    public ResponseEntity<String> resetToDefaultProfileImage() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         user.setBasicImage();
         userRepository.save(user);
+
+        return ResponseEntity.ok("이미지가 정상적으로 변경되었습니다.");
     }
 
     // 동행중
@@ -99,7 +102,7 @@ public class MyPageService {
     public Page<MatchRspDTO> completeMatch(Long userId, int page, int size){
         Pageable pageable = PageRequest.of(page, size);
 
-        return matchRepository.findAllByUserIdInMatchUserIdsAndEndMatch(userId, pageable);
+        return matchRepository.getMatchRspDTOsByUserIdInMatchUserIdsAndEndMatch(userId, pageable);
     }
 
     // 해당 게시글의 평가할 유저들 불러오기

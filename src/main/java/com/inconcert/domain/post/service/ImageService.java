@@ -1,7 +1,7 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.ImageUploadException;
+import com.inconcert.common.exception.ExceptionMessage;
+import com.inconcert.common.exception.ImageUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

@@ -16,7 +16,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.*;
+import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

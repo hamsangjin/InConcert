@@ -21,8 +21,8 @@ public interface MyPageRepostory extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE u.id = :userId")
-    Page<PostDTO> findByUserId(@Param("userId") Long userId,
-                               Pageable pageable);
+    Page<PostDTO> getPostDTOsByUserId(@Param("userId") Long userId,
+                                      Pageable pageable);
 
     // 내가 작성한 댓글이 있는 게시물들
     @Query("SELECT DISTINCT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
@@ -34,8 +34,8 @@ public interface MyPageRepostory extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE cm.user.id = :userId")
-    Page<PostDTO> findPostsWithMyComments(@Param("userId") Long userId,
-                                          Pageable pageable);
+    Page<PostDTO> getPostDTOsWithMyComments(@Param("userId") Long userId,
+                                            Pageable pageable);
 
     // 내가 좋아요를 누른 게시물들
     @Query("SELECT DISTINCT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
@@ -47,6 +47,6 @@ public interface MyPageRepostory extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE l.user.id = :userId")
-    Page<PostDTO> findPostsILiked(@Param("userId") Long userId,
-                                  Pageable pageable);
+    Page<PostDTO> getPostDTOsMyLiked(@Param("userId") Long userId,
+                                     Pageable pageable);
 }

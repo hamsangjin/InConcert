@@ -85,13 +85,13 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p.id " +
             "FROM Post p " +
             "WHERE p.endDate < :currentDate AND p.isEnd = false AND p.postCategory.category.title = 'match'")
-    List<Long> findAllByEndDateBeforeAndIsEndFalse(@Param("currentDate") LocalDate currentDate);
+    List<Long> getPostIdsByEndDateBeforeAndIsEndFalse(@Param("currentDate") LocalDate currentDate);
 
     @Query("SELECT new com.inconcert.domain.user.dto.response.MatchRspDTO" +
             "(p.id, p.chatRoom.id, p.title, p.endDate, size(p.matchUserIds), p.matchCount, p.isEnd, p.thumbnailUrl, p.postCategory.category.title, p.postCategory.title, p.user.nickname) " +
             "FROM Post p " +
             "WHERE :userId member of p.matchUserIds AND p.isEnd = true")
-    Page<MatchRspDTO> findAllByUserIdInMatchUserIdsAndEndMatch(@Param("userId") Long userId, Pageable pageable);
+    Page<MatchRspDTO> getMatchRspDTOsByUserIdInMatchUserIdsAndEndMatch(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT id " +
             "FROM User " +

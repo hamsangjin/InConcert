@@ -9,8 +9,8 @@ import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.service.MyPageService;
 import com.inconcert.domain.user.service.UserService;
-import com.inconcert.global.exception.ExceptionMessage;
-import com.inconcert.global.exception.UserNotFoundException;
+import com.inconcert.common.exception.ExceptionMessage;
+import com.inconcert.common.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -52,7 +52,8 @@ public class MyPageController {
     }
 
     @PostMapping("/edit")
-    public String editMyPage(@ModelAttribute MyPageEditReqDto reqDto, RedirectAttributes redirectAttributes) {
+    public String editMyPage(@ModelAttribute MyPageEditReqDto reqDto,
+                             RedirectAttributes redirectAttributes) {
         try {
             myPageService.editUser(reqDto);
         }
@@ -70,9 +71,8 @@ public class MyPageController {
     // 기본 프로필로 변경
     @PostMapping("/reset-profile-image")
     @ResponseBody
-    public ResponseEntity<Void> resetProfileImage() {
-        myPageService.resetToDefaultProfileImage();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> resetProfileImage() {
+        return myPageService.resetToDefaultProfileImage();
     }
 
     @GetMapping("/board/{userId}")
@@ -112,7 +112,9 @@ public class MyPageController {
                                   @PathVariable("userId") Long userId,
                                   @RequestParam(name = "page", defaultValue = "0") int page,
                                   @RequestParam(name = "size", defaultValue = "10") int size) {
+
         Page<PostDTO> postPage = myPageService.getMyLikePosts(userId, page, size);
+
         model.addAttribute("postsPage", postPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", postPage.getTotalPages());
@@ -180,14 +182,12 @@ public class MyPageController {
     }
 
     @PostMapping("/match/{reviewerId}/complete/{postId}/{revieweeId}")
-    public ResponseEntity<?> addMyfeedback(@PathVariable(name = "reviewerId") Long reviewerId,
-                                @PathVariable(name = "revieweeId") Long revieweeId,
-                                @PathVariable(name = "postId") Long postId,
-                                @RequestParam(name = "rating") int rating) {
+    public ResponseEntity<String> addMyfeedback(@PathVariable(name = "reviewerId") Long reviewerId,
+                                                @PathVariable(name = "revieweeId") Long revieweeId,
+                                                @PathVariable(name = "postId") Long postId,
+                                                @RequestParam(name = "rating") int rating) {
 
-        feedbackService.feedback(postId, reviewerId, revieweeId, rating);
-
-        return ResponseEntity.ok().build();
+        return feedbackService.feedback(postId, reviewerId, revieweeId, rating);
     }
 
     @PostMapping("/bye")

@@ -25,6 +25,13 @@ public class ReportDTO {
                 .build();
     }
 
+    public ReportDTO(Long id, String type, Post post, User reporter) {
+        this.id = id;
+        this.type = type;
+        this.post = post;
+        this.reporter = reporter;
+    }
+
     public ReportDTO(String type, Post post, User reporter) {
         this.type = type;
         this.post = post;
