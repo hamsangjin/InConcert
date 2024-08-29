@@ -8,10 +8,18 @@ spring:
     password: ${password}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:sql/init.sql # init.sql 파일의 위치를 지정
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true # 데이터베이스 초기화를 JPA 테이블 생성 후로 지연
+
+
 
   servlet:
     multipart:
@@ -89,3 +97,12 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+aws:
+  s3:
+    bucket: ${bucketName}
+    credentials:
+      access-key: ${s3AccessKey}
+      secret-key: ${s3SecretKey}
+  cloudfront:
+    url: ${cloudFrontUrl}

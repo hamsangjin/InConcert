@@ -12,6 +12,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+
 public class ImageController {
 
     private final ImageService imageService;
