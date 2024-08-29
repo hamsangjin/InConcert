@@ -22,7 +22,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        performanceService.startCrawlingAsync();
+        performanceService.startCrawlingAsync(false);
 
         // 기존의 게시글 로드
         List<PostDTO> reviewPosts = homeService.getAllCategoryPosts("review");

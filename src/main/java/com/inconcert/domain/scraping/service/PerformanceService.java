@@ -53,9 +53,9 @@ public class PerformanceService {
     }
 
     @Async
-    public void startCrawlingAsync() {
+    public void startCrawlingAsync(boolean isSchedule) {
         // 게시물이 이미 있는 경우 크롤링 실행 X
-        if(!infoRepository.findPostsByCategoryTitle(PageRequest.of(0, 8)).isEmpty()) {
+        if(!isSchedule && !infoRepository.findPostsByCategoryTitle(PageRequest.of(0, 8)).isEmpty()) {
             return;
         }
 
@@ -217,7 +217,7 @@ public class PerformanceService {
     // 자정에 한번씩 새로 스크래핑
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleCrawling() {
-        startCrawlingAsync();
+        startCrawlingAsync(true);
     }
 
     // performance to CrawledDTO
