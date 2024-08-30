@@ -1,6 +1,6 @@
-package com.inconcert.domain.images.controller;
+package com.inconcert.common.controller;
 
-import com.inconcert.domain.images.service.ImageService;
+import com.inconcert.common.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

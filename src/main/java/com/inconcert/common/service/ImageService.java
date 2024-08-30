@@ -1,4 +1,4 @@
-package com.inconcert.domain.images.service;
+package com.inconcert.common.service;
 
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.exception.ImageUploadException;
@@ -50,7 +50,7 @@ public class ImageService {
                         software.amazon.awssdk.core.sync.RequestBody.fromBytes(image.getBytes()));
 
                 // CloudFront URL 생성
-                String fileDownloadUri = cloudFrontUrl + "/" + savedFileName;
+                String fileDownloadUri = cloudFrontUrl + savedFileName;
 
                 Map<String, String> result = new HashMap<>();
                 result.put("url", fileDownloadUri);

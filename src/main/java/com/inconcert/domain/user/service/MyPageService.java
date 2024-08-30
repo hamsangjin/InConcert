@@ -3,7 +3,7 @@ package com.inconcert.domain.user.service;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.MatchRepository;
-import com.inconcert.domain.images.service.ImageService;
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.feedback.repository.FeedbackRepository;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
