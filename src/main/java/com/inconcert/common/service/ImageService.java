@@ -37,8 +37,6 @@ public class ImageService {
     }
 
     public ResponseEntity<?> uploadImage(MultipartFile image) {
-        System.out.println("이미지 서비스 uploadImage 호출");
-
         String savedFileName = generateTempImageName(image);
 
         try {
@@ -55,8 +53,6 @@ public class ImageService {
 
             Map<String, String> imageUrlMap = new HashMap<>();
             imageUrlMap.put("url", fileDownloadUri);
-
-            System.out.println(fileDownloadUri);
 
             return ResponseEntity.ok(imageUrlMap);
         } catch (IOException | S3Exception e) {
