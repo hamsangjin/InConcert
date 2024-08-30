@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
@@ -19,6 +20,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TransferService {
     private final TransferRepository transferRepository;
+    private final ImageService imageService;
 
     @Transactional(readOnly = true)
     public List<PostDTO> getAllTransferPostsByPostCategory(String postCategoryTitle) {
@@ -79,6 +81,14 @@ public class TransferService {
     public void deletePost(Long postId) {
         Post post = transferRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
+
+        // 포스트에 포함된 모든 이미지 삭제
+        List<String> imageKeys = imageService.extractImageKeys(post.getContent());
+        for (String key : imageKeys) {
+            imageService.deleteImage(key);
+        }
+
+        // 게시글 삭제
         transferRepository.delete(post);
     }
 }

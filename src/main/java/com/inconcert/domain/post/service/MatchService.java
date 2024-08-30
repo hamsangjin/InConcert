@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.chat.dto.ChatMessageDTO;
 import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.repository.ChatMessageRepository;
@@ -31,6 +32,7 @@ public class MatchService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ImageService imageService;
 
     public List<PostDTO> getAllMatchPostsByPostCategory(String postCategoryTitle) {
         return switch (postCategoryTitle) {
@@ -93,9 +95,14 @@ public class MatchService {
     public void deletePost(Long postId) {
         Post post = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
-        if (post.hasChatRoom() && post.getChatRoom().getUsers().size() >= 2) {
-            throw new ExistChatPostDeleteException(ExceptionMessage.EXIST_CHAT_POST_DELETE.getMessage());
+
+        // 포스트에 포함된 모든 이미지 삭제
+        List<String> imageKeys = imageService.extractImageKeys(post.getContent());
+        for (String key : imageKeys) {
+            imageService.deleteImage(key);
         }
+
+        // 게시글 삭제
         matchRepository.delete(post);
     }
 
