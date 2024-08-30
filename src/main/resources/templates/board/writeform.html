@@ -144,7 +144,7 @@
 
         input.onchange = function() {
             const file = input.files[0];
-            resizeImage(file, 1280, 1280, function(resizedBlob) { // 예시로 최대 800x600 크기로 설정
+            resizeImage(file, 1280, 1280, function(resizedBlob) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
                     let range = quill.getSelection();
@@ -154,11 +154,6 @@
                     // 파일 객체와 이미지 src를 매핑
                     imageMap.set(e.target.result, resizedBlob); // 리사이징된 이미지를 매핑
                     imageFiles.push(resizedBlob); // 리사이징된 이미지를 배열에 추가
-
-                    // 첫 번째 이미지일 경우 썸네일로 설정
-                    if (!document.getElementById('thumbnailUrl').value) {
-                        document.getElementById('thumbnailUrl').value = e.target.result;
-                    }
                 };
                 reader.readAsDataURL(resizedBlob);
             });
@@ -200,7 +195,7 @@
         let title = document.getElementById('title');
         let content = document.getElementById('content');
 
-        return !(
+        return (
             categoryTitle.value === 'default' ||
             postCategoryTitle.value === 'default' ||
             (categoryTitle.value === 'match' && (matchCount.value === 'default' || !endDate.value)) ||
@@ -241,7 +236,7 @@
         event.preventDefault();
         let categoryTitle = document.getElementById('categoryTitle');
 
-        if (!validateFormInputs()) {
+        if (validateFormInputs()) {
             alert('모든 필드를 올바르게 입력해주세요.');
         } else {
             if (imageFiles.length > 0) {
