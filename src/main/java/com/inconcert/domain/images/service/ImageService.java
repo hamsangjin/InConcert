@@ -1,4 +1,4 @@
-package com.inconcert.domain.post.service;
+package com.inconcert.domain.images.service;
 
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.exception.ImageUploadException;
@@ -63,6 +63,7 @@ public class ImageService {
         return ResponseEntity.ok(results);
     }
 
+    // 수정 필요
     public void deleteImage(String imageKey) {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()

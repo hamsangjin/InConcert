@@ -3,7 +3,7 @@ package com.inconcert.domain.user.service;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.MatchRepository;
-import com.inconcert.domain.post.service.ImageService;
+import com.inconcert.domain.images.service.ImageService;
 import com.inconcert.domain.feedback.repository.FeedbackRepository;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
@@ -69,13 +69,12 @@ public class MyPageService {
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
 
-        // 이미지 처리
+        // 이미지 처리 (수정 필요)
         String profileImageUrl = user.getProfileImage();
         if (reqDto.getProfileImage() != null && !reqDto.getProfileImage().isEmpty()) {
             ResponseEntity<?> uploadResult = imageService.uploadImages(Arrays.asList(reqDto.getProfileImage()));
             Map<String, String> map = (Map<String, String>) uploadResult.getBody();
             profileImageUrl = map.get("url");
-            System.out.println(profileImageUrl + " prorororororrororoororoifiififififiif");
         }
 
         user.updateUser(reqDto, encodedPassword, profileImageUrl);

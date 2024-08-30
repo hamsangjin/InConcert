@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.domain.images.service.ImageService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
@@ -70,6 +71,7 @@ public class ReviewService {
                 .build();
     }
 
+    // 수정 필요
     @Transactional
     public void deletePost(Long postId) {
         Post post = reviewRepository.findById(postId)

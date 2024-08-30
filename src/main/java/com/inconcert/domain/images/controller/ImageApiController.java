@@ -1,6 +1,6 @@
-package com.inconcert.domain.post.controller;
+package com.inconcert.domain.images.controller;
 
-import com.inconcert.domain.post.service.ImageService;
+import com.inconcert.domain.images.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ImageController {
+public class ImageApiController {
     private final ImageService imageService;
 
     @PostMapping("/uploadImages")
