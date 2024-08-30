@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,11 +68,10 @@ public class MyPageService {
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
 
-        // 이미지 처리 (수정 필요)
+        // 이미지 처리(기존 이미지 삭제 처리 추가 필요)
         String profileImageUrl = user.getProfileImage();
         if (reqDto.getProfileImage() != null && !reqDto.getProfileImage().isEmpty()) {
-            ResponseEntity<?> uploadResult = imageService.uploadImages(Arrays.asList(reqDto.getProfileImage()));
-            Map<String, String> map = (Map<String, String>) uploadResult.getBody();
+            Map<String, String> map = (Map<String, String>) imageService.uploadImage(reqDto.getProfileImage()).getBody();
             profileImageUrl = map.get("url");
         }
 
@@ -81,7 +79,7 @@ public class MyPageService {
         userRepository.save(user);
     }
 
-    // 기본 이미지로 변경
+    // 기본 이미지로 변경(기존 이미지 삭제 처리 추가 필요)
     @Transactional
     public ResponseEntity<String> resetToDefaultProfileImage() {
         User user = userService.getAuthenticatedUser()

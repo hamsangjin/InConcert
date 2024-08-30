@@ -1,7 +1,6 @@
 package com.inconcert.common.service;
 
 import com.inconcert.common.exception.ExceptionMessage;
-import com.inconcert.common.exception.ImageUploadException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -37,43 +36,49 @@ public class ImageService {
         return uuid + "_" + (originalFileName != null ? originalFileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_") : "");
     }
 
-    public ResponseEntity<?> uploadImages(List<MultipartFile> images) {
-        List<Map<String, String>> results = new ArrayList<>();
-        for (MultipartFile image : images) {
-            String savedFileName = generateTempImageName(image);
+    public ResponseEntity<?> uploadImage(MultipartFile image) {
+        System.out.println("이미지 서비스 uploadImage 호출");
 
-            try {
-                // S3에 파일 업로드
-                s3Client.putObject(PutObjectRequest.builder()
-                                .bucket(bucketName)
-                                .key(savedFileName)
-                                .contentType(image.getContentType()) // Content-Type 설정
-                                .build(),
-                        software.amazon.awssdk.core.sync.RequestBody.fromBytes(image.getBytes()));
+        String savedFileName = generateTempImageName(image);
 
-                // CloudFront URL 생성
-                String fileDownloadUri = cloudFrontUrl + savedFileName;
+        try {
+            // S3에 파일 업로드
+            s3Client.putObject(PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(savedFileName)
+                            .contentType(image.getContentType()) // Content-Type 설정
+                            .build(),
+                    software.amazon.awssdk.core.sync.RequestBody.fromBytes(image.getBytes()));
 
-                Map<String, String> result = new HashMap<>();
-                result.put("url", fileDownloadUri);
-                results.add(result);
-            } catch (IOException | S3Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionMessage.IMAGE_UPLOAD_BAD_REQUEST.getMessage());
-            }
+            // CloudFront URL 생성
+            String fileDownloadUri = cloudFrontUrl + savedFileName;
+
+            Map<String, String> imageUrlMap = new HashMap<>();
+            imageUrlMap.put("url", fileDownloadUri);
+
+            System.out.println(fileDownloadUri);
+
+            return ResponseEntity.ok(imageUrlMap);
+        } catch (IOException | S3Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ExceptionMessage.IMAGE_UPLOAD_BAD_REQUEST.getMessage());
         }
-
-        return ResponseEntity.ok(results);
     }
 
-    public void deleteImage(String imageKey) {
+    public ResponseEntity<String> deleteImage(String imageKey) {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucketName)
                     .key(imageKey)
                     .build());
+            return ResponseEntity.ok("이미지가 정상적으로 업로드되었습니다.");
         } catch (S3Exception e) {
-            throw new ImageUploadException("Failed to delete the file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete the file: " + e.getMessage());
         }
+    }
+
+    // URL에서 S3 키를 추출하는 메소드
+    public String extractImageKeyFromUrl(String imageUrl) {
+        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
     }
 
     // content에서 이미지 키를 추출하는 메서드
@@ -91,6 +96,4 @@ public class ImageService {
 
         return imageKeys;
     }
-
-
 }
