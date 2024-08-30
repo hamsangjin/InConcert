@@ -131,6 +131,7 @@ public class PerformanceService {
         List<PostDTO> batchPostDTOs = new ArrayList<>();
         int processedCount = 0;
 
+        User adminUser = userService.getUserByUsername("admin");
         for (WebElement element : elements) {
             String poster = element.findElement(By.cssSelector("a span:nth-child(1) img")).getAttribute("src");
             String title = element.findElement(By.cssSelector("a span:nth-child(2)")).getText();
@@ -150,15 +151,14 @@ public class PerformanceService {
 
                         // performance 저장
                         performanceRepository.save(performance);
-                        log.info("Saved performance: " + performance.getTitle());
+                        log.info(performance.getTitle() + "Performance 저장");
 
                         ScrapedPostDTO scrapedPostDTO = convertToCrawledDTO(performance, Long.parseLong(type));
-                        Post post = createPostFromCrawledDTO(scrapedPostDTO);
+                        Post post = createPostFromCrawledDTO(scrapedPostDTO, adminUser);
 
                         // post 저장
                         Post savedPost = infoRepository.save(post);
-                        log.info("Saved post: {}", post.getTitle());
-                        log.info("Saved post id: {}", post.getId());
+                        log.info("[" + post.getId() + "] " + post.getTitle() + "게시글 저장");
 
                         // 실시간 업데이트 전송
                         PostDTO postDTO = convertToPostDTO(scrapedPostDTO, savedPost);
@@ -175,7 +175,7 @@ public class PerformanceService {
                             batchPostDTOs.clear();
                         }
                     }else{
-                        log.error("Duplicated performance");
+                        log.error("중복된 게시글(제목)입니다");
                     }
                 } catch (Exception e) {
                     log.error("Error saving performance or post: {}", e.getMessage());
@@ -195,9 +195,7 @@ public class PerformanceService {
 
     // CrawledPostDTO to Post
     @Transactional(readOnly = true)
-    public Post createPostFromCrawledDTO(ScrapedPostDTO scrapedPostDTO) {
-        User adminUser = userService.getUserByUsername("admin");
-
+    public Post createPostFromCrawledDTO(ScrapedPostDTO scrapedPostDTO, User adminUser) {
         PostCategory postCategory = postCategoryRepository.findByTitleAndCategoryTitleWithCategory(
                 scrapedPostDTO.getPostCategoryTitle(),
                 scrapedPostDTO.getCategoryTitle()

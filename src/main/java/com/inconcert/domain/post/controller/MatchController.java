@@ -149,7 +149,7 @@ public class MatchController {
     public String completeMatch(@PathVariable("postId") Long postId,
                                 @PathVariable("postCategoryTitle") String postCategoryTitle) {
 
-            matchService.completeMatch(postId);
+        matchService.completeMatch(postId);
         return "redirect:/match/" + postCategoryTitle + '/' + postId;
     }
 

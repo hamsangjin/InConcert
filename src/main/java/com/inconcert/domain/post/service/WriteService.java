@@ -38,7 +38,7 @@ public class WriteService {
     private final ChatService chatService;
 
     @Transactional
-    public Post save(PostDTO postDto){
+    public Post save(PostDTO postDto) {
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
@@ -63,15 +63,18 @@ public class WriteService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
         // 동행을 제외한 카테고리들은 모집인원, 마감 날짜 제거
-        if(!category.getTitle().equals("match")){
+        if (!category.getTitle().equals("match")) {
             postDto.setMatchCount(0);
             postDto.setEndDate(null);
         }
 
-        if(postDto.getThumbnailUrl().equals(""))    postDto.setThumbnailUrl(null);
+        if (postDto.getThumbnailUrl().equals("")) postDto.setThumbnailUrl(null);
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDTO.toEntity(postDto, updatedPostCategory);
+
+        // 이미지 업로드는 이미 JS에서 완료했으므로, postDto의 thumbnailUrl을 그대로 사용
+        post.updateThumbnailUrl(postDto.getThumbnailUrl());
 
         // Post 저장
         Post savePost = switch (category.getTitle()) {

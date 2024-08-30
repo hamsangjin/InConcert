@@ -19,8 +19,6 @@ spring:
     show-sql: true
     defer-datasource-initialization: true # 데이터베이스 초기화를 JPA 테이블 생성 후로 지연
 
-
-
   servlet:
     multipart:
       enabled: true

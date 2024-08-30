@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,14 +126,14 @@ public class InfoController {
     }
 
     @PostMapping("/write")
-    public String write(@ModelAttribute PostDTO postDto){
+    public String write(@ModelAttribute PostDTO postDto) {
         Post post = writeService.save(postDto);
         return "redirect:/info/" + post.getPostCategory().getTitle() + '/' + post.getId();
     }
 
     @GetMapping("/{postCategoryTitle}/{postId}/report")
     public String reportForm(@PathVariable("postId") Long postId,
-                         Model model) {
+                             Model model) {
         model.addAttribute("reportDTO", new ReportDTO());
         model.addAttribute("post", infoService.getPostDtoByPostId(postId));
         model.addAttribute("user", userService.getAuthenticatedUser());

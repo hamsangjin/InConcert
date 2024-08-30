@@ -3,7 +3,7 @@ package com.inconcert.domain.user.service;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.MatchRepository;
-import com.inconcert.domain.post.service.ImageService;
+import com.inconcert.domain.images.service.ImageService;
 import com.inconcert.domain.feedback.repository.FeedbackRepository;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,11 +69,12 @@ public class MyPageService {
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
 
-        // 이미지 처리
+        // 이미지 처리 (수정 필요)
         String profileImageUrl = user.getProfileImage();
         if (reqDto.getProfileImage() != null && !reqDto.getProfileImage().isEmpty()) {
-            Map<String, String> uploadResult = imageService.uploadImage(reqDto.getProfileImage());
-            profileImageUrl = uploadResult.get("url");
+            ResponseEntity<?> uploadResult = imageService.uploadImages(Arrays.asList(reqDto.getProfileImage()));
+            Map<String, String> map = (Map<String, String>) uploadResult.getBody();
+            profileImageUrl = map.get("url");
         }
 
         user.updateUser(reqDto, encodedPassword, profileImageUrl);
