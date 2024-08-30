@@ -1,6 +1,6 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.domain.images.service.ImageService;
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;

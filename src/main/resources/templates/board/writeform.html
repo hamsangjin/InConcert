@@ -43,7 +43,7 @@
 <div class="container">
     <div th:replace="~{fragments/header :: header}"></div>
 
-    <form method="post" enctype="multipart/form-data" id="postForm">
+    <form method="post" id="postForm">
         <div class="write-container">
             <div class="dropdowns">
                 <select id="categoryTitle" name="categoryTitle" required>
@@ -107,6 +107,35 @@
         }
     });
 
+    function resizeImage(file, maxWidth, maxHeight, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth || height > maxHeight) {
+                    const scalingFactor = Math.min(maxWidth / width, maxHeight / height);
+                    width = width * scalingFactor;
+                    height = height * scalingFactor;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(function(blob) {
+                    callback(blob);
+                }, 'image/jpeg', 0.95); // JPEG 포맷, 품질은 95%
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
     function imageHandler() {
         let input = document.createElement('input');
         input.setAttribute('type', 'file');
@@ -114,25 +143,25 @@
         input.click();
 
         input.onchange = function() {
-            let file = input.files[0];
-            let reader = new FileReader();
+            const file = input.files[0];
+            resizeImage(file, 1280, 1280, function(resizedBlob) { // 예시로 최대 800x600 크기로 설정
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', e.target.result);
+                    quill.setSelection(range.index + 1);
 
-            reader.onload = function(e) {
-                let range = quill.getSelection();
-                quill.insertEmbed(range.index, 'image', e.target.result);
-                quill.setSelection(range.index + 1);
+                    // 파일 객체와 이미지 src를 매핑
+                    imageMap.set(e.target.result, resizedBlob); // 리사이징된 이미지를 매핑
+                    imageFiles.push(resizedBlob); // 리사이징된 이미지를 배열에 추가
 
-                // 파일 객체와 이미지 src를 매핑
-                imageMap.set(e.target.result, file);
-                imageFiles.push(file);
-
-                // 첫 번째 이미지일 경우 썸네일로 설정
-                if (!document.getElementById('thumbnailUrl').value) {
-                    document.getElementById('thumbnailUrl').value = e.target.result;
-                }
-            };
-
-            reader.readAsDataURL(file);
+                    // 첫 번째 이미지일 경우 썸네일로 설정
+                    if (!document.getElementById('thumbnailUrl').value) {
+                        document.getElementById('thumbnailUrl').value = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(resizedBlob);
+            });
         };
     }
 
@@ -161,9 +190,7 @@
         }
     });
 
-    document.getElementById('postForm').addEventListener('submit', function(event) {
-        event.preventDefault();  // 폼 기본 제출 동작 중지
-
+    function validateFormInputs() {
         document.getElementById('content').value = quill.root.innerHTML;
 
         let categoryTitle = document.getElementById('categoryTitle');
@@ -173,51 +200,59 @@
         let title = document.getElementById('title');
         let content = document.getElementById('content');
 
-        if (
+        return !(
             categoryTitle.value === 'default' ||
             postCategoryTitle.value === 'default' ||
             (categoryTitle.value === 'match' && (matchCount.value === 'default' || !endDate.value)) ||
             !title.value.trim() ||
             !content.value.trim()
-        ) {
-            alert('모든 필드를 올바르게 입력해주세요.');
-        }
-        else {
-            if (imageFiles.length > 0) {
-                // 글쓰기 버튼을 눌렀을 때 이미지들을 S3에 업로드
-                let formData = new FormData();
-                imageFiles.forEach(file => formData.append('images', file));
+        );
+    }
 
-                fetch('/uploadImages', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data && data.length > 0) {
-                            // 서버에서 받은 이미지 URL을 hidden input에 저장
-                            document.getElementById('thumbnailUrl').value = data[0].url;  // 첫 번째 이미지 URL을 썸네일로 설정
+    function submitPostForm(categoryTitle, url) {
+        let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
+        document.getElementById('postForm').action = '/' + selectedCategory + '/write';
+        document.getElementById('thumbnailUrl').value = url;
+        document.getElementById('postForm').submit();
+    }
 
-                            // 실제 폼을 다시 전송
-                            let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
-                            document.getElementById('postForm').action = '/' + selectedCategory + '/write';
-                            document.getElementById('postForm').submit();
-                        } else {
-                            alert('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('이미지 업로드 중 오류가 발생했습니다.');
-                    });
+    function uploadImages(imageFiles) {
+        let formData = new FormData();
+        imageFiles.forEach(file => formData.append('images', file));
+
+        return fetch('/uploadImages', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json',
             }
-            else {
-                let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
-                document.getElementById('postForm').action = '/' + selectedCategory + '/write';
-                document.getElementById('postForm').submit();
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    return data[0].url;  // 첫 번째 이미지 URL을 반환
+                } else {
+                    throw new Error('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
+                }
+            });
+    }
+
+    document.getElementById('postForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        let categoryTitle = document.getElementById('categoryTitle');
+
+        if (!validateFormInputs()) {
+            alert('모든 필드를 올바르게 입력해주세요.');
+        } else {
+            if (imageFiles.length > 0) {
+                uploadImages(imageFiles).then(url => {
+                    submitPostForm(categoryTitle, url);
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert('이미지 업로드 중 오류가 발생했습니다.');
+                });
+            } else {
+                submitPostForm(categoryTitle);
             }
         }
     });
