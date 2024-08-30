@@ -15,6 +15,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +65,6 @@ public class ImageService {
         return ResponseEntity.ok(results);
     }
 
-    // 수정 필요
     public void deleteImage(String imageKey) {
         try {
             s3Client.deleteObject(DeleteObjectRequest.builder()
@@ -74,4 +75,22 @@ public class ImageService {
             throw new ImageUploadException("Failed to delete the file: " + e.getMessage());
         }
     }
+
+    // content에서 이미지 키를 추출하는 메서드
+    public List<String> extractImageKeys(String content) {
+        List<String> imageKeys = new ArrayList<>();
+
+        // 이미지 URL을 찾기 위한 정규식 패턴 (이미지 경로만 추출)
+        Pattern pattern = Pattern.compile("https://[\\w.-]+/([\\w-]+_[\\w.-]+)");
+        Matcher matcher = pattern.matcher(content);
+
+        while (matcher.find()) {
+            String imageKey = matcher.group(1); // S3 키 추출
+            imageKeys.add(imageKey);
+        }
+
+        return imageKeys;
+    }
+
+
 }
