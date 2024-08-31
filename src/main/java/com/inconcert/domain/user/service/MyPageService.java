@@ -68,22 +68,32 @@ public class MyPageService {
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
 
-        // 이미지 처리(기존 이미지 삭제 처리 추가 필요)
+        // 이미지 처리
         String profileImageUrl = user.getProfileImage();
+        // 이미지 변경 여부 확인
         if (reqDto.getProfileImage() != null && !reqDto.getProfileImage().isEmpty()) {
+            // 기존 이미지가 기본 이미지가 아니면 s3 삭제
+            if(!profileImageUrl.equals("/images/profile.png")) {
+                imageService.deleteImage(imageService.extractImageKeyFromUrl(profileImageUrl));
+            }
+            // 새로운 프로필 이미지 업로드
             Map<String, String> map = (Map<String, String>) imageService.uploadImage(reqDto.getProfileImage()).getBody();
             profileImageUrl = map.get("url");
         }
-
         user.updateUser(reqDto, encodedPassword, profileImageUrl);
         userRepository.save(user);
     }
 
-    // 기본 이미지로 변경(기존 이미지 삭제 처리 추가 필요)
+    // 기본 이미지로 변경
     @Transactional
     public ResponseEntity<String> resetToDefaultProfileImage() {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
+        // 기존 이미지가 기본 이미지가 아니면 s3 삭제
+        if(!user.getProfileImage().equals("/images/profile.png")) {
+            imageService.deleteImage(imageService.extractImageKeyFromUrl(user.getProfileImage()));
+        }
 
         user.setBasicImage();
         userRepository.save(user);

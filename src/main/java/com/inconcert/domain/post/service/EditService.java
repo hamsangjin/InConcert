@@ -1,6 +1,5 @@
 package com.inconcert.domain.post.service;
 
-import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;

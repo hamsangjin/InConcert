@@ -26,7 +26,7 @@
 
                 <img id="profileImagePreview" class="profile-img2" th:src="${user.profileImage}" alt="No Posts"
                      onclick="triggerFileInput()"/>
-                <input type="file" id="profileImageInput" name="profileImage" style="display: none;"
+                <input type="file" id="profileImageInput" accept="image/*" name="profileImage" style="display: none;"
                        onchange="previewImage(event)">
 
                 <div class="profile-container">
@@ -176,8 +176,7 @@
 
     // 기본 프로필 이미지로 변경
     function resetToDefaultProfile() {
-        const defaultProfileImageUrl = '/images/profile.png'; // 기본 프로필 이미지 경로
-        document.getElementById('profileImagePreview').src = defaultProfileImageUrl;
+        document.getElementById('profileImagePreview').src = '/images/profile.png';     // 기본 프로필 이미지 경로
         document.getElementById('profileImageInput').value = ''; // 파일 선택 필드 비우기
 
         isDefaultProfile = true; // 기본 프로필 이미지가 선택됨
