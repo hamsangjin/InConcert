@@ -218,7 +218,7 @@
                             const safeBase64Url = escapeRegExp(base64Url);
                             quill.root.innerHTML = quill.root.innerHTML.replace(new RegExp(safeBase64Url, 'g'), data.url);
                             imageMap.delete(base64Url);
-                            imageMap.set(data.url, file);
+                            // imageMap.set(data.url, file);
                         }
                     });
             });

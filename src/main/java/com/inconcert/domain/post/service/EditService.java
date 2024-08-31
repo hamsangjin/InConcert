@@ -39,7 +39,6 @@ public class EditService {
     private final CategoryRepository categoryRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
-    private final ImageService imageService;
 
     @Transactional
     public Long updatePost(Long postId, PostDTO postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {

@@ -109,7 +109,6 @@ public class InfoController {
                                @PathVariable("postId") Long postId, Model model) {
         PostDTO postDto = infoService.getPostDtoByPostId(postId);
 
-
         model.addAttribute("post", postDto);
         model.addAttribute("categoryTitle", "info");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

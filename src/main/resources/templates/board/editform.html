@@ -19,7 +19,6 @@
         function toggleMatchAndDateFields() {
             const categoryTitle = document.getElementById("categoryTitle");
             const matchCount = document.getElementById("matchCount");
-            const endDate = document.getElementById("endDate");
             const dateContainer = document.querySelector(".date-container");
 
             if (categoryTitle.value === "match") {
@@ -267,17 +266,18 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.url) {
+                            console.log(data.url);
                             const safeBase64Url = escapeRegExp(base64Url);
                             quill.root.innerHTML = quill.root.innerHTML.replace(new RegExp(safeBase64Url, 'g'), data.url);
                             imageMap.delete(base64Url);
-                            imageMap.set(data.url, file);
+                            // imageMap.set(data.url, file);
                         }
                     });
             });
             allPromises.push(...uploads);
 
             // 이미지 삭제 프로미스 처리 (예시로 추가, 실제 삭제 조건과 로직에 맞게 조정 필요)
-            let deletions = Array.from(deleteImageMap).map(([key, value]) => {
+            let deletions = Array.from(deleteImageMap).map(([key, _]) => {
                 return fetch('/deleteImage', {
                     method: 'POST',
                     headers: {
@@ -297,6 +297,7 @@
             allPromises.push(...deletions);
 
             Promise.all(allPromises).then(() => {
+                document.getElementById('content').value = quill.root.innerHTML;
                 let postId = /*[[${post.id}]]*/ '[(${post.id})]';
                 let categoryTitle = /*[[${post.id}]]*/ '[(${categoryTitle})]';
                 let postCategoryTitle = /*[[${post.id}]]*/ '[(${postCategoryTitle})]';
