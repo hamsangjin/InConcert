@@ -126,50 +126,17 @@
 
             // 첫 번째 선택된 파일을 가져옴(물론 하나밖에 못 선택함)
             let file = input.files[0];
-            // FormData 객체 생성
-            let formData = new FormData();
-            // FormData 객체에 선택된 이미지 파일 추가
-            formData.append('image', file);
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                let base64Url = e.target.result;
+                let range = quill.getSelection(true);
+                quill.insertEmbed(range.index, 'image', base64Url);
+                quill.setSelection(range.index + 1);
 
-            // 파일을 '/uploadImage' 엔드포인트로 POST 요청을 보냄
-            fetch('/uploadImage', {
-                method: 'POST', // HTTP 메소드 지정
-                body: formData, // 요청 본문에 formData 객체를 포함
-                headers: {
-                    'Accept': 'application/json', // 서버에게 JSON 응답을 요청
-                }
-            })
-                .then(response => response.json()) // 서버 응답을 JSON으로 파싱
-                .then(data => {
-                    // 데이터가 유효하고 URL이 포함된 경우
-                    if (data && data.url) {
-                        // 업로드된 이미지의 URL로 에디터에 이미지 삽입
-                        // 기존 방식: base64로 저장했다가 url 교체하는 방식
-                        let range = quill.getSelection(); // 현재 에디터의 선택 범위 가져옴
-                        if (range) {
-                            // 선택된 위치에 이미지 삽입
-                            quill.insertEmbed(range.index, 'image', data.url);
-                            // 삽입 후 선택 범위를 이미지 다음 위치로 이동
-                            quill.setSelection(range.index + 1);
-                        }
-
-                        // 이미지 URL과 파일 객체를 imageMap에 저장
-                        imageMap.set(data.url, imageMap.size + 1);
-                        console.log(imageMap);
-                        // 썸네일 URL도 없다면 추가된 이미지의 S3 URL로 저장
-                        if (!document.getElementById('thumbnailUrl').value) {
-                            document.getElementById('thumbnailUrl').value = data.url;
-                        }
-                    } else {
-                        // 데이터가 유효하지 않거나 URL이 없는 경우 오류 메시지 표시
-                        alert('이미지 업로드 실패: ' + (data.message || 'Unknown error'));
-                    }
-                })
-                .catch(error => {
-                    // 네트워크 오류 또는 요청 실패 시 콘솔에 오류 로그 출력 및 사용자에게 알림
-                    console.error('Error:', error);
-                    alert('이미지 업로드 중 오류가 발생했습니다.');
-                });
+                // 이미지 파일을 imageMap에 저장
+                imageMap.set(base64Url, file);
+            };
+            reader.readAsDataURL(file);
         };
     }
 
@@ -195,22 +162,7 @@
                 // 위 내용을 검사하지만 !로 부정을 의미하여, 이는 "에디터 내부 데이터에서 해당 이미지 URL을 가진 삽입 로그가 하나도 없다"는 것을 의미
                 if (!currentText.includes(key) && !formattedText.ops.some(op => op.insert && op.insert.image && op.insert.image === key)) {
                     console.log("Deleting image:", key); // 삭제 로그
-                    fetch('/deleteImage', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ imageUrl: key })
-                    }).then(response => {
-                        if (response.ok) {
-                            console.log('Image deleted successfully');
-                            imageMap.delete(key);
-                        } else {
-                            console.error('Failed to delete image');
-                        }
-                    }).catch(error => {
-                        console.error('Error:', error);
-                    });
+                    imageMap.delete(key);
                 }
             });
         }
@@ -236,6 +188,11 @@
         );
     }
 
+    // Base64 URL에서 정규 표현식의 특수 문자를 이스케이프 처리하는 함수
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $&는 전체 매치된 문자열을 의미합니다.
+    }
+
     let isFormSubmitted = false;  // 폼 제출 상태를 추적하는 플래그
     document.getElementById('postForm').addEventListener('submit', function(event) {
         event.preventDefault();  // 폼 기본 제출 동작 중지
@@ -245,11 +202,37 @@
         }
         else {
             isFormSubmitted = true;  // 폼이 제출되었다고 플래그 설정
-            // Post 요청 url 설정해 submit
-            let categoryTitle = document.getElementById('categoryTitle');
-            let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
-            document.getElementById('postForm').action = '/' + selectedCategory + '/write';
-            document.getElementById('postForm').submit();
+
+            // 이미지 업로드 완료 후 이미지 URL 교체 로직
+            let uploads = Array.from(imageMap).map(([base64Url, file]) => {
+                let formData = new FormData();
+                formData.append('image', file);
+
+                return fetch('/uploadImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.url) {
+                            const safeBase64Url = escapeRegExp(base64Url);
+                            quill.root.innerHTML = quill.root.innerHTML.replace(new RegExp(safeBase64Url, 'g'), data.url);
+                            imageMap.delete(base64Url);
+                            imageMap.set(data.url, file);
+                        }
+                    });
+            });
+
+            Promise.all(uploads).then(() => {
+                document.getElementById('content').value = quill.root.innerHTML;
+                let categoryTitle = document.getElementById('categoryTitle');
+                let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
+                document.getElementById('postForm').action = '/' + selectedCategory + '/write';
+                document.getElementById('postForm').submit();
+            }).catch(error => {
+                console.error('Upload failed:', error);
+                alert('이미지 업로드 실패');
+            });
         }
     });
 
@@ -262,27 +245,6 @@
             // 브라우저가 페이지를 벗어나기 전에 요청을 보낼 수 있도록 기본 이벤트를 취소
             event.preventDefault();
             event.returnValue = ''; // 크롬에서 필요한 설정
-
-            imageMap.forEach((value, key) => {
-                fetch('/deleteImage', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({imageUrl: key})
-                }).then(response => {
-                    if (response.ok) {
-                        console.log('Image deleted successfully from server on unload');
-                    } else {
-                        console.error('Failed to delete image on unload');
-                    }
-                }).catch(error => {
-                    console.error('Error during image deletion on unload:', error);
-                });
-
-                // 이벤트 처리 후 이미지 맵에서 해당 항목 삭제
-                imageMap.delete(key);
-            });
         }
     });
 </script>
