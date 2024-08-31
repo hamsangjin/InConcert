@@ -1,5 +1,6 @@
 package com.inconcert.domain.post.service;
 
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.category.repository.CategoryRepository;
@@ -22,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,20 +41,21 @@ public class EditService {
     private final CategoryRepository categoryRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatService chatService;
+    private final ImageService imageService;
 
     @Transactional
     public Long updatePost(Long postId, PostDTO postDto, String currentCategoryTitle, String newCategoryTitle, String newPostCategoryTitle) {
         // 현재 카테고리에서 게시글 찾기
-        Post currentPost = getPostByIdAndCategory(postId, currentCategoryTitle);        // 1
+        Post currentPost = getPostByIdAndCategory(postId, currentCategoryTitle);
 
         Category category = categoryRepository.findByTitle(newCategoryTitle)
-                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));        // 2 + 매니투매니
+                .orElseThrow(() -> new CategoryNotFoundException(ExceptionMessage.CATEGORY_NOT_FOUND.getMessage()));
 
-        List<PostCategory> postCategories = postCategoryRepository.findByTitle(newPostCategoryTitle);       // 3
+        List<PostCategory> postCategories = postCategoryRepository.findByTitle(newPostCategoryTitle);
 
         // 적절한 PostCategory 찾기
         PostCategory postCategory = postCategories.stream()
-                .filter(pc -> pc.getCategory().equals(category))        // 4(x)
+                .filter(pc -> pc.getCategory().equals(category))
                 .findFirst()
                 .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_COMBINATION_NOT_FOUND.getMessage()));
 
@@ -64,14 +68,14 @@ public class EditService {
         }
 
         // 채팅방 찾기 (match 카테고리인 경우에만 처리)
-        ChatRoom chatRoom = currentPost.getChatRoom();      // 5(x)
+        ChatRoom chatRoom = currentPost.getChatRoom();
 
         // 다른 게시판에서 동행 게시판으로 수정하는 경우 채팅방 생성
         if(!currentCategoryTitle.equals("match") && newCategoryTitle.equals("match")){
             log.info("얘는?");
             ChatRoomDTO chatRoomDto = chatService.createChatRoom(postDto.getTitle());
             chatRoom = chatRoomRepository.findById(chatRoomDto.getId())
-                    .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage())); // 10(x)
+                    .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
 
             // Post와 채팅방 연결
             chatRoom.assignPost(currentPost);
@@ -87,10 +91,10 @@ public class EditService {
                 .endDate(postDto.getEndDate())
                 .chatRoom(chatRoom)
                 .matchCount(postDto.getMatchCount())
-                .user(currentPost.getUser())            // 11(x)
-                .comments(new ArrayList<>(currentPost.getComments())) // 12(o)
-                .likes(new ArrayList<>(currentPost.getLikes()))         // 13(o)
-                .notifications(new ArrayList<>(currentPost.getNotifications()))     // 14
+                .user(currentPost.getUser())
+                .comments(new ArrayList<>(currentPost.getComments()))
+                .likes(new ArrayList<>(currentPost.getLikes()))
+                .notifications(new ArrayList<>(currentPost.getNotifications()))
                 .viewCount(currentPost.getViewCount())
                 .postCategory(postCategory)
                 .build();

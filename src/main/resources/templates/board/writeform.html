@@ -154,7 +154,8 @@
                         }
 
                         // 이미지 URL과 파일 객체를 imageMap에 저장
-                        imageMap.set(data.url, file);
+                        imageMap.set(data.url, imageMap.size + 1);
+                        console.log(imageMap);
                         // 썸네일 URL도 없다면 추가된 이미지의 S3 URL로 저장
                         if (!document.getElementById('thumbnailUrl').value) {
                             document.getElementById('thumbnailUrl').value = data.url;
@@ -235,6 +236,7 @@
         );
     }
 
+    let isFormSubmitted = false;  // 폼 제출 상태를 추적하는 플래그
     document.getElementById('postForm').addEventListener('submit', function(event) {
         event.preventDefault();  // 폼 기본 제출 동작 중지
 
@@ -242,6 +244,7 @@
             alert('모든 필드를 올바르게 입력해주세요.');
         }
         else {
+            isFormSubmitted = true;  // 폼이 제출되었다고 플래그 설정
             // Post 요청 url 설정해 submit
             let categoryTitle = document.getElementById('categoryTitle');
             let selectedCategory = categoryTitle.options[categoryTitle.selectedIndex].value;
@@ -255,30 +258,32 @@
     // 페이지를 떠나기 전에 실행되는 이벤트 핸들러
     window.addEventListener('beforeunload', function(event) {
         // 서버에 이미지 삭제 요청을 보냄
-        imageMap.forEach((value, key) => {
-            fetch('/deleteImage', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ imageUrl: key })
-            }).then(response => {
-                if (response.ok) {
-                    console.log('Image deleted successfully from server on unload');
-                } else {
-                    console.error('Failed to delete image on unload');
-                }
-            }).catch(error => {
-                console.error('Error during image deletion on unload:', error);
+        if (!isFormSubmitted) {  // 폼이 제출되지 않았다면 이미지 삭제 진행
+            // 브라우저가 페이지를 벗어나기 전에 요청을 보낼 수 있도록 기본 이벤트를 취소
+            event.preventDefault();
+            event.returnValue = ''; // 크롬에서 필요한 설정
+
+            imageMap.forEach((value, key) => {
+                fetch('/deleteImage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({imageUrl: key})
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Image deleted successfully from server on unload');
+                    } else {
+                        console.error('Failed to delete image on unload');
+                    }
+                }).catch(error => {
+                    console.error('Error during image deletion on unload:', error);
+                });
+
+                // 이벤트 처리 후 이미지 맵에서 해당 항목 삭제
+                imageMap.delete(key);
             });
-
-            // 이벤트 처리 후 이미지 맵에서 해당 항목 삭제
-            imageMap.delete(key);
-        });
-
-        // 브라우저가 페이지를 벗어나기 전에 요청을 보낼 수 있도록 기본 이벤트를 취소
-        event.preventDefault();
-        event.returnValue = ''; // 크롬에서 필요한 설정
+        }
     });
 </script>
 </body>
