@@ -6,10 +6,9 @@ import com.inconcert.domain.certification.entity.Certification;
 import com.inconcert.domain.certification.provider.EmailProvider;
 import com.inconcert.domain.certification.provider.TempPasswordEmailProvider;
 import com.inconcert.domain.certification.repository.CertificationRepository;
-import com.inconcert.domain.role.entity.Role;
-import com.inconcert.domain.role.repository.RoleRepository;
 import com.inconcert.domain.user.dto.request.*;
 import com.inconcert.domain.user.dto.response.*;
+import com.inconcert.domain.user.entity.Role;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.common.auth.CustomUserDetails;
@@ -17,7 +16,6 @@ import com.inconcert.common.auth.jwt.token.entity.Token;
 import com.inconcert.common.auth.jwt.token.service.TokenService;
 import com.inconcert.common.auth.jwt.util.JwtTokenizer;
 import com.inconcert.common.exception.ExceptionMessage;
-import com.inconcert.common.exception.RoleNotFoundException;
 import com.inconcert.common.exception.UserNotFoundException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
@@ -31,7 +29,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,11 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +44,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final CertificationRepository certificationRepository;
-    private final RoleRepository roleRepository;
     private final EmailProvider emailProvider;
     private final TempPasswordEmailProvider tempPasswordEmailProvider;
     private final PasswordEncoder passwordEncoder;
@@ -59,7 +51,6 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
     private final TokenService tokenService;
-
 
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
@@ -188,13 +179,6 @@ public class UserService {
         String password = reqDto.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
 
-        // ROLE_USER를 데이터베이스에서 조회
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RoleNotFoundException(ExceptionMessage.ROLE_NOT_FOUND.getMessage()));
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-
         User user = User.builder()
                 .username(username)
                 .password(encodedPassword)
@@ -205,7 +189,7 @@ public class UserService {
                 .birth(reqDto.getBirth())
                 .gender(reqDto.getGender())
                 .mbti(reqDto.getMbti())
-                .roles(roles)
+                .role(Role.ROLE_USER)   // 일반 유저
                 .build();
 
         userRepository.save(user);
@@ -229,18 +213,21 @@ public class UserService {
                 return ResponseEntity.status(HttpStatus.LOCKED).build();
             }
 
-            List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+            Role roles = user.getRole();
 
             String accessToken = jwtTokenizer.createAccessToken(
                     userDetails.getId(),
                     userDetails.getEmail(),
                     userDetails.getUsername(),
-                    userDetails.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .collect(Collectors.toList())
+                    roles
             );
 
-            String refreshToken = jwtTokenizer.createRefreshToken(userDetails.getId(), userDetails.getEmail(), userDetails.getUsername(), roles);
+            String refreshToken = jwtTokenizer.createRefreshToken(
+                    userDetails.getId(),
+                    userDetails.getEmail(),
+                    userDetails.getUsername(),
+                    roles
+            );
 
             Token tokenEntity = Token.builder()
                     .accessTokenValue(accessToken)
@@ -302,10 +289,9 @@ public class UserService {
 
         User user = getUserByUsername(username);
 
-        // accessToken 생성.
-        List roles = (List) claims.get("roles");
+        // accessToken 생성
+        Role roles = (Role) claims.get("roles");
         String accessToken = jwtTokenizer.createAccessToken(user.getId(), user.getEmail(), username, roles);
-
 
         // 쿠키 생성 response로 보내기
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -378,8 +364,8 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public void updateUser(User user) {
+        userRepository.save(user);
     }
 
     @Transactional

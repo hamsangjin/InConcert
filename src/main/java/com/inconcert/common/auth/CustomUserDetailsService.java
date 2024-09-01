@@ -1,6 +1,6 @@
 package com.inconcert.common.auth;
 
-import com.inconcert.domain.role.entity.Role;
+import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         return new CustomUserDetails(
                 user.getId(),
@@ -28,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 user.getPassword(),
                 user.getEmail(),
                 user.getProfileImage(),
-                user.getRoles().stream().map(Role::getName).collect(Collectors.toList())
+                Arrays.asList(user.getRole().toString())
         );
     }
 }

@@ -40,12 +40,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    // role을 찾을 수 없을 때
-    @ExceptionHandler(RoleNotFoundException.class)
-    public ResponseEntity<String> handleRoleNameNotFoundException(RoleNotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
-
     @ExceptionHandler(LikeNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleLikeNotFoundException(LikeNotFoundException ex) {
