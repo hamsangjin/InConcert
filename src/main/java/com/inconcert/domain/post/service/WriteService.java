@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -68,13 +70,10 @@ public class WriteService {
             postDto.setEndDate(null);
         }
 
-        if (postDto.getThumbnailUrl().equals("")) postDto.setThumbnailUrl(null);
+        postDto.setThumbnailUrl(extractURL(postDto.getContent()));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDTO.toEntity(postDto, updatedPostCategory);
-
-        // 이미지 업로드는 이미 JS에서 완료했으므로, postDto의 thumbnailUrl을 그대로 사용
-        post.updateThumbnailUrl(postDto.getThumbnailUrl());
 
         // Post 저장
         Post savePost = switch (category.getTitle()) {
@@ -104,5 +103,20 @@ public class WriteService {
         notificationService.createKeywordsNotification(post);
 
         return savePost;
+    }
+
+    private static String extractURL(String content) {
+        // img의 src속성만 추출하는 패턴 생성
+        String regex = "http[s]?://[^\\s\"']+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+
+        String url = null;
+        // 패턴에 맞는거 하나라도 찾을 경우 url에 저장 후 리턴
+        while (matcher.find()) {
+            url = matcher.group();
+            break;
+        }
+        return url;
     }
 }

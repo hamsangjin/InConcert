@@ -94,7 +94,6 @@ public class ReviewController {
                                @PathVariable("postId") Long postId, Model model) {
         PostDTO postDto = reviewService.getPostDtoByPostId(postId);
 
-
         model.addAttribute("post", postDto);
         model.addAttribute("categoryTitle", "review");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

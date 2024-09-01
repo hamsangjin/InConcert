@@ -19,7 +19,6 @@
         function toggleMatchAndDateFields() {
             const categoryTitle = document.getElementById("categoryTitle");
             const matchCount = document.getElementById("matchCount");
-            const endDate = document.getElementById("endDate");
             const dateContainer = document.querySelector(".date-container");
 
             if (categoryTitle.value === "match") {
@@ -95,7 +94,29 @@
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script>
-    var quill = new Quill('#editor', {
+    let initialContent = /*[[${post.content}]]*/ '[(${post.content})]';
+    let initImageMap = new Map();       // 기존 image들
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/extract-images', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content: initialContent })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Extracted Image URLs:', data);
+
+                Object.keys(data).forEach(key => {
+                    initImageMap.set(key, data[key]);
+                });
+
+            })
+            .catch(error => console.error('Error fetching images:', error));
+    });
+
+    let quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
             toolbar: [
@@ -107,72 +128,200 @@
             ]
         }
     });
-
-    var initialContent = /*[[${post.content}]]*/ '[(${post.content})]';
     quill.root.innerHTML = initialContent;
+    quill.getModule('toolbar').addHandler('image', imageHandler);
 
+    let imageMap = new Map();  // 이미지 src와 파일 객체를 매핑할 맵
+    // 이미지 핸들러 함수
     function imageHandler() {
-        var input = document.createElement('input');
+        // 새로운 input 요소 생성
+        let input = document.createElement('input');
+        // input 요소의 유형을 'file'로 설정하여 파일 선택 가능하게 함
         input.setAttribute('type', 'file');
+        // input 요소에서 이미지 파일만을 선택할 수 있도록 설정
         input.setAttribute('accept', 'image/*');
+        // 프로그래밍 방식으로 input 요소를 클릭하여 파일 선택기를 열음
         input.click();
 
-        input.onchange = function() {
-            var file = input.files[0];
-            var formData = new FormData();
-            formData.append('file', file);
+        // 파일이 선택되면 이벤트 핸들러가 실행됨
+        input.onchange = function () {
+            // 파일이 선택되지 않은 경우 함수 종료
+            if (input.files.length === 0) {
+                return;
+            }
 
-            fetch('/uploadImage', {
-                method: 'POST',
-                body: formData
-            }).then(response => response.json())
-                .then(result => {
-                    var range = quill.getSelection(true);
-                    quill.insertEmbed(range.index, 'image', result.url);
-                    quill.setSelection(range.index + 1);
+            // 첫 번째 선택된 파일을 가져옴(물론 하나밖에 못 선택함)
+            let file = input.files[0];
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                let base64Url = e.target.result;
+                let range = quill.getSelection(true);
+                quill.insertEmbed(range.index, 'image', base64Url);
+                quill.setSelection(range.index + 1);
 
-                    // post.thumbnailUrl이 null인 경우에만 썸네일로 설정
-                    if (!document.getElementById('thumbnailUrl').value) {
-                        document.getElementById('thumbnailUrl').value = result.url;
-                    }
-                }).catch(error => {
-                console.error('Error:', error);
-            });
+                // 이미지 파일을 imageMap에 저장
+                imageMap.set(base64Url, file);
+            };
+            reader.readAsDataURL(file);
         };
     }
 
-    quill.getModule('toolbar').addHandler('image', imageHandler);
 
-    document.getElementById('editForm').addEventListener('submit', function(event) {
+    // 이미지 삭제 핸들러
+    // 에디터의 텍스트가 변경될 때마다 호출
+    // delta: 최근 변경 사항을 나타내는 객체(추가, 삭제, 형식 변경 등)
+    // oldDelta: 변경 전의 상태를 나타내는 객체
+    // source: 변경의 출처를 나타냄(ex: 사용자 입력 = 'user')
+    let deleteImageMap = new Map();     // 삭제할 image들
+    quill.on('text-change', function(delta, oldDelta, source) {
+        if (source === 'user') {
+            console.log("Delta:", delta); // 변경 사항 로깅
+            let currentText = quill.getText();          // 에디터의 현재 전체 텍스트를 문자열 형식으로
+            let formattedText = quill.getContents();    // 에디터의 현재 상태를 리치 텍스트 형식으로
+
+            // 이미지 업로드할 때 저장한 Map for문 돌기
+            imageMap.forEach((value, key) => {
+                // 현재 텍스트나 리치 텍스트 형식의 콘텐츠에서
+                // 특정 이미지(URL)가 더 이상 존재하지 않는지 확인
+                // 부연 설명:
+                // .some(...) 메소드: 배열 내의 어떤 요소라도 주어진 함수의 조건을 만족하면 true를 반환
+                // 즉, 에디터의 현재 내용 중에서 특정 이미지 URL을 가진 이미지 삽입 행위가 존재하는가?"를 검사
+                // 위 내용을 검사하지만 !로 부정을 의미하여, 이는 "에디터 내부 데이터에서 해당 이미지 URL을 가진 삽입 로그가 하나도 없다"는 것을 의미
+                if (!currentText.includes(key) && !formattedText.ops.some(op => op.insert && op.insert.image && op.insert.image === key)) {
+                    console.log("Deleting image:", key); // 삭제 로그
+                    imageMap.delete(key);
+                    deleteImageMap.set(key, deleteImageMap.size+1);
+                }
+            });
+
+            // 이미지 업로드할 때 저장한 Map for문 돌기
+            initImageMap.forEach((value, key) => {
+                // 현재 텍스트나 리치 텍스트 형식의 콘텐츠에서
+                // 특정 이미지(URL)가 더 이상 존재하지 않는지 확인
+                // 부연 설명:
+                // .some(...) 메소드: 배열 내의 어떤 요소라도 주어진 함수의 조건을 만족하면 true를 반환
+                // 즉, 에디터의 현재 내용 중에서 특정 이미지 URL을 가진 이미지 삽입 행위가 존재하는가?"를 검사
+                // 위 내용을 검사하지만 !로 부정을 의미하여, 이는 "에디터 내부 데이터에서 해당 이미지 URL을 가진 삽입 로그가 하나도 없다"는 것을 의미
+                if (!currentText.includes(key) && !formattedText.ops.some(op => op.insert && op.insert.image && op.insert.image === key)) {
+                    console.log("Deleting image:", key); // 삭제 로그
+                    initImageMap.delete(key);
+                    deleteImageMap.set(key, deleteImageMap.size+1);
+                }
+            });
+        }
+    });
+
+    function validateFormInputs() {
         document.getElementById('content').value = quill.root.innerHTML;
 
-        var originalCategoryTitle = document.getElementById('originalCategoryTitle').value;
-
-        var categoryTitle = document.getElementById('categoryTitle');
-        var postCategoryTitle = document.getElementById('postCategoryTitle');
-        var matchCount = document.getElementById('matchCount');
-        var endDate = document.getElementById('endDate');
-        var title = document.getElementById('title');
-        var content = document.getElementById('content');
+        let originalCategoryTitle = document.getElementById('originalCategoryTitle').value;
+        let categoryTitle = document.getElementById('categoryTitle').value;
+        let postCategoryTitle = document.getElementById('postCategoryTitle').value;
+        let matchCount = document.getElementById('matchCount').value;
+        let endDate = document.getElementById('endDate').value;
+        let title = document.getElementById('title').value;
+        let content = document.getElementById('content').value;
 
         if(originalCategoryTitle === 'match' && categoryTitle.value !== 'match') {
-            event.preventDefault();
             alert("채팅방이 존재하는 경우 카테고리를 변경할 수 없습니다.")
+            return false;
         }
 
         if (
-            categoryTitle.value === 'default' ||
-            postCategoryTitle.value === 'default' ||
-            (categoryTitle.value === 'match' && (matchCount.value === 'default' || !endDate.value)) ||
-            !title.value.trim() ||
-            !content.value.trim()
+            categoryTitle === 'default' ||
+            postCategoryTitle === 'default' ||
+            (categoryTitle === 'match' && (matchCount === 'default' || !endDate)) ||
+            !title.trim() ||
+            !content.trim()
         ) {
-            event.preventDefault();
             alert('모든 필드를 올바르게 입력해주세요.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Base64 URL에서 정규 표현식의 특수 문자를 이스케이프 처리하는 함수
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $&는 전체 매치된 문자열을 의미합니다.
+    }
+
+    let isFormSubmitted = false;  // 폼 제출 상태를 추적하는 플래그
+    document.getElementById('editForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // 폼 기본 제출 동작 중지
+
+        if(validateFormInputs()){
+            isFormSubmitted = true;  // 폼이 제출되었다고 플래그 설정
+            let allPromises = [];
+
+            // 이미지 업로드 완료 후 이미지 URL 교체 로직
+            let uploads = Array.from(imageMap).map(([base64Url, file]) => {
+                let formData = new FormData();
+                formData.append('image', file);
+
+                return fetch('/uploadImage', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.url) {
+                            console.log(data.url);
+                            const safeBase64Url = escapeRegExp(base64Url);
+                            quill.root.innerHTML = quill.root.innerHTML.replace(new RegExp(safeBase64Url, 'g'), data.url);
+                            imageMap.delete(base64Url);
+                            // imageMap.set(data.url, file);
+                        }
+                    });
+            });
+            allPromises.push(...uploads);
+
+            // 이미지 삭제 프로미스 처리 (예시로 추가, 실제 삭제 조건과 로직에 맞게 조정 필요)
+            let deletions = Array.from(deleteImageMap).map(([key, _]) => {
+                return fetch('/deleteImage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ imageUrl: key })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Image deleted successfully');
+                            deleteImageMap.delete(key);
+                        } else {
+                            console.error('Failed to delete image');
+                        }
+                    });
+            });
+            allPromises.push(...deletions);
+
+            Promise.all(allPromises).then(() => {
+                document.getElementById('content').value = quill.root.innerHTML;
+                let postId = /*[[${post.id}]]*/ '[(${post.id})]';
+                let categoryTitle = /*[[${post.id}]]*/ '[(${categoryTitle})]';
+                let postCategoryTitle = /*[[${post.id}]]*/ '[(${postCategoryTitle})]';
+                document.getElementById('editForm').action = '/' + categoryTitle + '/' + postCategoryTitle  + '/' + postId + '/edit';
+                document.getElementById('editForm').submit();
+            }).catch(error => {
+                console.error('Upload failed:', error);
+                alert('이미지 처리 실패');
+            });
+
         }
     });
 
     document.getElementById('endDate').min = new Date().toISOString().split("T")[0];
+
+    // 페이지를 떠나기 전에 실행되는 이벤트 핸들러
+    window.addEventListener('beforeunload', function(event) {
+        // 서버에 이미지 삭제 요청을 보냄
+        if (!isFormSubmitted) {  // 폼이 제출되지 않았다면 이미지 삭제 진행
+            // 브라우저가 페이지를 벗어나기 전에 요청을 보낼 수 있도록 기본 이벤트를 취소
+            event.preventDefault();
+            event.returnValue = ''; // 크롬에서 필요한 설정
+        }
+    });
 </script>
 </body>
 </html>
