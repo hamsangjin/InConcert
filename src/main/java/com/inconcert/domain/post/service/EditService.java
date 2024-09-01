@@ -15,6 +15,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.common.exception.*;
+import com.inconcert.domain.post.util.HtmlUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -56,6 +57,7 @@ public class EditService {
                 .orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_COMBINATION_NOT_FOUND.getMessage()));
 
         postDto.setThumbnailUrl(extractURL(postDto.getContent()));
+        postDto.setContent(HtmlUtils.escapeHtml(postDto.getContent()));
 
         // 동행을 제외한 카테고리들은 모집인원, 마감 날짜 제거
         if(!category.getTitle().equals("match")){

@@ -8,7 +8,7 @@ import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.MatchRepository;
-import com.inconcert.domain.post.util.DateUtil;
+import com.inconcert.domain.post.util.DateUtils;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
 import com.inconcert.common.exception.*;
@@ -50,8 +50,8 @@ public class MatchService {
     }
 
     public Page<PostDTO> getByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, String gender, String mbti, int page, int size) {
-        LocalDateTime startDate = DateUtil.getStartDate(period);
-        LocalDateTime endDate = DateUtil.getCurrentDate();
+        LocalDateTime startDate = DateUtils.getStartDate(period);
+        LocalDateTime endDate = DateUtils.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
 
         Gender enumGender = gender.equals("all") ? null : Gender.valueOf(gender);

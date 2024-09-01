@@ -15,9 +15,12 @@ import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
 import com.inconcert.domain.post.repository.TransferRepository;
+import com.inconcert.domain.post.util.HtmlUtils;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +43,7 @@ public class WriteService {
     private final ChatService chatService;
 
     @Transactional
-    public Post save(PostDTO postDto) {
+    public Post save(PostDTO postDto){
         // 게시물 작성 폼에서 가져온 postCategory 제목으로 조회해서 PostCategory 리스트 생성
         List<PostCategory> postCategories = postCategoryRepository.findByTitle(postDto.getPostCategoryTitle());
 
@@ -64,13 +67,15 @@ public class WriteService {
         postDto.setUser(userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage())));
 
+        postDto.setThumbnailUrl(extractURL(postDto.getContent()));
+        postDto.setContent(HtmlUtils.escapeHtml(postDto.getContent()));
+
+
         // 동행을 제외한 카테고리들은 모집인원, 마감 날짜 제거
         if (!category.getTitle().equals("match")) {
             postDto.setMatchCount(0);
             postDto.setEndDate(null);
         }
-
-        postDto.setThumbnailUrl(extractURL(postDto.getContent()));
 
         // 주입된 PostCategory를 Post에 저장
         Post post = PostDTO.toEntity(postDto, updatedPostCategory);

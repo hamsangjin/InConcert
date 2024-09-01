@@ -3,7 +3,7 @@ spring:
     name: inconcert
 
   datasource:
-    url: jdbc:mysql://localhost:3306/inconcert?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/inconcert?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${username}
     password: ${password}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -18,6 +18,13 @@ spring:
       ddl-auto: update
     show-sql: true
     defer-datasource-initialization: true # 데이터베이스 초기화를 JPA 테이블 생성 후로 지연
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        connection:
+          useUnicode: true
+          characterEncoding: utf8mb4
 
   servlet:
     multipart:
