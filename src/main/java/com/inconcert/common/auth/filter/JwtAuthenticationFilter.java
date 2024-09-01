@@ -1,5 +1,6 @@
 package com.inconcert.common.auth.filter;
 
+import com.inconcert.domain.user.entity.Role;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.common.auth.CustomUserDetails;
@@ -80,7 +81,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Long userId = claims.get("userId", Long.class);
         String username = claims.get("username", String.class);
-        List<GrantedAuthority> authorities = getGrantedAuthorities(claims); // 권한 리스트
+
+        // Role 객체를 역직렬화하여 권한 리스트 생성
+        Role role = jwtTokenizer.getRoleFromClaims(claims);
+        List<GrantedAuthority> authorities = getGrantedAuthorities(role); // 권한 리스트
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
@@ -100,11 +104,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);   // contextholder에 인증 설정
     }
 
-    private List<GrantedAuthority> getGrantedAuthorities(Claims claims) {
-        List<String> roles = claims.get("roles", List.class);
-        return roles.stream()
-                .map(role -> (GrantedAuthority) () -> role)
-                .collect(Collectors.toList());
+    private List<GrantedAuthority> getGrantedAuthorities(Role role) {
+        return List.of((GrantedAuthority) role::name); // Role enum의 name을 권한으로 변환
     }
 
     private String getToken(HttpServletRequest request) {
