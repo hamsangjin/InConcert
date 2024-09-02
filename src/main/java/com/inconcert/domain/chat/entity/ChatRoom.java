@@ -28,23 +28,21 @@ public class ChatRoom {
     @JoinColumn(name = "host_user_id")
     private User hostUser;
 
-    @ManyToMany
-    @JoinTable(
-            name = "chat_room_users",
-            joinColumns = @JoinColumn(name = "chat_room_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users = new ArrayList<>();
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private Post post;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoomUser> users = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> messages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatNotification> notifications = new ArrayList<>();
+
     @Builder
-    public ChatRoom(String roomName, User hostUser, Post post, List<User> users) {
+    public ChatRoom(String roomName, User hostUser, Post post, List<ChatRoomUser> users) {
         this.roomName = roomName;
         this.hostUser = hostUser;
         this.post = post;
@@ -52,11 +50,11 @@ public class ChatRoom {
     }
 
     public void addUser(User user) {
-        users.add(user);
-    }
-
-    public void removeUser(User user) {
-        users.remove(user);
+        ChatRoomUser chatRoomUser = ChatRoomUser.builder()
+                .user(user)
+                .chatRoom(this)
+                .build();
+        this.users.add(chatRoomUser);
     }
 
     public void assignPost(Post post) {

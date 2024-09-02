@@ -1,7 +1,8 @@
 package com.inconcert.domain.user.entity;
 
 import com.inconcert.domain.chat.entity.ChatMessage;
-import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.entity.ChatNotification;
+import com.inconcert.domain.chat.entity.ChatRoomUser;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
@@ -92,8 +93,14 @@ public class User {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> sentMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatRoom> hostedRooms = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoomUser> chatRooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatNotification> chatNotifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "requestUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatNotification> chatNotificationRequests = new ArrayList<>();
 
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,
