@@ -25,19 +25,12 @@ public class ImageService {
 
     private static final Logger log = LoggerFactory.getLogger(ImageService.class);
     @Value("${aws.s3.bucket}")
-    private String bucketName;
+    String bucketName;
 
     @Value("${aws.cloudfront.url}")
-    private String cloudFrontUrl;
+    String cloudFrontUrl;
 
     private final S3Client s3Client;
-
-    // 저장되는 이미지 파일명
-    public String generateTempImageName(MultipartFile file) {
-        String uuid = UUID.randomUUID().toString();
-        String originalFileName = file.getOriginalFilename();
-        return uuid + "_" + (originalFileName != null ? originalFileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_") : "");
-    }
 
     public ResponseEntity<?> uploadImage(MultipartFile image) {
         String savedFileName = generateTempImageName(image);
@@ -97,6 +90,7 @@ public class ImageService {
         return imageKeys;
     }
 
+    // content에서 img요소의 src값들을 추출하는 메서드
     public Map<String, String> extractImageUrls(String content) {
         // 정규표현식으로 img 태그의 src 속성 추출
         Pattern imgPattern = Pattern.compile(
@@ -116,5 +110,12 @@ public class ImageService {
             imageMap.put(imageUrls.get(i), "url" + (i+1));
         }
         return imageMap;
+    }
+
+    // 저장되는 이미지 파일명
+    private String generateTempImageName(MultipartFile file) {
+        String uuid = UUID.randomUUID().toString();
+        String originalFileName = file.getOriginalFilename();
+        return uuid + "_" + (originalFileName != null ? originalFileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_") : "");
     }
 }

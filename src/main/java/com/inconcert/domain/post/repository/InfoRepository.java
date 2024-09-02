@@ -37,7 +37,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN p.user u " +
             "WHERE c.title = 'info' " +
             "ORDER BY p.createdAt DESC")
-    List<PostDTO> findTop8LatestInfoPosts(Pageable pageable);
+    List<PostDTO> getTop8LatestInfoPosts(Pageable pageable);
 
     // 실시간 인기 공연 게시글 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +

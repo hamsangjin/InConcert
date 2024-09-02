@@ -31,7 +31,7 @@ public class HomeService {
     private final TransferRepository transferRepository;
     private final HomeRepository homeRepository;
 
-    public List<PostDTO> getAllCategoryPosts(String categoryTitle) {
+    public List<PostDTO> getAllPostDTOsByCategoryTitle(String categoryTitle) {
         PageRequest pageable = PageRequest.of(0, 8);
 
         return switch (categoryTitle) {
@@ -50,8 +50,8 @@ public class HomeService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<List<PostDTO>> getLatestPosts() {
-        return ResponseEntity.ok(infoRepository.findTop8LatestInfoPosts(PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdAt"))));
+    public ResponseEntity<List<PostDTO>> getTop8LatestInfoPosts() {
+        return ResponseEntity.ok(infoRepository.getTop8LatestInfoPosts(PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdAt"))));
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +66,6 @@ public class HomeService {
                 popularPosts.add(popularPost);
             }
         }
-
         return ResponseEntity.ok(popularPosts);
     }
 }

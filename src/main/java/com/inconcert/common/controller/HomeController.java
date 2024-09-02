@@ -25,9 +25,9 @@ public class HomeController {
         performanceService.startCrawlingAsync(false);
 
         // 기존의 게시글 로드
-        List<PostDTO> reviewPosts = homeService.getAllCategoryPosts("review");
-        List<PostDTO> matchPosts = homeService.getAllCategoryPosts("match");
-        List<PostDTO> transferPosts = homeService.getAllCategoryPosts("transfer");
+        List<PostDTO> reviewPosts = homeService.getAllPostDTOsByCategoryTitle("review");
+        List<PostDTO> matchPosts = homeService.getAllPostDTOsByCategoryTitle("match");
+        List<PostDTO> transferPosts = homeService.getAllPostDTOsByCategoryTitle("transfer");
 
 
         model.addAttribute("reviewPosts", reviewPosts);
