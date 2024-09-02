@@ -4,7 +4,6 @@ import com.inconcert.domain.chat.dto.ChatRoomDTO;
 import com.inconcert.domain.chat.dto.UserDTO;
 import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
-import com.inconcert.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,12 +48,18 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     // 채팅방에 속한 유저 목록
     @Query("SELECT new com.inconcert.domain.chat.dto.UserDTO(u.id, u.username, u.nickname, u.profileImage)" +
             "FROM ChatRoom c " +
-            "JOIN c.users u " +
+            "JOIN ChatRoomUser cru ON :chatRoomId = cru.chatRoom.id " +
+            "JOIN User u ON u.id = cru.user.id " +
             "WHERE c.id = :chatRoomId")
     List<UserDTO> findAllById(@Param("chatRoomId") Long chatRoomId);
 
-    // 두 유저가 포함된 1:1 채팅방이 존재하는지 확인
-    List<ChatRoom> findByUsersContainsAndUsersContainsAndPostIsNull(User user1, User user2);
+    @Query("SELECT count(c) " +
+            "FROM ChatRoom c " +
+            "JOIN ChatRoomUser cru ON c.id = cru.chatRoom.id " +
+            "WHERE c.post IS NULL " +
+            "AND :userId1 IN (SELECT u.id FROM cru.user u) " +
+            "AND :userId2 IN (SELECT u.id FROM cru.user u) ")
+    int findChatRoomsWithNoPostAndBothUsers(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
 
     // 동행 완료 버튼 클릭 시, 그때의 채팅방 유저들 불러오기
     @Query("SELECT u.id " +

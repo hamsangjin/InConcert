@@ -9,6 +9,7 @@ import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.chat.repository.ChatMessageRepository;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.repository.ChatNotificationRepository;
+import com.inconcert.domain.chat.repository.ChatRoomUserRepository;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
@@ -21,7 +22,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -34,6 +34,7 @@ public class ChatService {
     private final UserService userService;
     private final ChatNotificationService chatNotificationService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ChatRoomUserRepository chatRoomUserRepository;
 
     // 사용자의 채팅방 목록
     @Transactional(readOnly = true)
@@ -86,9 +87,8 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomName)
                 .hostUser(user)
-                .users(Arrays.asList(user))
                 .build();
-
+        chatRoom.addUser(user);
         chatRoom = chatRoomRepository.save(chatRoom);
 
         return ChatRoomDTO.builder()
@@ -186,16 +186,15 @@ public class ChatService {
         if(chatRoom.getPost() != null && chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ExceptionMessage.HOST_EXIT.getMessage());
         }
-        chatRoom.removeUser(leavingUser);   // host가 아니거나, host가 채팅방에 혼자 있는 경우
 
         // 채팅방 인원이 0명일 경우 post와 채팅방 삭제
-        if (chatRoom.getUsers().isEmpty()) {
+        if (chatRoom.getUsers().size() == 1) {
             chatRoomRepository.deleteById(chatRoomId);
         }
         else {
+            chatRoomUserRepository.deleteByUserAndChatRoom(leavingUser.getId(), chatRoom.getId());
             // 1대1 채팅방이 아닌 채팅방에서 나간 경우 퇴장 메시지 전송
             if(chatRoom.getPost() != null) {
-                chatRoomRepository.save(chatRoom);
                 ChatMessageDTO leaveMessage = ChatMessageDTO.builder()
                         .chatRoomId(chatRoomId)
                         .username(leavingUser.getUsername())
@@ -253,9 +252,7 @@ public class ChatService {
         messagingTemplate.convertAndSend("/topic/chat/room/" + chatRoomId, kickedMessage);
         messagingTemplate.convertAndSend("/topic/chat/kicked/" + kickedUserId, "채팅방에서 강퇴되었습니다.");
 
-        // 유저 강퇴
-        chatRoom.removeUser(kickedUser);
-        chatRoomRepository.save(chatRoom);
+        chatRoomUserRepository.deleteByUserAndChatRoom(kickedUser.getId(), chatRoom.getId());
 
         return ResponseEntity.ok("유저가 강퇴되었습니다.");
     }
@@ -317,9 +314,9 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 이미 요청자와 수신자 사이의 1:1 채팅방이 존재하는지 확인
-        List<ChatRoom> existingRooms = chatRoomRepository.findByUsersContainsAndUsersContainsAndPostIsNull(requestingUser, receiver);
+        int existingRoomsCount = chatRoomRepository.findChatRoomsWithNoPostAndBothUsers(requestingUser.getId(), receiver.getId());
 
-        if (!existingRooms.isEmpty()) {
+        if (existingRoomsCount > 0) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());
         } else if(receiverId.equals(requestingUser.getId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionMessage.SELF_CHAT.getMessage());
@@ -333,6 +330,8 @@ public class ChatService {
         chatRoom.addUser(requestingUser); // 요청자 추가
         chatRoom.addUser(receiver); // 수신자 추가
 
-        return ResponseEntity.ok(chatRoomRepository.save(chatRoom).getId());
+        ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
+
+        return ResponseEntity.ok(saveChatRoom.getId());
     }
 }
