@@ -151,14 +151,14 @@ public class PerformanceService {
 
                         // performance 저장
                         performanceRepository.save(performance);
-                        log.info(performance.getTitle() + "Performance 저장");
+                        log.info(performance.getTitle() + " Performance 저장");
 
                         ScrapedPostDTO scrapedPostDTO = convertToCrawledDTO(performance, Long.parseLong(type));
                         Post post = createPostFromCrawledDTO(scrapedPostDTO, adminUser);
 
                         // post 저장
                         Post savedPost = infoRepository.save(post);
-                        log.info("[" + post.getId() + "] " + post.getTitle() + "게시글 저장");
+                        log.info("[" + post.getId() + "] " + post.getTitle() + " 게시글 저장");
 
                         // 실시간 업데이트 전송
                         PostDTO postDTO = convertToPostDTO(scrapedPostDTO, savedPost);
@@ -175,7 +175,7 @@ public class PerformanceService {
                             batchPostDTOs.clear();
                         }
                     }else{
-                        log.error("중복된 게시글(제목)입니다");
+                        log.error("[" + title + "] 중복된 게시글(제목)입니다");
                     }
                 } catch (Exception e) {
                     log.error("Error saving performance or post: {}", e.getMessage());
