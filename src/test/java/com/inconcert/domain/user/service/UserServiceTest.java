@@ -384,7 +384,6 @@ class UserServiceTest {
                 List.of(user.getRole().name())
         );
 
-        Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userRepository.findByUsername("testuser")).thenReturn(java.util.Optional.of(user));
@@ -452,7 +451,6 @@ class UserServiceTest {
                 List.of(user.getRole().name())
         );
 
-        Authentication authentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(userDetails);
         when(userRepository.findByUsername("banneduser")).thenReturn(java.util.Optional.of(user));
