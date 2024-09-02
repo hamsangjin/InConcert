@@ -1,13 +1,10 @@
 package com.inconcert.common.auth;
 
-import com.inconcert.domain.role.entity.Role;
-import com.inconcert.domain.role.repository.RoleRepository;
 import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
+import com.inconcert.domain.user.entity.Role;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
-import com.inconcert.common.exception.ExceptionMessage;
-import com.inconcert.common.exception.RoleNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -16,15 +13,12 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -59,11 +53,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private User createUser(String username, String email, String name, String gender, String mobile, LocalDate birth) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RoleNotFoundException(ExceptionMessage.ROLE_NOT_FOUND.getMessage()))
-        );
-
         User user = User.builder()
                 .username(username)
                 .password("password")   // 소셜 로그인 시 비밀번호 필요하지 않음 (임의로 비밀번호 지정)
@@ -74,7 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .birth(birth)
                 .gender(gender.equals("F") ? Gender.FEMALE : Gender.MALE)
                 .mbti(Mbti.미선택)
-                .roles(roles)
+                .role(Role.ROLE_USER)   // 일반 유저
                 .build();
 
         return userRepository.save(user);

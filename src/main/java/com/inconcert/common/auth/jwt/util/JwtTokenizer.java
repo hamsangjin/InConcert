@@ -1,5 +1,6 @@
 package com.inconcert.common.auth.jwt.util;
 
+import com.inconcert.domain.user.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -33,11 +33,11 @@ public class JwtTokenizer {
 
     // JWT 생성
     private String createToken(Long id, String email, String username,
-                               List<String> roles, Long expire, byte[] secretKey) {
+                               Role role, Long expire, byte[] secretKey) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("userId", id);
         claims.put("username", username);
-        claims.put("roles", roles);
+        claims.put("role", role.name()); // Role enum을 문자열로 저장
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -47,19 +47,18 @@ public class JwtTokenizer {
                 .compact();
     }
 
-
     // 서명 키 생성 메소드
     public static Key getSigningKey(byte[] secretKey) {
         return Keys.hmacShaKeyFor(secretKey);
     }
 
     // ACCESS Token 생성
-    public String createAccessToken(Long id, String email, String username, List<String> roles) {
+    public String createAccessToken(Long id, String email, String username, Role roles) {
         return createToken(id, email, username, roles, ACCESS_TOKEN_EXPIRE_COUNT, accessSecret);
     }
 
     // Refresh Token 생성
-    public String createRefreshToken(Long id, String email, String username, List<String> roles) {
+    public String createRefreshToken(Long id, String email, String username, Role roles) {
         return createToken(id, email, username, roles, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
     }
 
@@ -78,5 +77,11 @@ public class JwtTokenizer {
 
     public Claims parseRefreshToken(String refreshToken) {
         return parseToken(refreshToken, refreshSecret);
+    }
+
+    // Role enum으로 역직렬화
+    public Role getRoleFromClaims(Claims claims) {
+        String roleName = claims.get("role", String.class); // 문자열로 저장된 Role 가져오기
+        return Role.valueOf(roleName); // 문자열을 Role enum으로 변환
     }
 }
