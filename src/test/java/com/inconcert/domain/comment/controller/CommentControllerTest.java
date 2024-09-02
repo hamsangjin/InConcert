@@ -28,7 +28,7 @@ public class CommentControllerTest {
 
     // 각 테스트 실행 전에 Mock 객체를 초기화합니다.
     @BeforeEach
-    void setUp() {
+    void 초기화() {
         MockitoAnnotations.openMocks(this);
     }
 
