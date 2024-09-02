@@ -132,7 +132,6 @@ class HomeServiceTest {
         assertThat(result.getContent()).hasSize(2);
         assertThat(result.getContent().get(0).getContent()).contains(keyword);
         assertThat(result.getContent().get(1).getTitle()).contains(keyword);
-
         verify(homeRepository, times(1)).findByKeyword(eq(keyword), any(Pageable.class));
     }
 
@@ -184,6 +183,7 @@ class HomeServiceTest {
         assertThat(response.getBody().get(0).getTitle()).isEqualTo(postDTO2.getTitle());
         assertThat(response.getBody().get(1).getContent()).isEqualTo(postDTO1.getContent());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        verify(infoRepository, times(1)).getTop8LatestInfoPosts(any(Pageable.class));
     }
 
     @Test
