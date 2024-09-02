@@ -12,7 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "comments")
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
