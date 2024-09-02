@@ -12,9 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-
 public interface ReportRepository extends JpaRepository<Report, Long> {
-
     @Query("SELECT new com.inconcert.domain.report.dto.ReportDTO(r.id, r.type, r.post, r.reporter) " +
             "FROM Report r")
     List<ReportDTO> getReportDTOs();

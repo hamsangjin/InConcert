@@ -5,6 +5,7 @@ import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
+import com.inconcert.domain.report.entity.Report;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -67,6 +68,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
+
     @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private ChatRoom chatRoom;
 
@@ -88,9 +92,5 @@ public class Post extends BaseEntity {
 
     public void updateMatchUserIds(List<Long> matchUserIds) {
         this.matchUserIds = matchUserIds;
-    }
-
-    public void updateThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
     }
 }

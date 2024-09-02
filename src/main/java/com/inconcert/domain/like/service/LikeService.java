@@ -46,17 +46,22 @@ public class LikeService {
         // 현재 사용자가 해당 포스트에 좋아요를 눌렀는지 확인
         Optional<Like> findLike = likeRepository.findByPostAndUser(post, user);
 
-        if (!findLike.isPresent()) {
-            // 좋아요를 누르지 않은 경우, 좋아요 추가
+        // 좋아요를 누르지 않은 경우, 좋아요 추가
+        if (findLike.isEmpty()) {
             Like like = Like.builder()
                     .post(post)
                     .user(user)
                     .build();
-            if(post.getUser().getId() != user.getId())  notificationService.createLikesNotification(post, user, true);
+            if(!post.getUser().getId().equals(user.getId()))
+                notificationService.createLikesNotification(post, user, true);
+
             likeRepository.save(like);
-        } else {
-            if(post.getUser().getId() != user.getId())   notificationService.createLikesNotification(post, user, false);
-            // 이미 좋아요를 누른 경우, 좋아요 취소
+        }
+        // 이미 좋아요를 누른 경우, 좋아요 취소
+        else {
+            if(!post.getUser().getId().equals(user.getId()))
+                notificationService.createLikesNotification(post, user, false);
+
             likeRepository.delete(findLike.get());
         }
 
