@@ -30,7 +30,7 @@ public class MatchControllerTest {
 
     // 각 테스트가 실행되기 전에 Mock 객체들을 초기화
     @BeforeEach
-    void setUp() {
+    void 초기화() {
         MockitoAnnotations.openMocks(this);
     }
 
