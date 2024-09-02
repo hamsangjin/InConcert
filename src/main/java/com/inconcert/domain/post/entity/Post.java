@@ -18,6 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
