@@ -4,7 +4,7 @@ import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.TransferRepository;
-import com.inconcert.domain.post.util.DateUtil;
+import com.inconcert.domain.post.util.DateUtils;
 import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,8 +41,8 @@ public class TransferService {
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getByKeywordAndFilters(String postCategoryTitle, String keyword, String period, String type, int page, int size) {
-        LocalDateTime startDate = DateUtil.getStartDate(period);
-        LocalDateTime endDate = DateUtil.getCurrentDate();
+        LocalDateTime startDate = DateUtils.getStartDate(period);
+        LocalDateTime endDate = DateUtils.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
 
         // 데이터베이스에서 조건에 맞는 게시물 검색

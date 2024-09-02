@@ -2,7 +2,7 @@ package com.inconcert.domain.post.util;
 
 import java.time.LocalDateTime;
 
-public class DateUtil {
+public class DateUtils {
     public static LocalDateTime getStartDate(String period) {
         return switch (period) {
             case "all" -> LocalDateTime.now().minusYears(100);

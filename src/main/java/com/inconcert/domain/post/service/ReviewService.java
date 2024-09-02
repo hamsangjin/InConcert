@@ -4,7 +4,7 @@ import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.ReviewRepository;
-import com.inconcert.domain.post.util.DateUtil;
+import com.inconcert.domain.post.util.DateUtils;
 import com.inconcert.common.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -35,8 +35,8 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getByKeywordAndFilters(String keyword, String period, String type, int page, int size) {
-        LocalDateTime startDate = DateUtil.getStartDate(period);
-        LocalDateTime endDate = DateUtil.getCurrentDate();
+        LocalDateTime startDate = DateUtils.getStartDate(period);
+        LocalDateTime endDate = DateUtils.getCurrentDate();
         Pageable pageable = PageRequest.of(page, size);
 
         // 데이터베이스에서 조건에 맞는 게시물 검색
