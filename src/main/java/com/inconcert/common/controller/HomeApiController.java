@@ -23,7 +23,7 @@ public class HomeApiController {
 
     @GetMapping("/api/posts/latest")
     public ResponseEntity<List<PostDTO>> getLatestPosts() {
-        return homeService.getLatestPosts();
+        return homeService.getTop8LatestInfoPosts();
     }
 
     @GetMapping("/api/posts/popular")
