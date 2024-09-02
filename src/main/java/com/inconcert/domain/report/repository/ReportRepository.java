@@ -21,7 +21,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     @Query("SELECT new com.inconcert.domain.report.dto.ReportDTO(r.id, r.type, r.post, r.reporter) " +
             "FROM Report r " +
-            "WHERE r.reporter.id = :reportId")
+            "WHERE r.id = :reportId")
     ReportDTO getReportDTOByReportId(@Param("reportId") Long reportId);
 
     boolean existsByReporterAndPost(User reporter, Post post);

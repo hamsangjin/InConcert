@@ -213,8 +213,7 @@
 
     function validateFormInputs() {
         document.getElementById('content').value = quill.root.innerHTML;
-
-        let originalCategoryTitle = document.getElementById('originalCategoryTitle').value;
+        let originalCategoryTitle = /*[[${categoryTitle}]]*/ '[(${categoryTitle})]';
         let categoryTitle = document.getElementById('categoryTitle').value;
         let postCategoryTitle = document.getElementById('postCategoryTitle').value;
         let matchCount = document.getElementById('matchCount').value;
@@ -222,7 +221,7 @@
         let title = document.getElementById('title').value;
         let content = document.getElementById('content').value;
 
-        if(originalCategoryTitle === 'match' && categoryTitle.value !== 'match') {
+        if(originalCategoryTitle === 'match' && categoryTitle !== 'match') {
             alert("채팅방이 존재하는 경우 카테고리를 변경할 수 없습니다.")
             return false;
         }

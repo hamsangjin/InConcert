@@ -20,7 +20,6 @@ spring:
     defer-datasource-initialization: true # 데이터베이스 초기화를 JPA 테이블 생성 후로 지연
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.MySQL8Dialect
         connection:
           useUnicode: true
