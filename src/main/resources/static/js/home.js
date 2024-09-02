@@ -13,7 +13,7 @@ const infoPosts = [];
 function connectSSE() {
     eventSource = new EventSource('/api/crawling/progress');
 
-    eventSource.onopen = function(event) {
+    eventSource.onopen = function() {
         console.log("SSE connection opened");
     };
 
@@ -216,6 +216,26 @@ function checkCrawlingStatus() {
         });
 }
 
+function runFunctionsAtMidnight() {
+    const now = new Date();
+    const targetTime = new Date();
+    targetTime.setHours(0, 3, 0, 0); // 오전 12시 3분으로 설정
+
+    // 만약 현재 시간이 12시 3분 이후라면, 다음 날로 설정
+    if (now > targetTime) {
+        targetTime.setDate(targetTime.getDate() + 1);
+    }
+
+    const timeUntilTarget = targetTime - now;
+
+    setTimeout(() => {
+        refreshData();
+        checkCrawlingStatus();
+        // 다음 날 같은 시간에 다시 설정
+        runFunctionsAtMidnight();
+    }, timeUntilTarget);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const isCrawling = document.getElementById('crawling-status').style.display !== 'none';
     updateCrawlingStatus(isCrawling);
@@ -223,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
     connectSSE();
     checkCrawlingStatus();
 
-    // 주기적으로 데이터 새로고침
-    setInterval(refreshData, 300000);
-    setInterval(checkCrawlingStatus, 10000);
+    // 12시 3분에 주기적으로 새로고침
+    runFunctionsAtMidnight();
 });

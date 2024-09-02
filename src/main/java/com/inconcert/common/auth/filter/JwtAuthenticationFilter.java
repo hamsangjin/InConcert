@@ -74,6 +74,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/images/") ||
+                path.startsWith("/webjars/") || path.startsWith("/uploads/") || path.startsWith("/v3/api-docs/") ||
+                path.startsWith("/swagger-ui/") || path.startsWith("/favicon.ico");
+    }
+
     private void getAuthentication(String token){
         Claims claims = jwtTokenizer.parseAccessToken(token);   // 토큰 파싱
 
