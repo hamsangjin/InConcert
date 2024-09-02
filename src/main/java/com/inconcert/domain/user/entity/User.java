@@ -104,6 +104,12 @@ public class User {
     @OneToMany(mappedBy = "requestUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatNotification> chatNotificationRequests = new ArrayList<>();
 
+    public User(Long id, String username, String email){
+        this.id = id;
+        this.username = username;
+        this.email = email;
+    }
+
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,
                 LocalDate birth, String profileImage, Gender gender, String intro, Mbti mbti, Role role) {

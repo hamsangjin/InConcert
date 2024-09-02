@@ -4,10 +4,6 @@ import com.inconcert.common.exception.CategoryNotFoundException;
 import com.inconcert.common.repository.HomeRepository;
 import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.InfoRepository;
-import com.inconcert.domain.post.repository.MatchRepository;
-import com.inconcert.domain.post.repository.ReviewRepository;
-import com.inconcert.domain.post.repository.TransferRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,21 +27,9 @@ class HomeServiceTest {
     @Mock
     private InfoRepository infoRepository;
     @Mock
-    private ReviewRepository reviewRepository;
-    @Mock
-    private TransferRepository transferRepository;
-    @Mock
-    private MatchRepository matchRepository;
-    @Mock
     private HomeRepository homeRepository;
-
     @InjectMocks
     private HomeService homeService;
-
-    @BeforeEach
-    void setUp() {
-        homeService = new HomeService(infoRepository, reviewRepository, matchRepository, transferRepository, homeRepository);
-    }
 
     @Test
     public void 각_게시판의_게시글_가져오기() {
