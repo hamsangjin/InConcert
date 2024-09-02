@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -54,10 +53,10 @@ class ImageServiceTest {
         ResponseEntity<?> responseEntity = imageService.uploadImage(multipartFile);
 
         // then
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         Map<String, String> responseBody = (Map<String, String>) responseEntity.getBody();
         assertThat(responseBody).isNotEmpty();
-        assertTrue(responseBody.containsKey("url"));
+        assertThat(responseBody).containsKey("url");
         assertThat(responseBody.get("url")).contains(imageService.cloudFrontUrl);
         assertThat(responseBody.get("url")).contains("_image.png");
     }
@@ -86,7 +85,6 @@ class ImageServiceTest {
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo("이미지가 정상적으로 삭제되었습니다.");
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
@@ -99,8 +97,8 @@ class ImageServiceTest {
         ResponseEntity<String> responseEntity = imageService.deleteImage(imageUrl);
 
         // then
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody().contains("이미지 삭제 실패"));
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getBody()).contains("이미지 삭제 실패");
     }
 
     @Test

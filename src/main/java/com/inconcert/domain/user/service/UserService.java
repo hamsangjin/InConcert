@@ -52,110 +52,6 @@ public class UserService {
     private final JwtTokenizer jwtTokenizer;
     private final TokenService tokenService;
 
-    @Transactional(readOnly = true)
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-    }
-
-    // 아이디 중복 확인
-    @Transactional(readOnly = true)
-    public ResponseEntity<? super UsernameCheckRspDto> checkUsername(UsernameCheckReqDto reqDto) {
-        String username = reqDto.getUsername();
-        boolean isExistUserId = userRepository.existsByUsername(username);
-        if(isExistUserId) return UsernameCheckRspDto.duplicateId();
-
-        return UsernameCheckRspDto.success();
-    }
-
-    // 이메일 중복 확인
-    @Transactional(readOnly = true)
-    public ResponseEntity<? super EmailCheckRspDto> checkEmail(EmailCheckReqDto reqDto) {
-        String email = reqDto.getEmail();
-        boolean isExistEmail = userRepository.existsByEmail(email);
-        if(isExistEmail) return EmailCheckRspDto.duplicateEmail();
-
-        return EmailCheckRspDto.success();
-    }
-
-    // 닉네임 중복 확인
-    @Transactional(readOnly = true)
-    public ResponseEntity<? super NicknameCheckRspDto> checkNickname(NicknameCheckReqDto reqDto) {
-        String nickname = reqDto.getNickname();
-        boolean isExistNickname = userRepository.existsByNickname(nickname);
-        if(isExistNickname) return NicknameCheckRspDto.duplicateNickname();
-
-        return NicknameCheckRspDto.success();
-    }
-
-    // 전화번호 중복 확인
-    @Transactional(readOnly = true)
-    public ResponseEntity<? super PhoneNumberCheckRspDto> checkPhoneNumber(PhoneNumberCheckReqDto reqDto) {
-        String phoneNumber = reqDto.getPhoneNumber();
-        boolean isExistPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
-        if(isExistPhoneNumber) return PhoneNumberCheckRspDto.duplicatePhoneNumber();
-
-        return PhoneNumberCheckRspDto.success();
-    }
-
-    // 인증 메일 전송 (인증번호 갱신 또는 생성)
-    @Transactional
-    public ResponseEntity<? super EmailCertificationRspDto> sendCertificationNumber(EmailCertificationReqDto reqDto) {
-        String username = reqDto.getUsername();
-        String email = reqDto.getEmail();
-
-        boolean isExistUsername = userRepository.existsByUsername(username);
-        if(isExistUsername) return UsernameCheckRspDto.duplicateId();    // id가 중복될 경우 (username)
-
-        // 새로운 인증번호 생성
-        String certificationNumber = CertificationNumber.certificationNumber();
-
-        // 메일 전송
-        boolean isSucceed = emailProvider.sendEmail(email, certificationNumber);
-        if(!isSucceed) return EmailCertificationRspDto.mailSendFail();
-
-        // 해당 사용자에 대한 인증번호가 이미 존재하는지 확인
-        Certification existingCertification = certificationRepository.findByUsername(username);
-
-        Certification certification;
-        if (existingCertification != null) {
-            certification = Certification.builder()
-                    .id(existingCertification.getId())
-                    .email(email)
-                    .certificationNumber(certificationNumber)
-                    .username(username)
-                    .build();
-        }
-        else {
-            // 새로운 인증번호 객체 생성
-            certification = Certification.builder()
-                    .email(email)
-                    .certificationNumber(certificationNumber)
-                    .username(username)
-                    .build();
-        }
-
-        certificationRepository.save(certification);
-
-        return EmailCertificationRspDto.success();
-    }
-
-    // 인증 번호 확인
-    @Transactional(readOnly = true)
-    public ResponseEntity<? super CheckCertificationRspDto> checkCertification(CheckCertificationReqDto reqDto) {
-        String username = reqDto.getUsername();
-        String email = reqDto.getEmail();
-        String certificationNumber = reqDto.getCertificationNumber();
-
-        Certification certification = certificationRepository.findByUsername(username);
-        if(certification == null) return CheckCertificationRspDto.certificationFail();
-
-        boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
-        if(!isMatched) return CheckCertificationRspDto.certificationFail(); // 인증 번호가 일치하지 않을 때
-
-        return CheckCertificationRspDto.success();
-    }
-
     // 회원가입
     @Transactional
     public ResponseEntity<? super RegisterRspDto> joinUser(RegisterReqDto reqDto) {
@@ -260,8 +156,111 @@ public class UserService {
             return ResponseEntity.ok(loginRspDto);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
-
         }
+    }
+
+    @Transactional(readOnly = true)
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+    }
+
+    // 아이디 중복 확인
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super UsernameCheckRspDto> checkUsername(UsernameCheckReqDto reqDto) {
+        String username = reqDto.getUsername();
+        boolean isExistUserId = userRepository.existsByUsername(username);
+        if(isExistUserId) return UsernameCheckRspDto.duplicateId();
+
+        return UsernameCheckRspDto.success();
+    }
+
+    // 이메일 중복 확인
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super EmailCheckRspDto> checkEmail(EmailCheckReqDto reqDto) {
+        String email = reqDto.getEmail();
+        boolean isExistEmail = userRepository.existsByEmail(email);
+        if(isExistEmail) return EmailCheckRspDto.duplicateEmail();
+
+        return EmailCheckRspDto.success();
+    }
+
+    // 닉네임 중복 확인
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super NicknameCheckRspDto> checkNickname(NicknameCheckReqDto reqDto) {
+        String nickname = reqDto.getNickname();
+        boolean isExistNickname = userRepository.existsByNickname(nickname);
+        if(isExistNickname) return NicknameCheckRspDto.duplicateNickname();
+
+        return NicknameCheckRspDto.success();
+    }
+
+    // 전화번호 중복 확인
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super PhoneNumberCheckRspDto> checkPhoneNumber(PhoneNumberCheckReqDto reqDto) {
+        String phoneNumber = reqDto.getPhoneNumber();
+        boolean isExistPhoneNumber = userRepository.existsByPhoneNumber(phoneNumber);
+        if(isExistPhoneNumber) return PhoneNumberCheckRspDto.duplicatePhoneNumber();
+
+        return PhoneNumberCheckRspDto.success();
+    }
+
+    // 인증 메일 전송 (인증번호 갱신 또는 생성)
+    @Transactional
+    public ResponseEntity<? super EmailCertificationRspDto> sendCertificationNumber(EmailCertificationReqDto reqDto) {
+        String username = reqDto.getUsername();
+        String email = reqDto.getEmail();
+
+        boolean isExistUsername = userRepository.existsByUsername(username);
+        if(isExistUsername) return UsernameCheckRspDto.duplicateId();    // id가 중복될 경우 (username)
+
+        // 새로운 인증번호 생성
+        String certificationNumber = CertificationNumber.certificationNumber();
+
+        // 메일 전송
+        boolean isSucceed = emailProvider.sendEmail(email, certificationNumber);
+        if(!isSucceed) return EmailCertificationRspDto.mailSendFail();
+
+        // 해당 사용자에 대한 인증번호가 이미 존재하는지 확인
+        Certification existingCertification = certificationRepository.findByUsername(username);
+
+        Certification certification;
+        if (existingCertification != null) {
+            certification = Certification.builder()
+                    .id(existingCertification.getId())
+                    .email(email)
+                    .certificationNumber(certificationNumber)
+                    .username(username)
+                    .build();
+        }
+        else {
+            // 새로운 인증번호 객체 생성
+            certification = Certification.builder()
+                    .email(email)
+                    .certificationNumber(certificationNumber)
+                    .username(username)
+                    .build();
+        }
+
+        certificationRepository.save(certification);
+
+        return EmailCertificationRspDto.success();
+    }
+
+    // 인증 번호 확인
+    @Transactional(readOnly = true)
+    public ResponseEntity<? super CheckCertificationRspDto> checkCertification(CheckCertificationReqDto reqDto) {
+        String username = reqDto.getUsername();
+        String email = reqDto.getEmail();
+        String certificationNumber = reqDto.getCertificationNumber();
+
+        Certification certification = certificationRepository.findByUsername(username);
+        if(certification == null) return CheckCertificationRspDto.certificationFail();
+
+        boolean isMatched = certification.getEmail().equals(email) && certification.getCertificationNumber().equals(certificationNumber);
+        if(!isMatched) return CheckCertificationRspDto.certificationFail(); // 인증 번호가 일치하지 않을 때
+
+        return CheckCertificationRspDto.success();
     }
 
     @Transactional
@@ -339,7 +338,7 @@ public class UserService {
 
             return ResponseEntity.ok(userRepository.save(user.get()).getEmail() + "로 임시 비밀번호를 전송했습니다.");
         }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 아이디나 이메일이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionMessage.USER_NOT_FOUND.getMessage());
         }
     }
 
