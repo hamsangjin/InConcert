@@ -69,6 +69,8 @@ public class ReportService {
                 .orElseThrow(() -> new ReportNotFoundException(ExceptionMessage.REPORT_NOT_FOUND.getMessage()));
 
         Post post = report.getPost();
+        if(post == null) throw new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage());
+
         User postUser = post.getUser();
 
         switch (reportDTO.getResult()){
@@ -90,9 +92,11 @@ public class ReportService {
         }
 
         // 신고 삭제 처리
-        deleteReportId(reportId);
+        reportRepository.deleteById(reportId);
+
         // 게시글 삭제 처리
         getRepositoryByCategoryTitle(post.getPostCategory().getCategory().getTitle()).delete(post);
+
         // 신고 대상 유저 ban_date 저장
         userService.updateUser(postUser);
     }
