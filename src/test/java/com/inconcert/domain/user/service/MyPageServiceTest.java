@@ -279,7 +279,7 @@ class MyPageServiceTest {
 
 
     @Test
-    void getMyReviewee_shouldReturnRevieweeList() {
+    void 나를_평가하는_리뷰어_목록(){
         // given
         Long userId = 1L;
         Long postId = 1L;
@@ -300,7 +300,7 @@ class MyPageServiceTest {
     }
 
     @Test
-    void getUsersReviewStatuses_shouldReturnReviewStatuses() {
+    void 이미_리뷰를_남겼을_경우() {
         // given
         Long userId = 1L;
         Long postId = 1L;
@@ -321,7 +321,7 @@ class MyPageServiceTest {
     }
 
     @Test
-    void isEndFeedback_shouldReturnTrueWhenAllReviewsCompleted() {
+    void 모든_게시글에_대해_모든_리뷰가_완료() {
         // given
         Long userId = 1L;
         List<Long> postIds = Arrays.asList(1L, 2L);
@@ -338,7 +338,7 @@ class MyPageServiceTest {
     }
 
     @Test
-    void isEndFeedback_shouldReturnFalseWhenNotAllReviewsCompleted() {
+    void 모든_리뷰가_완료되지_않았을_경우() {
         // given
         Long userId = 1L;
         List<Long> postIds = Arrays.asList(1L, 2L);
