@@ -34,7 +34,7 @@ public class LikeService {
     @Transactional
     public ResponseEntity<Map<String, Boolean>> toggleLike(Long postId, String categoryTitle) {
         Post post = getPost(postId, categoryTitle);
-        User user = getUser();
+        User user = getAuthenticatedUser();
         Map<String, Boolean> response = new HashMap<>();
 
         // 로그인하지 않은 경우
@@ -74,7 +74,7 @@ public class LikeService {
         Post post = getPost(postId, categoryTitle);
         Map<String, Boolean> response = new HashMap<>();
 
-        User user = getUser();
+        User user = getAuthenticatedUser();
         if (user == null){
             response.put("liked", false);
             return ResponseEntity.ok(response);
@@ -99,7 +99,7 @@ public class LikeService {
         };
     }
 
-    private User getUser() {
+    private User getAuthenticatedUser() {
         Optional<User> optionalUser = userService.getAuthenticatedUser();
         if (optionalUser.isEmpty()) return null;
 
