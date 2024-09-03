@@ -20,6 +20,11 @@ public class HomeController {
     private final HomeService homeService;
     private final PerformanceService performanceService;
 
+    @GetMapping
+    public String index() {
+        return "redirect:/home";
+    }
+
     @GetMapping("/home")
     public String home(Model model) {
         performanceService.startCrawlingAsync(false);
