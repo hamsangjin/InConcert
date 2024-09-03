@@ -17,7 +17,13 @@
                              th:data-manner="${comment.user.mannerPoint != null ? comment.user.mannerPoint : '진행된 동행 정보가 없습니다.'}"
                              th:data-intro="${comment.user.intro}">
                         <div>
-                            <p class="author" th:text="${comment.user.nickname}">댓글 작성한 유저</p>
+                            <div class="author">
+                                <p th:text="${comment.user.nickname}"></p>
+                                <p th:if="${comment.isSecret}">
+                                    <i class="fas fa-lock" title="비밀 댓글"></i>
+                                </p>
+                            </div>
+
                             <p class="date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
                         </div>
                     </div>

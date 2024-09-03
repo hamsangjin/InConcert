@@ -470,8 +470,22 @@ header {
     margin: 0 0 0 5px;
 }
 
-.comment-header .author {
+.comment-header .author{
+    display: flex;
+    align-items: center;
+}
+
+.comment-header .author > p{
+    margin: 0;
+}
+
+.comment-header .author > p:first-child {
     font-weight: bold;
+    margin-right: 5px;
+}
+
+.comment-header .author > p:nth-child(2) {
+    color: gray;
 }
 
 .comment-header .date {
