@@ -35,4 +35,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "SET u.manner_point = (SELECT ROUND(AVG(f.point), 2) FROM feedbacks f WHERE f.reviewee_id = :revieweeId) " +
             "WHERE u.id = :revieweeId", nativeQuery = true)
     void updateMannerPointByRevieweeId(@Param("revieweeId") Long revieweeId);
+
+    @Query("SELECT u.profileImage " +
+            "FROM User u " +
+            "WHERE u.nickname = :nickname")
+    String getProfileImageByNickname(@Param("nickname") String nickname);
 }

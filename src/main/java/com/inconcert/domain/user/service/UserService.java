@@ -39,7 +39,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -362,6 +364,13 @@ public class UserService {
         else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionMessage.USER_NOT_FOUND.getMessage());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<Map<String, String>> getProfileImageByNickname(String nickname) {
+        Map<String, String> profileImageMap = new HashMap<>();
+        profileImageMap.put("profileImage", userRepository.getProfileImageByNickname(nickname));
+        return ResponseEntity.ok(profileImageMap);
     }
 
     @Transactional(readOnly = true)

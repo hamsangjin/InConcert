@@ -4,11 +4,13 @@ import com.inconcert.domain.chat.dto.NotificationMessageDTO;
 import com.inconcert.domain.chat.dto.UserDTO;
 import com.inconcert.domain.chat.service.ChatNotificationService;
 import com.inconcert.domain.chat.service.ChatService;
+import com.inconcert.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ import java.util.List;
 public class ChatApiController {
     private final ChatService chatService;
     private final ChatNotificationService chatNotificationService;
+    private final UserService userService;
 
     // 채팅방에 속한 유저 목록
     @GetMapping("/users/{chatRoomId}")
@@ -72,5 +75,11 @@ public class ChatApiController {
     @GetMapping("/notifications/requestlist")
     public ResponseEntity<List<NotificationMessageDTO>> getNotificationsForUser(@RequestParam("userId") Long userId) {
         return chatNotificationService.getNotificationMessageDTOsByUserId(userId);
+    }
+
+    // 메시지 보낸 유저의 프로필 이미지 가져오기
+    @GetMapping("/profile")
+    public ResponseEntity<Map<String, String>> getUserProfile(@RequestParam("nickname") String nickname) {
+        return userService.getProfileImageByNickname(nickname);
     }
 }

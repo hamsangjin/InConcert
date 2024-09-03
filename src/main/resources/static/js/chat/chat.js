@@ -328,7 +328,14 @@ function showMessage(message) {
         messageHeader.className = 'message-header';
 
         const profileImg = document.createElement('img');
-        profileImg.src = document.getElementById('profileImg').value;
+        // 닉네임을 이용해 fetch 요청으로 프로필 이미지 가져오기
+        fetch(`/api/chat/profile?nickname=${message.nickname}`)
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                profileImg.src = data.profileImage || 'images/profile.png';
+            })
 
         const nickname = document.createElement('p');
         nickname.innerText = message.nickname;

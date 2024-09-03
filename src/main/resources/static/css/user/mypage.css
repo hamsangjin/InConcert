@@ -280,6 +280,12 @@ h3{
     height: 200px
 }
 
+.intro-container > p{
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
 .mbti-mannerPoint-container{
     display: flex;
     margin: 0 20px;

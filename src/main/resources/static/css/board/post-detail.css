@@ -583,12 +583,17 @@ header {
 
 .comment-p {
     margin: 20px 0 20px 5px;
-    white-space: pre-wrap;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 
 .comment-p.secret {
     color: #00a885;
     font-weight: bold;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 
 .comment-actions-reply {
@@ -773,6 +778,9 @@ header {
     margin-top: 15px;
     margin-bottom: 50px;
     color: #333;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 
 #kakaotalk-sharing-btn {
