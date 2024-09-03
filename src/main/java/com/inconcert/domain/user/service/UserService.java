@@ -1,11 +1,14 @@
 package com.inconcert.domain.user.service;
 
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.certification.util.CertificationNumber;
 import com.inconcert.domain.certification.util.TempPassword;
 import com.inconcert.domain.certification.entity.Certification;
 import com.inconcert.domain.certification.provider.EmailProvider;
 import com.inconcert.domain.certification.provider.TempPasswordEmailProvider;
 import com.inconcert.domain.certification.repository.CertificationRepository;
+import com.inconcert.domain.feedback.repository.FeedbackRepository;
+import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.dto.request.*;
 import com.inconcert.domain.user.dto.response.*;
 import com.inconcert.domain.user.entity.Role;
@@ -36,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,6 +52,8 @@ public class UserService {
     private final TempPasswordEmailProvider tempPasswordEmailProvider;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final ImageService imageService;
+    private final FeedbackRepository feedbackRepository;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
@@ -387,6 +393,28 @@ public class UserService {
     public void deleteUser(){
         User user = getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+
+        // 업로드된 이미지 제거
+        for(Post post : user.getPosts()){
+            List<String> imageKeys = imageService.extractImageKeys(post.getContent());
+            for (String key : imageKeys) {
+                imageService.deleteImage(key);
+            }
+        }
+
+        // 프로필 이미지 기본 이미지가 아니면 업로드 제거
+        if(!user.getProfileImage().equals("/images/profile.png")){
+            imageService.deleteImage(imageService.extractImageKeyFromUrl(user.getProfileImage()));
+        }
+
+        // 매너점수 업데이트 대상 저장
+        List<Long> revieweeIdsByReviewerId = feedbackRepository.findRevieweeIdsByReviewerId(user.getId());
+
         userRepository.deleteById(user.getId());
+
+        // 피드백 삭제된 시점으로 매너점수 업데이트
+        for(Long revieweeId : revieweeIdsByReviewerId){
+            userRepository.updateMannerPointByRevieweeId(revieweeId);
+        }
     }
 }

@@ -62,7 +62,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     int findChatRoomsWithNoPostAndBothUsers(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
 
     // 동행 완료 버튼 클릭 시, 그때의 채팅방 유저들 불러오기
-    @Query("SELECT u.id " +
+    @Query("SELECT u.user.id " +
             "FROM ChatRoom c JOIN c.users u " +
             "WHERE c.post.id = :postId")
     List<Long> findUserIdsByPostId(@Param("postId") Long postId);
@@ -71,6 +71,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("SELECT new com.inconcert.domain.user.dto.response.MatchRspDTO" +
             "(c.post.id, c.id, c.post.title, c.post.endDate, size(c.users), c.post.matchCount, c.post.isEnd, c.post.thumbnailUrl, c.post.postCategory.category.title, c.post.postCategory.title, c.hostUser.nickname) " +
             "FROM ChatRoom c JOIN c.users u " +
-            "WHERE u.id = :userId AND c.post.isEnd = false")
+            "WHERE u.user.id = :userId AND c.post.isEnd = false")
     Page<MatchRspDTO> getChatRoomDTOsByUserId(@Param("userId") Long userId, Pageable pageable);
 }

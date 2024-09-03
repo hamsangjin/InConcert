@@ -23,12 +23,15 @@ public class Feedback{
     private int point;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewer_id")
     private User reviewer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewee_id")
     private User reviewee;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @Builder
