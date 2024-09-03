@@ -95,6 +95,8 @@ public class EditService {
                 .notifications(new ArrayList<>(currentPost.getNotifications()))
                 .viewCount(currentPost.getViewCount())
                 .postCategory(postCategory)
+                .reports(currentPost.getReports())
+                .feedbacks(currentPost.getFeedbacks())
                 .build();
 
         savePostToRepository(updatedPost, newCategoryTitle);

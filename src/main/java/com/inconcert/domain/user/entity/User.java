@@ -4,9 +4,11 @@ import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.entity.ChatNotification;
 import com.inconcert.domain.chat.entity.ChatRoomUser;
 import com.inconcert.domain.comment.entity.Comment;
+import com.inconcert.domain.feedback.entity.Feedback;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.post.entity.Post;
+import com.inconcert.domain.report.entity.Report;
 import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.common.auth.jwt.token.entity.Token;
 import jakarta.persistence.*;
@@ -103,6 +105,15 @@ public class User {
 
     @OneToMany(mappedBy = "requestUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatNotification> chatNotificationRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> givenReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reviewee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> receivedReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Report> reports = new ArrayList<>();
 
     public User(Long id, String username, String email){
         this.id = id;

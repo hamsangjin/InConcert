@@ -2,8 +2,7 @@ package com.inconcert.common.service;
 
 import com.inconcert.common.exception.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,8 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ImageService {
-
-    private static final Logger log = LoggerFactory.getLogger(ImageService.class);
     @Value("${aws.s3.bucket}")
     String bucketName;
 

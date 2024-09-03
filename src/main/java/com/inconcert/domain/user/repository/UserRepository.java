@@ -14,13 +14,13 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
+    Optional<User> findByNameAndEmail(String name, String email);
+    Optional<User> findByUsernameAndEmail(String username, String email);
+
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
     boolean existsByPhoneNumber(String phoneNumber);
-
-    Optional<User> findByNameAndEmail(String name, String email);
-    Optional<User> findByUsernameAndEmail(String username, String email);
 
     @Query("SELECT new com.inconcert.domain.user.dto.response.FeedbackRspDTO" +
             "(u.id, u.profileImage, u.nickname, u.birth, u.mbti, u.gender, :userId, :postId) " +
@@ -35,6 +35,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "SET u.manner_point = (SELECT ROUND(AVG(f.point), 2) FROM feedbacks f WHERE f.reviewee_id = :revieweeId) " +
             "WHERE u.id = :revieweeId", nativeQuery = true)
     void updateMannerPointByRevieweeId(@Param("revieweeId") Long revieweeId);
-
-
 }

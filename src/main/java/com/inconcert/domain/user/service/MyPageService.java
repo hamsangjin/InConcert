@@ -62,8 +62,7 @@ public class MyPageService {
     // 유저 정보 수정
     @Transactional
     public void editUser(MyPageEditReqDto reqDto) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAuthenticatedUser();
 
         // 비밀번호 인코딩
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
@@ -87,8 +86,7 @@ public class MyPageService {
     // 기본 이미지로 변경
     @Transactional
     public ResponseEntity<String> resetToDefaultProfileImage() {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAuthenticatedUser();
 
         // 기존 이미지가 기본 이미지가 아니면 s3 삭제
         if(!user.getProfileImage().equals("/images/profile.png")) {
@@ -144,5 +142,10 @@ public class MyPageService {
                         .stream()
                         .allMatch(Boolean::booleanValue))
                 .collect(Collectors.toList());
+    }
+
+    private User getAuthenticatedUser(){
+        return userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
     }
 }

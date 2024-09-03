@@ -3,6 +3,7 @@ package com.inconcert.domain.post.entity;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.chat.entity.ChatRoom;
 import com.inconcert.domain.comment.entity.Comment;
+import com.inconcert.domain.feedback.entity.Feedback;
 import com.inconcert.domain.like.entity.Like;
 import com.inconcert.domain.notification.entity.Notification;
 import com.inconcert.domain.report.entity.Report;
@@ -71,6 +72,9 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Report> reports = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Feedback> feedbacks = new ArrayList<>();
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private ChatRoom chatRoom;
