@@ -70,12 +70,22 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000));
             response.addCookie(accessTokenCookie);
 
-            Token tokenEntity = Token.builder()
-                    .accessTokenValue(accessToken)
-                    .refreshTokenValue("refreshToken")
-                    .user(tokenUser)
-                    .build();
-            tokenService.saveToken(tokenEntity);
+            Optional<Token> optionalToken = tokenService.getTokenByUser(tokenUser);
+
+            // 로그인한 적 있는 경우 토큰 업데이트
+            if(optionalToken.isPresent()) {
+                Token token = optionalToken.get();
+                token.updateToken(accessToken, "refreshToken");
+                tokenService.saveToken(token);
+            }
+            else {
+                Token tokenEntity = Token.builder()
+                        .accessTokenValue(accessToken)
+                        .refreshTokenValue("refreshToken")
+                        .user(tokenUser)
+                        .build();
+                tokenService.saveToken(tokenEntity);
+            }
 
             clearAuthenticationAttributes(request);
 

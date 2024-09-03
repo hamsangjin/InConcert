@@ -31,4 +31,9 @@ public class Token {
         this.refreshTokenValue = refreshTokenValue;
         this.user = user;
     }
+
+    public void updateToken(String accessTokenValue, String refreshTokenValue) {
+        this.accessTokenValue = accessTokenValue;
+        this.refreshTokenValue = refreshTokenValue;
+    }
 }
