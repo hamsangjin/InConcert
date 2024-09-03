@@ -56,10 +56,12 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query("SELECT count(c) " +
             "FROM ChatRoom c " +
             "JOIN ChatRoomUser cru ON c.id = cru.chatRoom.id " +
+            "JOIN cru.user u " +
             "WHERE c.post IS NULL " +
-            "AND :userId1 IN (SELECT u.id FROM cru.user u) " +
-            "AND :userId2 IN (SELECT u.id FROM cru.user u) ")
-    int findChatRoomsWithNoPostAndBothUsers(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
+            "AND u.id IN (:userId1, :userId2) " +
+            "GROUP BY c " +
+            "HAVING COUNT(u.id) = 2")
+    Integer findChatRoomsWithNoPostAndBothUsers(@Param("userId1") Long userId1, @Param("userId2") Long userId2);
 
     // 동행 완료 버튼 클릭 시, 그때의 채팅방 유저들 불러오기
     @Query("SELECT u.user.id " +

@@ -91,6 +91,8 @@
                     if(error.message === 'Login failed'){
                         alert('아이디와 비밀번호를 다시 입력해주세요.');
                     } else if (error.message.startsWith('baned user')) {
+                        window.location.href = '/loginform';
+
                         const banDate = error.message.split(':')[1];
 
                         let message = '이 계정은 ';

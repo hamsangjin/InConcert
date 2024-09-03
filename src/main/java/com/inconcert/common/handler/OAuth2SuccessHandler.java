@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -52,6 +54,21 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
                         return userRepository.save(user);
                     });
+
+//             이용 정지 당한 경우
+            if(tokenUser.getBanDate().isAfter(LocalDate.now())){
+                response.setStatus(HttpStatus.LOCKED.value());
+                response.getWriter().write("{\"error\": \"Account is locked due to a ban.\"}");
+                response.sendRedirect("/loginform");
+                return; // 더 이상 진행하지 않도록 종료
+            }
+//            // 이용 정지 당한 경우
+//            if(tokenUser.getBanDate().isAfter(LocalDate.now())){
+//                response.setStatus(HttpStatus.LOCKED.value());
+//                response.setContentType("application/json;charset=UTF-8");
+//                response.getWriter().write("{\"error\": \"Account is locked due to a ban.\", \"banDate\": \"" + tokenUser.getBanDate() + "\"} ");
+//                return; // 더 이상 진행하지 않도록 종료
+//            }
 
             // SecurityContextHolder에 인증 정보 설정
             Authentication newAuth = new UsernamePasswordAuthenticationToken(naverUser, null, naverUser.getAuthorities());

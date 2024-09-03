@@ -8,6 +8,7 @@
                         <!-- user의 이미지로 변경 -->
                         <img class="profile-img profile-img-comment" th:src="${comment.user.profileImage}"
                              alt="프로필 이미지"
+                             th:data-receiver-id="${comment.user.id}"
                              th:data-nickname="${comment.user.nickname}"
                              th:data-gender="${comment.user.gender.name()}"
                              th:data-birth="${comment.user.birth}"
@@ -93,14 +94,17 @@
             <div class="popup" id="profilePopup-comment">
                 <div class="popup-content">
                     <div class="card" id="profileCard-comment">
-                        <button class="chat-btn" th:data-receiver-id="${post.user.id}" onclick="requestOneToOneChat(this)">1:1 채팅</button>
-                        <span class="close" id="closePopup-comment">&times;</span>
+                        <div class="popup-btn">
+                            <button class="chat-btn">
+                                1:1 채팅
+                            </button>
+                            <span class="close" id="closePopup-comment">&times;</span>
+                        </div>
                         <div class="profile-container">
                             <div class="profile-left">
                                 <img src="" alt="Profile Picture" class="profile-img3">
                                 <p class="nickname"></p>
                             </div>
-
                             <div class="profile-right">
                                 <div class="space">
                                     <div>

@@ -6,7 +6,6 @@ import com.inconcert.domain.chat.dto.UserDTO;
 import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.entity.ChatNotification;
 import com.inconcert.domain.chat.entity.ChatRoom;
-import com.inconcert.domain.chat.entity.ChatRoomUser;
 import com.inconcert.domain.chat.repository.ChatMessageRepository;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.repository.ChatNotificationRepository;
@@ -303,7 +302,7 @@ public class ChatService {
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
         // 이미 요청자와 수신자 사이의 1:1 채팅방이 존재하는지 확인
-        int existingRoomsCount = chatRoomRepository.findChatRoomsWithNoPostAndBothUsers(requestingUser.getId(), receiver.getId());
+        int existingRoomsCount = chatRoomRepository.findChatRoomsWithNoPostAndBothUsers(requestingUser.getId(), receiver.getId()) == null ? 0 : chatRoomRepository.findChatRoomsWithNoPostAndBothUsers(requestingUser.getId(), receiver.getId());
 
         if (existingRoomsCount > 0) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());

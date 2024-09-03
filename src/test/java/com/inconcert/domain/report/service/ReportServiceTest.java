@@ -1,7 +1,9 @@
 package com.inconcert.domain.report.service;
 
+import com.inconcert.common.auth.jwt.token.service.TokenService;
 import com.inconcert.common.exception.PostNotFoundException;
 import com.inconcert.common.exception.ReportNotFoundException;
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.category.entity.Category;
 import com.inconcert.domain.category.entity.PostCategory;
 import com.inconcert.domain.post.entity.Post;
@@ -35,6 +37,12 @@ class ReportServiceTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private ImageService imageService;
+
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private ReportService reportService;

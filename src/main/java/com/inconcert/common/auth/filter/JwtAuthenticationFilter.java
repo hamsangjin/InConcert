@@ -1,5 +1,6 @@
 package com.inconcert.common.auth.filter;
 
+import com.inconcert.domain.report.service.BlackListService;
 import com.inconcert.domain.user.entity.Role;
 import com.inconcert.domain.user.entity.User;
 import com.inconcert.domain.user.repository.UserRepository;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenizer jwtTokenizer;
     private final UserRepository userRepository;
+    private final BlackListService blackListService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -43,6 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // accessToken 가져오기
             String token = getToken(request);
             if (StringUtils.hasText(token)) {
+                // 블랙리스트에 있는지 확인
+                if (blackListService.isBlacklisted(token)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("{\"error\": \"Your session has been invalidated.\"}");
+                    response.sendRedirect("/logout");
+                    return; // 요청을 중단하고, 더 이상 필터 체인을 진행하지 않음
+                }
+
+                // 블랙리스트에 없으면 인증 처리
                 getAuthentication(token);
             }
         } catch (ExpiredJwtException e) {

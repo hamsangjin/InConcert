@@ -1,5 +1,8 @@
 package com.inconcert.domain.report.service;
 
+import com.inconcert.common.auth.jwt.token.entity.Token;
+import com.inconcert.common.auth.jwt.token.service.TokenService;
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +32,9 @@ public class ReportService {
     private final ReviewRepository reviewRepository;
     private final TransferRepository transferRepository;
     private final UserService userService;
+    private final ImageService imageService;
+    private final BlackListService blackListService;
+    private final TokenService tokenService;
 
     // 신고 목록 불러오기
     @Transactional(readOnly = true)
@@ -97,8 +104,23 @@ public class ReportService {
         // 게시글 삭제 처리
         getRepositoryByCategoryTitle(post.getPostCategory().getCategory().getTitle()).delete(post);
 
+        List<String> imageKeys = imageService.extractImageKeys(post.getContent());
+        for (String key : imageKeys) {
+            imageService.deleteImage(key);
+        }
+
         // 신고 대상 유저 ban_date 저장
         userService.updateUser(postUser);
+
+        // 신고 당한 유저의 모든 활성 토큰을 블랙리스트에 추가하여 자동 로그아웃
+        if(!reportDTO.getResult().equals("deletePost")) {
+            Optional<Token> optionalToken = tokenService.getTokenByUser(postUser);
+            optionalToken.ifPresent(token -> {
+                blackListService.addToBlacklist(token.getAccessTokenValue());
+                // 추가적으로 refresh token도 블랙리스트에 추가
+                blackListService.addToBlacklist(token.getRefreshTokenValue());
+            });
+        }
     }
 
     // 반환받은 Repository로 post 조회

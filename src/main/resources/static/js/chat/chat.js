@@ -9,6 +9,7 @@ function scrollToBottom() {
 
 window.onload = function() {
     scrollToBottom()
+    document.getElementById("message").focus();
 };
 
 // STOMP 연결
