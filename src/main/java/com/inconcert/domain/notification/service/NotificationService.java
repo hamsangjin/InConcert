@@ -28,7 +28,7 @@ public class NotificationService {
     private final RedisTemplate<String, String> redisTemplate;
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final SseEmitters sseEmitters;
+    private final NotificationSseEmitters sseEmitters;
     private final UserService userService;
 
     @Transactional(readOnly = true)
@@ -150,6 +150,7 @@ public class NotificationService {
         }
     }
 
+    // 알림 읽음 처리
     @Transactional
     public ResponseEntity<String> markAsRead(Long id) {
         notificationRepository.markAsRead(id);
@@ -173,7 +174,7 @@ public class NotificationService {
         return ResponseEntity.ok(notificationRepository.findByTypeAndUserIdOrderByIsReadAscCreatedAtDesc(type, user.getId()));
     }
 
-    // 알림 삭제 로직
+    // 알림 삭제
     @Transactional
     public ResponseEntity<String> deleteNotification(Long id){
         notificationRepository.deleteById(id);

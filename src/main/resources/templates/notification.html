@@ -214,17 +214,22 @@
             case 'comment':
                 listType = 'commentNotificationList';
                 break;
-            default:
-                listType = 'allNotificationList';
-                break;
         }
 
+        // 해당 탭 리스트에 알림 추가
         const list = document.getElementById(listType);
-
         if (list) {
             list.insertBefore(createNotificationElement(notification), list.firstChild);
         } else {
             console.error(`Notification list element not found for type: ${notification.type}`);
+        }
+
+        // 전체 탭 리스트에도 알림 추가
+        const allList = document.getElementById('allNotificationList');
+        if (allList) {
+            allList.insertBefore(createNotificationElement(notification), allList.firstChild);
+        } else {
+            console.error("All notifications list element not found");
         }
     }
 
