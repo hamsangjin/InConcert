@@ -91,7 +91,7 @@ validateInput(
     document.getElementById('phoneNumber'),
     '/user/phone-number-check',
     document.getElementById('phoneNumber-error'),
-    '이미 존재하는 번호입니다.',
+    '',
     /^010\d{7,8}$/,
     '010으로 시작하는 번호를 숫자만 입력해주세요.'
 );

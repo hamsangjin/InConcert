@@ -47,10 +47,10 @@ public class UserService {
     private final EmailProvider emailProvider;
     private final TempPasswordEmailProvider tempPasswordEmailProvider;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
-    private final TokenService tokenService;
 
     // 회원가입
     @Transactional
@@ -125,13 +125,24 @@ public class UserService {
                     roles
             );
 
-            Token tokenEntity = Token.builder()
-                    .accessTokenValue(accessToken)
-                    .refreshTokenValue(refreshToken)
-                    .user(user)
-                    .build();
+            // 기존 토큰 조회
+            Optional<Token> optionalToken = tokenService.getTokenByUser(user);
 
-            tokenService.saveToken(tokenEntity);
+            // 유저가 로그인한 적 있는 경우 토큰 업데이트
+            if(optionalToken.isPresent()){
+                Token token = optionalToken.get();
+                token.updateToken(accessToken, refreshToken);
+                tokenService.saveToken(token);
+            }
+            else {
+                Token tokenEntity = Token.builder()
+                        .accessTokenValue(accessToken)
+                        .refreshTokenValue(refreshToken)
+                        .user(user)
+                        .build();
+
+                tokenService.saveToken(tokenEntity);
+            }
 
             LoginRspDto loginRspDto = LoginRspDto.builder()
                     .accessToken(accessToken)
@@ -154,7 +165,8 @@ public class UserService {
             response.addCookie(refreshTokenCookie);
 
             return ResponseEntity.ok(loginRspDto);
-        } catch (AuthenticationException e) {
+        }
+        catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
         }
     }
@@ -265,7 +277,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<?> getRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        // 쿠키로부터 refresh Token을 얻어온다.
+        // 쿠키로부터 refresh token 얻기
         String refreshToken = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
@@ -279,7 +291,7 @@ public class UserService {
 
         // 없을 때 오류로 응답
         if (refreshToken == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("refreshToken이 존재하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("refreshToken이 존재하지 않습니다.");
         }
 
         // 있을 때 토큰으로부터 정보를 얻어온다.
@@ -315,7 +327,8 @@ public class UserService {
         Optional<User> findUser = userRepository.findByNameAndEmail(reqDto.getName(), reqDto.getEmail());
         if (findUser.isPresent()) {
             return ResponseEntity.ok(findUser.get().getUsername());
-        } else {
+        }
+        else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionMessage.USER_NOT_FOUND.getMessage());
         }
     }
@@ -336,8 +349,11 @@ public class UserService {
             String encodePassword = passwordEncoder.encode(tempPassword);
             user.get().updatePassword(encodePassword);
 
-            return ResponseEntity.ok(userRepository.save(user.get()).getEmail() + "로 임시 비밀번호를 전송했습니다.");
-        }else{
+            userRepository.save(user.get());
+
+            return ResponseEntity.ok(user.get().getEmail() + "로 임시 비밀번호를 전송했습니다.");
+        }
+        else{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ExceptionMessage.USER_NOT_FOUND.getMessage());
         }
     }

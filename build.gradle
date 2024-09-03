@@ -47,9 +47,10 @@ dependencies {
 	// Gson
 	implementation 'com.google.code.gson:gson'
 
-	// AWS S3 bucket 의존성
+	// AWS
 	implementation platform('software.amazon.awssdk:bom:2.20.56')
 	implementation 'software.amazon.awssdk:s3'
+	implementation 'software.amazon.awssdk:auth:2.20.27'
 
 	// https://mvnrepository.com/artifact/org.jsoup/jsoup
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.17.2'
