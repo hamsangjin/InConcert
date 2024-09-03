@@ -66,7 +66,7 @@ public class ChatControllerTest {
         // Then: 서비스 호출과 모델 속성 설정 확인
         verify(userService, times(1)).getAuthenticatedUser();
         verify(model, times(1)).addAttribute("user", user);
-        assertEquals("/chat/requests", result);
+        assertEquals("chat/requests", result);
     }
 
     @Test
