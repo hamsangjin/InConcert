@@ -127,7 +127,7 @@ public class MyPageService {
         List<Long> matchUserIds = matchRepository.findMatchUsersByPostId(postId, userId);
 
         // 이미 본인이 리뷰를 남긴 유저의 id들 불러오기
-        List<Long> revieweeIds = feedbackRepository.findExistingFeedbacks(userId, matchUserIds, postId);
+        List<Long> revieweeIds = feedbackRepository.getExistingRevieweeIdsByReviewerAndPost(userId, matchUserIds, postId);
 
         // matchUserIds를 각각 돌면서 revieweeIds에 포함되었는지 확인
         return matchUserIds.stream()

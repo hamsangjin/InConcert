@@ -408,7 +408,7 @@ public class UserService {
         }
 
         // 매너점수 업데이트 대상 저장
-        List<Long> revieweeIdsByReviewerId = feedbackRepository.findRevieweeIdsByReviewerId(user.getId());
+        List<Long> revieweeIdsByReviewerId = feedbackRepository.getRevieweeIdsByReviewerId(user.getId());
 
         userRepository.deleteById(user.getId());
 
