@@ -6,6 +6,7 @@ import com.inconcert.domain.chat.dto.UserDTO;
 import com.inconcert.domain.chat.entity.ChatMessage;
 import com.inconcert.domain.chat.entity.ChatNotification;
 import com.inconcert.domain.chat.entity.ChatRoom;
+import com.inconcert.domain.chat.entity.ChatRoomUser;
 import com.inconcert.domain.chat.repository.ChatMessageRepository;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.chat.repository.ChatNotificationRepository;
@@ -39,8 +40,7 @@ public class ChatService {
     // 사용자의 채팅방 목록
     @Transactional(readOnly = true)
     public List<ChatRoomDTO> getChatRoomDTOsByUserId() {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAthenticatedUser();
 
         // 네이티브 쿼리에서 DTO를 생성해서 담아주지 못하기 때문에, List<Map<String, Object>>로 반환받음
         // 그 후 각각 타입변환하고, null처리까지 한 후 List<ChatRoomDTO>로 반환
@@ -55,6 +55,8 @@ public class ChatService {
                         .build())
                 .toList();
     }
+
+
 
     // 특정 채팅방 조회
     @Transactional(readOnly = true)
@@ -71,8 +73,7 @@ public class ChatService {
     // 유저가 채팅방에 있는지 확인하는 메소드
     @Transactional(readOnly = true)
     public boolean isExistUser(Long chatRoomId) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAthenticatedUser();
 
         return getUserDTOsByChatRoomId(chatRoomId).getBody().stream()
                 .anyMatch(userDto -> userDto.getId().equals(user.getId()));
@@ -81,8 +82,7 @@ public class ChatService {
     // 채팅방 생성
     @Transactional
     public ChatRoomDTO createChatRoom(String roomName) {
-        User user = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User user = getAthenticatedUser();
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomName)
@@ -102,18 +102,17 @@ public class ChatService {
     // 동행 요청 Host에게 전송
     @Transactional
     public ResponseEntity<String> requestJoinChatRoom(Long chatRoomId) {
-        User requestingUser = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        User requestingUser = getAthenticatedUser();
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        List<Long> chatRoomUserIds = chatRoomUserRepository.getChatRoomUserIdsByChatRoomId(chatRoom.getId());
         Post post = chatRoom.getPost();
 
         // 이미 채팅방에 사용자가 속해 있는 경우
-        if (chatRoom.getUsers().contains(requestingUser)) {
+        if (chatRoomUserIds.contains(requestingUser.getId())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionMessage.ALREADY_IN_CHATROOM.getMessage());
         }
         // 현재 인원이 matchCount와 일치하거나 초과하는지 확인
-        if (chatRoom.getUsers().size() >= post.getMatchCount()) {
+        if (chatRoomUserIds.size() >= post.getMatchCount()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ExceptionMessage.ALREADY_FULL_CHATROOM.getMessage());
         }
         // 이미 신청한 경우
@@ -128,20 +127,19 @@ public class ChatService {
 
         return ResponseEntity.ok("요청을 성공적으로 전송하였습니다.");
     }
+    
 
     // 입장 승인
     @Transactional
     public ResponseEntity<String> approveJoinRequest(Long chatRoomId, Long notificationId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
 
-        ChatNotification chatNotification = chatNotificationRepository.findById(notificationId)
-                .orElseThrow(() -> new ChatNotificationNotFoundException(ExceptionMessage.CHAT_NOTIFICATION_NOT_FOUND.getMessage()));
-
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        ChatNotification chatNotification = getChatNotification(notificationId);
         User requestUser = chatNotification.getRequestUser();
+        List<Long> chatRoomUserIds = chatRoomUserRepository.getChatRoomUserIdsByChatRoomId(chatRoom.getId());
 
         // 요청자가 채팅방에 없을 떄 추가
-        if (!chatRoom.getUsers().contains(requestUser)) {
+        if (!chatRoomUserIds.contains(requestUser.getId())) {
             chatRoom.addUser(requestUser);
             chatRoomRepository.save(chatRoom);
 
@@ -177,18 +175,17 @@ public class ChatService {
     // 사용자가 채팅방에서 퇴장할 때 처리
     @Transactional
     public ResponseEntity<String> leaveChatRoom(Long chatRoomId) {
-        User leavingUser = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        User leavingUser = getAthenticatedUser();
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        List<Long> chatRoomUserIds = chatRoomUserRepository.getChatRoomUserIdsByChatRoomId(chatRoomId);
 
         // host는 2명 이상일 때 나갈 수 없음
-        if(chatRoom.getPost() != null && chatRoom.getHostUser().equals(leavingUser) && chatRoom.getUsers().size() >= 2) {
+        if(chatRoom.getPost() != null && chatRoom.getHostUser().equals(leavingUser) && chatRoomUserIds.size() >= 2) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ExceptionMessage.HOST_EXIT.getMessage());
         }
 
         // 채팅방 인원이 0명일 경우 post와 채팅방 삭제
-        if (chatRoom.getUsers().size() == 1) {
+        if (chatRoomUserIds.size() == 1) {
             chatRoomRepository.deleteById(chatRoomId);
         }
         else {
@@ -221,8 +218,7 @@ public class ChatService {
     // 강퇴
     @Transactional
     public ResponseEntity<String> kickUserFromChatRoom(Long chatRoomId, Long kickedUserId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
         User kickedUser = userRepository.findById(kickedUserId)
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
@@ -260,12 +256,8 @@ public class ChatService {
     // 요청 거절
     @Transactional
     public ResponseEntity<String> rejectJoinRequest(Long chatRoomId, Long notificationId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
-
-        ChatNotification chatNotification = chatNotificationRepository.findById(notificationId)
-                .orElseThrow(() -> new ChatNotificationNotFoundException(ExceptionMessage.CHAT_NOTIFICATION_NOT_FOUND.getMessage()));
-
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        ChatNotification chatNotification = getChatNotification(notificationId);
         User requestUser = chatNotification.getRequestUser();
 
         // 요청자에게 거절 알림 전송
@@ -278,8 +270,7 @@ public class ChatService {
     // 채팅방 메시지 가져오기
     @Transactional(readOnly = true)
     public List<ChatMessageDTO> getChatMessageDTOsByChatRoomId(Long chatRoomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
         return chatMessageRepository.findByChatRoom(chatRoom.getId());
     }
 
@@ -288,8 +279,7 @@ public class ChatService {
     public void sendMessage(ChatMessageDTO message) {
         User user = userRepository.findByUsername(message.getUsername())
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
-        ChatRoom chatRoom = chatRoomRepository.findById(message.getChatRoomId())
-                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+        ChatRoom chatRoom = getChatRoom(message.getChatRoomId());
 
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatRoom(chatRoom)
@@ -308,8 +298,7 @@ public class ChatService {
     // 1:1 채팅방 생성
     @Transactional
     public ResponseEntity<?> createOneToOneChatRoom(Long receiverId) {
-        User requestingUser = userService.getAuthenticatedUser()
-                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+        User requestingUser = getAthenticatedUser();
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
 
@@ -333,5 +322,21 @@ public class ChatService {
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
 
         return ResponseEntity.ok(saveChatRoom.getId());
+    }
+
+    private User getAthenticatedUser() {
+        return userService.getAuthenticatedUser()
+                .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
+    }
+
+    private ChatRoom getChatRoom(Long chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ChatNotFoundException(ExceptionMessage.CHAT_NOT_FOUND.getMessage()));
+    }
+
+    private ChatNotification getChatNotification(Long notificationId) {
+        ChatNotification chatNotification = chatNotificationRepository.findById(notificationId)
+                .orElseThrow(() -> new ChatNotificationNotFoundException(ExceptionMessage.CHAT_NOTIFICATION_NOT_FOUND.getMessage()));
+        return chatNotification;
     }
 }
