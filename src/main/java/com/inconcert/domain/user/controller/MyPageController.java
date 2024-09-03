@@ -38,7 +38,7 @@ public class MyPageController {
                 .orElseThrow(() -> new UsernameNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         model.addAttribute("user", user);
 
-        return "/user/mypage";
+        return "user/mypage";
     }
 
     @GetMapping("/editform")
@@ -48,7 +48,7 @@ public class MyPageController {
         model.addAttribute("user", user);
         model.addAttribute("mbtiValues", Mbti.values());
 
-        return "/user/mypageedit";
+        return "user/mypageedit";
     }
 
     @PostMapping("/edit")
@@ -88,7 +88,7 @@ public class MyPageController {
         model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "board");
 
-        return "/user/mypage-detail";
+        return "user/mypage-detail";
     }
 
     @GetMapping("/comment/{userId}")
@@ -104,7 +104,7 @@ public class MyPageController {
         model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "comment");
 
-        return "/user/mypage-detail";
+        return "user/mypage-detail";
     }
 
     @GetMapping("/like/{userId}")
@@ -120,7 +120,7 @@ public class MyPageController {
         model.addAttribute("totalPages", postPage.getTotalPages());
         model.addAttribute("title", "like");
 
-        return "/user/mypage-detail";
+        return "user/mypage-detail";
     }
 
     @GetMapping("/match/{userId}/present")
@@ -139,7 +139,7 @@ public class MyPageController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", matchRspDTOS.getTotalPages());
 
-        return "/user/match-list";
+        return "user/match-list";
     }
 
     @GetMapping("/match/{userId}/complete")
@@ -163,7 +163,7 @@ public class MyPageController {
         model.addAttribute("totalPages", matchRspDTOS.getTotalPages());
         model.addAttribute("isEndFeedback", isEndFeedback);
 
-        return "/user/match-list";
+        return "user/match-list";
     }
 
     @GetMapping("/match/{userId}/complete/{postId}")
@@ -178,7 +178,7 @@ public class MyPageController {
         model.addAttribute("user", user);
         model.addAttribute("myReviewee", myReviewee);
         model.addAttribute("myReviewStatuses", myReviewStatuses);
-        return "/user/review-list";
+        return "user/review-list";
     }
 
     @PostMapping("/match/{reviewerId}/complete/{postId}/{revieweeId}")

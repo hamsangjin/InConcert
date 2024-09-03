@@ -34,7 +34,7 @@ public class HomeController {
         model.addAttribute("matchPosts", matchPosts);
         model.addAttribute("transferPosts", transferPosts);
         model.addAttribute("isCrawling", performanceService.isCrawling());
-        return "/home";
+        return "home";
     }
 
     @GetMapping("/search")

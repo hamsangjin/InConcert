@@ -9,23 +9,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class UserController {
     @GetMapping("/loginform")
     public String loginform() {
-        return "/loginform";
+        return "loginform";
     }
 
     @GetMapping("/registerform")
     public String registerform() {
-        return "/registerform";
+        return "registerform";
     }
 
     // 아이디 찾기
     @GetMapping("/idform")
     public String idform() {
-        return "/user/findidform";
+        return "user/findidform";
     }
 
     // 비밀번호 찾기
     @GetMapping("/findpwform")
     public String findpw() {
-        return "/user/findpwform";
+        return "user/findpwform";
     }
 }

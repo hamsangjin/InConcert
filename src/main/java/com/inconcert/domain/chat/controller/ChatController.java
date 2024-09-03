@@ -35,7 +35,7 @@ public class ChatController {
         User user = userService.getAuthenticatedUser()
                 .orElseThrow(() -> new UserNotFoundException(ExceptionMessage.USER_NOT_FOUND.getMessage()));
         model.addAttribute("user", user);
-        return "/chat/requests";
+        return "chat/requests";
     }
 
     // 특정 채팅방 조회
