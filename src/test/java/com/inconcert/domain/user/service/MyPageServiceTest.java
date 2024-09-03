@@ -308,7 +308,7 @@ class MyPageServiceTest {
         List<Long> revieweeIds = Arrays.asList(2L, 4L);  // 유저가 이미 리뷰를 남긴 사용자 ID
 
         when(matchRepository.findMatchUsersByPostId(postId, userId)).thenReturn(matchUserIds);
-        when(feedbackRepository.findExistingFeedbacks(userId, matchUserIds, postId)).thenReturn(revieweeIds);
+        when(feedbackRepository.getExistingRevieweeIdsByReviewerAndPost(userId, matchUserIds, postId)).thenReturn(revieweeIds);
 
         // when
         List<Boolean> result = myPageService.getUsersReviewStatuses(userId, postId);
@@ -317,7 +317,7 @@ class MyPageServiceTest {
         assertEquals(3, result.size());  // 예상 결과와 비교하여 크기 검증
         assertEquals(Arrays.asList(true, false, true), result);  // 예상된 결과 확인
         verify(matchRepository, times(1)).findMatchUsersByPostId(postId, userId);
-        verify(feedbackRepository, times(1)).findExistingFeedbacks(userId, matchUserIds, postId);
+        verify(feedbackRepository, times(1)).getExistingRevieweeIdsByReviewerAndPost(userId, matchUserIds, postId);
     }
 
     @Test

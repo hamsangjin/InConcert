@@ -11,10 +11,10 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
     @Query("SELECT f.reviewee.id " +
             "FROM Feedback f " +
             "WHERE f.reviewer.id = :reviewerId AND f.reviewee.id IN :revieweeIds AND f.post.id = :postId")
-    List<Long> findExistingFeedbacks(@Param("reviewerId") Long reviewerId,
-                                     @Param("revieweeIds") List<Long> revieweeIds,
-                                     @Param("postId") Long postId);
+    List<Long> getExistingRevieweeIdsByReviewerAndPost(@Param("reviewerId") Long reviewerId,
+                                                       @Param("revieweeIds") List<Long> revieweeIds,
+                                                       @Param("postId") Long postId);
 
     @Query("SELECT f.reviewee.id FROM Feedback f WHERE f.reviewer.id = :reviewerId")
-    List<Long> findRevieweeIdsByReviewerId(@Param("reviewerId") Long reviewerId);
+    List<Long> getRevieweeIdsByReviewerId(@Param("reviewerId") Long reviewerId);
 }
