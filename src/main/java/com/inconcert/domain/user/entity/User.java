@@ -121,6 +121,13 @@ public class User {
         this.email = email;
     }
 
+    public User(Long id, String username, String email, Set<Post> posts){
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.posts = posts;
+    }
+
     @Builder
     public User(String username, String password, String email, String name, String nickname, String phoneNumber,
                 LocalDate birth, String profileImage, Gender gender, String intro, Mbti mbti, Role role) {

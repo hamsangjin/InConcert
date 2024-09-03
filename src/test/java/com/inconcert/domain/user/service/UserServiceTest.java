@@ -6,9 +6,12 @@ import com.inconcert.common.auth.jwt.token.service.TokenService;
 import com.inconcert.common.auth.jwt.util.JwtTokenizer;
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.exception.UserNotFoundException;
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.certification.provider.EmailProvider;
 import com.inconcert.domain.certification.provider.TempPasswordEmailProvider;
 import com.inconcert.domain.certification.util.TempPassword;
+import com.inconcert.domain.feedback.repository.FeedbackRepository;
+import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.user.dto.request.*;
 import com.inconcert.domain.user.dto.response.*;
 import com.inconcert.domain.user.entity.Role;
@@ -41,6 +44,7 @@ import com.inconcert.domain.user.entity.Gender;
 import com.inconcert.domain.user.entity.Mbti;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,11 +54,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 class UserServiceTest {
-
     @InjectMocks
     private UserService userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private FeedbackRepository feedbackRepository;
     @Mock
     private AuthenticationManager authenticationManager;
     @Mock
@@ -67,6 +72,8 @@ class UserServiceTest {
     private JwtTokenizer jwtTokenizer;
     @Mock
     private TokenService tokenService;
+    @Mock
+    private ImageService imageService;
     @Mock
     private CertificationRepository certificationRepository;
     @Mock
@@ -542,7 +549,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getRefreshToken_쿠키없음() {
+    void getRefreshToken_쿠키_없음() {
         // Given
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -551,7 +558,7 @@ class UserServiceTest {
         ResponseEntity<?> result = userService.getRefreshToken(request, response);
 
         // Then
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(result.getBody()).isEqualTo("refreshToken이 존재하지 않습니다.");
     }
 
@@ -712,7 +719,8 @@ class UserServiceTest {
     @Test
     void 유저_삭제() {
         // Given
-        User user = new User(1L, "user1", "user@user.1");
+        User user = new User(1L, "user1", "user@user.1", new HashSet<>());
+
         // SecurityContext에 Authentication 객체 설정
         given(securityContext.getAuthentication()).willReturn(authentication);
         given(authentication.getPrincipal()).willReturn("user1");

@@ -1,7 +1,6 @@
 package com.inconcert.domain.user.service;
 
-
-
+import com.inconcert.common.service.ImageService;
 import com.inconcert.domain.chat.repository.ChatRoomRepository;
 import com.inconcert.domain.comment.entity.Comment;
 import com.inconcert.domain.feedback.repository.FeedbackRepository;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
 class MyPageServiceTest {
     @Mock
@@ -46,6 +44,8 @@ class MyPageServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private ImageService imageService;
 
     @Mock
     private MatchRepository matchRepository;
@@ -112,7 +112,6 @@ class MyPageServiceTest {
         comment2.setPost(post2);
         comment2.setContent("댓글을 단 2번 포스트");
 
-
         PostDTO postDTO1 = new PostDTO(post1.getId(), post1.getTitle(), "info", "musical", "http://image1.png", user.getNickname(), 10, 5, 3, false, post1.getCreatedAt());
         PostDTO postDTO2 = new PostDTO(post2.getId(), post2.getTitle(), "match", "musical", "http://image2.png", user.getNickname(), 15, 8, 4, true, post2.getCreatedAt());
 
@@ -128,19 +127,14 @@ class MyPageServiceTest {
         assertThat(2).isEqualTo(result.getTotalElements()); // 2개가 맞는가 ?
         assertThat(postDTO1.getId()).isEqualTo(result.getContent().get(0).getId());
         assertThat(postDTO2.getTitle()).isEqualTo(result.getContent().get(1).getTitle());
-
     }
-
 
     @Test
     void 내가_좋아요한_게시물_불러오기(){
-
-
         Long userId = 1L;
         int page = 0;
         int size = 5;
         Pageable pageable = PageRequest.of(page, size);
-
 
         User user = new User();
         user.setId(userId);
@@ -158,12 +152,9 @@ class MyPageServiceTest {
         like1.setUser(user);
         like1.setPost(post1);
 
-
         Comment comment2 = new Comment();
         comment2.setUser(user);
         comment2.setPost(post2);
-
-
 
         PostDTO postDTO1 = new PostDTO(post1.getId(), post1.getTitle(), "info", "musical", "http://image1.png", user.getNickname(), 10, 5, 3, false, post1.getCreatedAt());
         PostDTO postDTO2 = new PostDTO(post2.getId(), post2.getTitle(), "match", "musical", "http://image2.png", user.getNickname(), 15, 8, 4, true, post2.getCreatedAt());
@@ -180,9 +171,7 @@ class MyPageServiceTest {
         assertThat(2).isEqualTo(result.getTotalElements()); // 2개
         assertThat(postDTO1.getId()).isEqualTo(result.getContent().get(0).getId());
         assertThat(postDTO2.getTitle()).isEqualTo(result.getContent().get(1).getTitle());
-
     }
-
 
     @Test
     void 기본_프사로_변경() {
@@ -202,7 +191,6 @@ class MyPageServiceTest {
         assertThat("/images/profile.png").isEqualTo(user.getProfileImage()); //유저의 프로필 사진이 바뀌었는지
         assertEquals("이미지가 정상적으로 변경되었습니다.", response.getBody());  // 응답 메시지 검증
     }
-
 
     @Test
     void 동행중인_유저_목록() {
@@ -254,7 +242,7 @@ class MyPageServiceTest {
     }
 
     @Test
-    void 동행_완료됐을시() {
+    void 동행_완료됐을_시() {
         // given
         Long userId = 1L;
         int page = 0;
@@ -276,7 +264,6 @@ class MyPageServiceTest {
         assertEquals(matchDTO1, result.getContent().get(0));
         verify(matchRepository, times(1)).getMatchRspDTOsByUserIdInMatchUserIdsAndEndMatch(userId, pageable);  // 메서드 호출 검증
     }
-
 
     @Test
     void 나를_평가하는_리뷰어_목록(){
@@ -352,6 +339,4 @@ class MyPageServiceTest {
         // then
         assertEquals(2, result.size());
     }
-
-
 }
