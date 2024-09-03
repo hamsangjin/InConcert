@@ -28,7 +28,7 @@ public class NotificationService {
     private final RedisTemplate<String, String> redisTemplate;
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
-    private final SseEmitters sseEmitters;
+    private final NotificationSseEmitters sseEmitters;
     private final UserService userService;
 
     @Transactional(readOnly = true)
