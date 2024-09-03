@@ -81,10 +81,6 @@ jwt:
   access-token-expire-time: 1800000   # 30분
   refresh-token-expire-time: 604800000  # 7일
 
-image:
-  upload:
-    dir: ${imageUploadPath}
-
 # chromedriver 경로
 chrome:
   driver: ${drivePath}
