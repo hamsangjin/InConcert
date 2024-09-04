@@ -64,8 +64,8 @@ public class MyPageService {
     public void editUser(MyPageEditReqDto reqDto) {
         User user = getAuthenticatedUser();
 
-        // 비밀번호 인코딩
-        String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
+        // 비밀번호 인코딩(중복 인코딩 제외 처리)
+        String encodedPassword = reqDto.getPassword().startsWith("$2a$10") ? reqDto.getPassword() : passwordEncoder.encode(reqDto.getPassword());
 
         // 이미지 처리
         String profileImageUrl = user.getProfileImage();
