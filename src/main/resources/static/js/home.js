@@ -211,7 +211,6 @@ function checkCrawlingStatus() {
             } else {
                 crawlingStatusElement.style.display = 'none';
                 contentElement.style.display = 'block';
-                refreshData();  // 데이터 새로고침
             }
         });
 }
