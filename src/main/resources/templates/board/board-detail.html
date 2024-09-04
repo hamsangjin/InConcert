@@ -114,35 +114,29 @@
         <span class="header-likes">좋아요</span>
     </div>
 
-    <div class="post-list" th:each="post : ${postsPage.content}">
-        <div class="post">
-            <div class="post-content">
-                <div class="post-left">
-                    <div class="post-thumbnail">
-                        <img th:src="${post.thumbnailUrl == null ? '/images/logo.png' :  post.thumbnailUrl}" alt="No Posts"/>
-                    </div>
-                    <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <p class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></p>
-                    <div class="new" th:if="${categoryTitle != 'info' && post.isNew}">
-                        <p> N </p>
-                    </div>
-                </div>
-                <div class="post-right">
-                    <span class="author" th:text="${post.nickname}"></span>
-                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
-                    <span class="views" th:text="${post.viewCount}"></span>
-                    <span class="likes" th:text="${post.likeCount}"></span>
-                </div>
+    <div class="post" th:each="post : ${postsPage.content}">
+        <div class="post-left">
+            <div class="post-thumbnail">
+                <img th:src="${post.thumbnailUrl == null ? '/images/logo.png' :  post.thumbnailUrl}" alt="No Posts"/>
+            </div>
+            <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                <span th:switch="${post.postCategoryTitle}">
+                    <span th:case="'musical'">[뮤지컬]</span>
+                    <span th:case="'concert'">[콘서트]</span>
+                    <span th:case="'theater'">[연극]</span>
+                    <span th:case="'etc'">[기타]</span>
+                </span>
+                <span th:text="${post.title}">Post Title</span>
+            </a>
+            <p class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></p>
+            <div class="new" th:if="${categoryTitle != 'info' && post.isNew}">
+                <p> N </p>
             </div>
         </div>
+        <span class="author" th:text="${post.nickname}"></span>
+        <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
+        <span class="views" th:text="${post.viewCount}"></span>
+        <span class="likes" th:text="${post.likeCount}"></span>
     </div>
 
     <!-- th:href 설명 -->

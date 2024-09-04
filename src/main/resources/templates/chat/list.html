@@ -21,8 +21,7 @@
 
     <div class="chat-container" th:each="chatRoom : ${chatRooms}">
         <div>
-            <img th:if="${chatRoom.userCount <= 2}" src="/images/DirectChat.png" alt="No Posts"/>
-            <img th:if="${chatRoom.userCount > 2}" src="/images/GroupChat.png" alt="No Posts"/>
+            <img th:src="${chatRoom.userCount <= 2 ? '/images/DirectChat.png' : '/images/GroupChat.png'}" src="/images/DirectChat.png" alt="No Posts"/>
             <a th:href="@{/chat/{chatRoomId}(chatRoomId=${chatRoom.id})}">
                 <span th:text="${chatRoom.roomName}">채팅방 이름</span>
             </a>

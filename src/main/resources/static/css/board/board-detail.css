@@ -304,11 +304,12 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    font-weight: bold;
     margin: 0 auto;
     gap: 10px;
     width: calc(100% - 20px);
     max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
 }
 
 .post-header span {
@@ -316,42 +317,33 @@ header {
 }
 
 .header-title {
-    flex: 5;
+    flex-basis: 60%;
 }
 
 .header-author,
 .header-date,
 .header-views,
 .header-likes {
-    flex: 1;
-}
-
-.post-list {
-    border-top: 1px solid #ddd;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 100%;
+    flex-basis: 10%;
 }
 
 .post {
     display: flex;
+    justify-content: space-between;
     padding: 10px;
+    margin: 0 auto;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
     border-bottom: 1px solid #ddd;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
-}
-
-.post-content {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
 }
 
 .post-left {
-    flex: 5;
+    flex-basis: 60%;
     display: flex;
     align-items: center;
     gap: 5px;
+    min-width: 0;
 }
 
 .post-thumbnail {
@@ -367,24 +359,28 @@ header {
     object-fit: cover;
 }
 
+.post-left > a:hover{
+    text-decoration: underline;
+}
+
 .post-title{
     text-decoration: none;
     color: black;
     padding: 0;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 80%;
+    gap: 5px;
 }
 
 .post-title > span:nth-child(2){
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 360px;
     display: block;
-}
-
-.post-left > a:hover{
-    text-decoration: underline;
+    max-width: 100%;
 }
 
 .comment-count{
@@ -404,16 +400,11 @@ header {
     align-items: center;
 }
 
-.post-right {
+.post > span{
     display: flex;
-    flex: 5;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    margin-left: 45px;
-}
-
-.post-right span {
-    flex: 1;
+    flex-basis: 10%;
     text-align: center;
     color: #6f6f6f;
 }

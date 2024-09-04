@@ -40,48 +40,43 @@
         <span class="header-likes">좋아요</span>
     </div>
 
-    <div class="post-list" th:each="post : ${postsPage.content}">
-        <div class="post">
+    <div class="post" th:each="post : ${postsPage.content}">
+        <div class="post-left">
             <div class="post-thumbnail" th:if="${post.thumbnailUrl != null}">
                 <img th:src="@{${post.thumbnailUrl}}">
             </div>
             <div class="post-thumbnail" th:if="${post.thumbnailUrl == null}">
                 <img src="/images/logo.png" alt="No Posts"/>
             </div>
+            <div class="post-title">
+                <a th:href="@{'/' + ${post.categoryTitle}}">
+                    <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.categoryTitle}">
+                        <span th:case="'info'">공연 소식</span>
+                        <span th:case="'review'">공연 후기</span>
+                        <span th:case="'match'">동행</span>
+                        <span th:case="'transfer'">양도</span>
+                    </span>
+                </a>
 
-            <div class="post-content">
-                <div class="post-title">
-                    <a th:href="@{'/' + ${post.categoryTitle}}">
-                        <span style="color:#6f6f6f; margin-right: 5px; min-width: 60px; max-width: 60px; text-align: center" th:switch="${post.categoryTitle}">
-                            <span th:case="'info'">공연 소식</span>
-                            <span th:case="'review'">공연 후기</span>
-                            <span th:case="'match'">동행</span>
-                            <span th:case="'transfer'">양도</span>
-                        </span>
-                    </a>
-
-                    <a th:href="@{'/' + ${post.categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
-                        <span th:text="${post.title}">Post Title</span>
-                    </a>
-                    <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
-                    <div th:if="${post.isNew}">
-                        <p class="new"> N </p>
-                    </div>
-                </div>
-                <div class="post-meta">
-                    <span class="author" th:text="${post.nickname}"></span>
-                    <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
-                    <span class="views" th:text="${post.viewCount}"></span>
-                    <span class="likes" th:text="${post.likeCount}"></span>
+                <a th:href="@{'/' + ${post.categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+                    <span th:switch="${post.postCategoryTitle}">
+                        <span th:case="'musical'">[뮤지컬]</span>
+                        <span th:case="'concert'">[콘서트]</span>
+                        <span th:case="'theater'">[연극]</span>
+                        <span th:case="'etc'">[기타]</span>
+                    </span>
+                    <span th:text="${post.title}">Post Title</span>
+                </a>
+                <span class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></span>
+                <div th:if="${post.isNew}">
+                    <p class="new"> N </p>
                 </div>
             </div>
         </div>
+        <span class="author" th:text="${post.nickname}"></span>
+        <span class="date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span>
+        <span class="views" th:text="${post.viewCount}"></span>
+        <span class="likes" th:text="${post.likeCount}"></span>
     </div>
     <div th:if="${totalPages > 0}" class="pagination">
         <ul>

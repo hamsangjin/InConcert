@@ -234,11 +234,12 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    font-weight: bold;
     margin: 0 auto;
     gap: 10px;
     width: calc(100% - 20px);
     max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
 }
 
 .post-header span {
@@ -246,69 +247,70 @@ header {
 }
 
 .header-title {
-    flex: 5; /* 제목이 50% 차지 */
+    flex-basis: 60%;
 }
 
 .header-author,
 .header-date,
 .header-views,
 .header-likes {
-    flex: 1; /* 나머지 항목이 각각 12.5%씩 차지 */
-}
-
-.post-list {
-    border-top: 1px solid #ddd;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 100%;
+    flex-basis: 10%;
 }
 
 .post {
     display: flex;
+    justify-content: space-between;
     padding: 10px;
+    margin: 0 auto;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
     border-bottom: 1px solid #ddd;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
+}
+
+.post-left {
+    flex-basis: 60%;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
 }
 
 .post-thumbnail {
-    flex-shrink: 0;
-    margin-right: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .post-thumbnail img {
     width: 50px;
+    max-width: 50px;
     height: 50px;
+    max-height: 50px;
     object-fit: cover;
 }
 
-.post-content {
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-}
-
-.post-title {
-    flex: 5; /* 제목이 50% 차지 */
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.post-title > a{
-    color: black;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-}
-
-.post-title > a:hover{
+.post-left > a:hover{
     text-decoration: underline;
 }
 
-.post-title > a > span:nth-child(2){
+.post-title{
+    text-decoration: none;
+    color: black;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 80%;
+    gap: 5px;
+}
+
+.post-title > span:nth-child(2){
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     display: block;
+    max-width: 100%;
 }
 
 .comment-count{
@@ -316,7 +318,7 @@ header {
     padding: 0;
 }
 
-.post-title > div{
+.new{
     border: none;
     border-radius: 50%;
     background-color: red;
@@ -328,19 +330,13 @@ header {
     align-items: center;
 }
 
-.post-meta {
+.post > span{
     display: flex;
-    flex: 5;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-left: 45px;
-}
-
-.post-meta span {
-    flex: 1;
+    flex-basis: 10%;
     text-align: center;
     color: #6f6f6f;
-    white-space: nowrap;
 }
 
 .pagination > ul{

@@ -265,10 +265,13 @@ header {
 .post-header {
     display: flex;
     justify-content: space-between;
+    padding: 10px;
+    margin: 0 auto;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
     font-weight: bold;
-    margin: 0 auto 10px;
-    min-width: 100%;
-    max-width: 100%;
 }
 
 .post-header span {
@@ -276,7 +279,7 @@ header {
 }
 
 .header-title{
-    flex: 5; /* 제목이 50% 차지 */
+    flex-basis: 50%;
 }
 
 .header-author,
@@ -284,55 +287,50 @@ header {
 .header-match-count,
 .header-status,
 .header-review{
-    flex: 1;
-}
-
-.post-list {
-    margin: 0 auto;
-    gap: 10px;
-    min-width: 100%;
-    max-width: 100%;
+    flex-basis: 10%;
 }
 
 .post {
     display: flex;
-    padding: 10px 0;
-    border-top: 1px solid #ccc;
-    background-color: #ffffff;
-    transition: background-color 0.3s ease;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 0 auto;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
 }
 
-.post-list > .post:last-child{
-    border-bottom: 1px solid #ccc;
-}
-
-.post-content {
+.post-left {
+    flex-basis: 50%;
     display: flex;
     align-items: center;
-    flex-grow: 1;
-}
-
-.post-left{
-    display: flex;
-    align-items: center;
-    flex: 5;
+    gap: 5px;
+    min-width: 0;
 }
 
 .post-thumbnail {
-    flex-shrink: 0;
-    margin-right: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .post-thumbnail img {
     width: 50px;
+    max-width: 50px;
     height: 50px;
+    max-height: 50px;
     object-fit: cover;
 }
 
-.post-title {
-    flex: 5; /* 제목이 50% 차지 */
+.post-title{
+    text-decoration: none;
+    color: black;
+    padding: 0;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
     gap: 5px;
 }
 
@@ -342,27 +340,32 @@ header {
     display: flex;
     align-items: center;
     gap: 3px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .post-title > a:hover{
     text-decoration: underline;
 }
 
-.post-right {
+.post-title > a > span:nth-child(2){
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+}
+
+.author,
+.date,
+.match-count,
+.status,
+.review{
     display: flex;
-    flex: 5;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-}
-
-.post-right > span,
-.post-right > a,
-.post-right > div{
-    flex: 1;
+    flex-basis: 10%;
     text-align: center;
-}
-
-.author, .date, .match-count{
     color: #6f6f6f;
 }
 

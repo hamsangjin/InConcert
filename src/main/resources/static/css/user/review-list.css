@@ -216,8 +216,8 @@ header {
 /* */
 
 .title-container{
-    width: 60%;
-    max-width: 60%;
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto;
 }
 
@@ -235,8 +235,8 @@ header {
     align-items: center;
     justify-content: flex-end;
     margin: 0 auto 50px;
-    width: 60%;
-    max-width: 60%;
+    width: 80%;
+    max-width: 80%;
 }
 
 .button-container > a{
@@ -252,18 +252,21 @@ header {
 }
 
 .review-container{
-    width: 60%;
-    max-width: 60%;
+    width: 80%;
+    max-width: 80%;
     margin: 0 auto 50px;
 }
 
 .post-header {
     display: flex;
     justify-content: space-between;
+    padding: 10px;
+    margin: 0 auto;
+    gap: 10px;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
     font-weight: bold;
-    margin: 0 auto 10px;
-    width: 100%;
-    max-width: 100%;
 }
 
 .post-header span {
@@ -271,18 +274,28 @@ header {
 }
 
 .header-image,
-.header-nickname,
-.header-birth,
 .header-mbti,
 .header-gender,
 .header-review{
-    flex: 2;
+    flex-basis: 15%;
+}
+
+.header-nickname,
+.header-birth{
+    flex-basis: 30%;
 }
 
 .review-container > div:nth-child(n+2){
     display: flex;
+    justify-content: space-between;
     align-items: center;
     text-align: center;
+    gap: 10px;
+    padding: 10px;
+    margin: 0 auto;
+    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    border-bottom: 1px solid #ddd;
 }
 
 .reviewee-img{
@@ -299,12 +312,15 @@ header {
 }
 
 .reviewee-img,
-.reviewee-nickname,
-.reviewee-birth,
 .reviewee-mbti,
 .reviewee-gender,
 .reviewee-review{
-    flex: 2;
+    flex-basis: 15%;
+}
+
+.reviewee-nickname,
+.reviewee-birth{
+    flex-basis: 30%;
 }
 
 .openReviewPopupBtn{

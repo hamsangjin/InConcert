@@ -128,12 +128,20 @@ header {
     align-items: center;
 }
 
+.chat-container > div:first-child{
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
 .chat-container > div:nth-child(2){
     justify-content: flex-end;
 }
 
 .chat-container > div > a{
     text-decoration: none;
+    min-width: 0;
+    max-width: 90%;
 }
 
 .chat-container > div > a:hover{
@@ -145,6 +153,11 @@ header {
     font-size: 24px;
     font-weight: bold;
     margin-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
 }
 
 .chat-container > div > a > span:hover{
@@ -172,6 +185,10 @@ header {
     font-size: 16px;
     font-weight: bolder;
     margin-right: 10px;
+}
+
+.chat-container > div:nth-child(2) > span:last-child{
+    color: #00a885;
 }
 
 .chat-container > span{

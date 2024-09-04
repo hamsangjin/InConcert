@@ -34,45 +34,33 @@
                 <span class="header-match-count">인원 수</span>
                 <span class="header-status">모집 상태</span>
                 <span class="header-review">상호 평가</span>
-
             </div>
 
-            <div class="post-list">
-                <div class="post" th:each="matchRspDTO : ${matchRspDTOs.content}">
-                    <div class="post-content">
-                        <div class="post-left">
-                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl != null}">
-                                <img th:src="@{${matchRspDTO.thumbnailUrl}}">
-                            </div>
-                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl == null}">
-                                <img src="/images/logo.png" alt="No Posts"/>
-                            </div>
-                            <div class="post-title">
-                                <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
-                                    <span th:switch="${matchRspDTO.postCategoryTitle}">
-                                        <span th:case="'musical'">[뮤지컬]</span>
-                                        <span th:case="'concert'">[콘서트]</span>
-                                        <span th:case="'theater'">[연극]</span>
-                                        <span th:case="'etc'">[기타]</span>
-                                    </span>
-                                    <span th:text="${#strings.length(matchRspDTO.title) > 23 ? #strings.substring(matchRspDTO.title, 0, 23) + '...' : matchRspDTO.title}">Post Title</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="post-right">
-                            <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
-                            <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
-                            <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
-                            <div class="status">
-                                <span class="status-ing">모집중</span>
-                            </div>
-                            <div class="review">
-                                <span class="matching">동행중</span>
-                            </div>
-
-                        </div>
+            <div class="post" th:each="matchRspDTO : ${matchRspDTOs.content}">
+                <div class="post-left">
+                    <div class="post-thumbnail">
+                        <img th:src="${matchRspDTO.thumbnailUrl == null ? '/images/logo.png' :  matchRspDTO.thumbnailUrl}" alt="No Posts"/>
                     </div>
+                    <div class="post-title">
+                        <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
+                            <span th:switch="${matchRspDTO.postCategoryTitle}">
+                                <span th:case="'musical'">[뮤지컬]</span>
+                                <span th:case="'concert'">[콘서트]</span>
+                                <span th:case="'theater'">[연극]</span>
+                                <span th:case="'etc'">[기타]</span>
+                            </span>
+                            <span th:text="${matchRspDTO.title}">Post Title</span>
+                        </a>
+                    </div>
+                </div>
+                <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
+                <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
+                <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
+                <div class="status">
+                    <span class="status-ing">모집중</span>
+                </div>
+                <div class="review">
+                    <span class="matching">동행중</span>
                 </div>
             </div>
             <div th:if="${totalPages > 0}" class="pagination">
@@ -114,46 +102,35 @@
                 <span class="header-review">상호 평가</span>
             </div>
 
-            <div class="post-list" th:each="matchRspDTO, iterStat : ${matchRspDTOs.content}">
-                <div class="post">
-                    <div class="post-content">
-                        <div class="post-left">
-                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl != null}">
-                                <img th:src="@{${matchRspDTO.thumbnailUrl}}">
-                            </div>
-                            <div class="post-thumbnail" th:if="${matchRspDTO.thumbnailUrl == null}">
-                                <img src="/images/logo.png" alt="No Posts"/>
-                            </div>
-                            <div class="post-title">
-                                <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
-                                    <span th:switch="${matchRspDTO.postCategoryTitle}">
-                                        <span th:case="'musical'">[뮤지컬]</span>
-                                        <span th:case="'concert'">[콘서트]</span>
-                                        <span th:case="'theater'">[연극]</span>
-                                        <span th:case="'etc'">[기타]</span>
-                                    </span>
-                                    <span th:text="${#strings.length(matchRspDTO.title) > 23 ? #strings.substring(matchRspDTO.title, 0, 23) + '...' : matchRspDTO.title}">Post Title</span>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="post-right">
-                            <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
-                            <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
-                            <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
-                            <div class="status">
-                                <span class="status-end"> 모집 종료 </span>
-                            </div>
-                            <div class="review">
-                                <a th:href="${'/mypage/match/' + user.id + '/complete/' + matchRspDTO.postId}">
-                                    <span class="need-feedback" th:if="${!isEndFeedback.get(iterStat.index)}">평가하기</span>
-                                </a>
-                                <span class="complete-feedback" th:if="${isEndFeedback.get(iterStat.index)}">평가완료</span>
-
-                            </div>
-
-                        </div>
+            <div class="post" th:each="matchRspDTO, iterStat : ${matchRspDTOs.content}">
+                <div class="post-left">
+                    <div class="post-thumbnail">
+                        <img th:src="${matchRspDTO.thumbnailUrl == null ? '/images/logo.png' :  matchRspDTO.thumbnailUrl}" alt="No Posts"/>
                     </div>
+                    <div class="post-title">
+                        <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
+                        <span th:switch="${matchRspDTO.postCategoryTitle}">
+                            <span th:case="'musical'">[뮤지컬]</span>
+                            <span th:case="'concert'">[콘서트]</span>
+                            <span th:case="'theater'">[연극]</span>
+                            <span th:case="'etc'">[기타]</span>
+                        </span>
+                            <span th:text="${matchRspDTO.title}">Post Title</span>
+                        </a>
+                    </div>
+                </div>
+                <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
+                <span class="date" th:text="${#temporals.format(matchRspDTO.endDate, 'yyyy-MM-dd')}"></span>
+                <span class="match-count" th:text="${matchRspDTO.chatRoomUserSize + '/' + matchRspDTO.matchCount}"></span>
+                <div class="status">
+                    <span class="status-end"> 모집 종료 </span>
+                </div>
+                <div class="review">
+                    <a th:href="${'/mypage/match/' + user.id + '/complete/' + matchRspDTO.postId}">
+                        <span class="need-feedback" th:if="${!isEndFeedback.get(iterStat.index)}">평가하기</span>
+                    </a>
+                    <span class="complete-feedback" th:if="${isEndFeedback.get(iterStat.index)}">평가완료</span>
+
                 </div>
             </div>
             <div th:if="${totalPages > 0}" class="pagination">
