@@ -292,7 +292,7 @@ header {
 }
 
 .post-left{
-    flex: 6;
+    flex-basis: 70%;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -341,16 +341,11 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex: 2.5;
+    flex-basis: 30%;
     gap: 10px;
 }
 
-.post-right > p:first-child{
+.post-right > p{
     text-align: center;
-    flex: 1.5;
-}
-
-.post-right > p:nth-child(2){
-    text-align: center;
-    flex: 1;
+    flex-basis: 15%;
 }

@@ -327,7 +327,7 @@ header {
 }
 
 .post-left{
-    flex: 6;
+    flex-basis: 60%;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -376,11 +376,11 @@ header {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    flex: 2;
+    flex-basis: 40%;
     gap: 10px;
 }
 
 .post-right > p{
     text-align: center;
-    flex: 0.5;
+    flex-basis: 20%;
 }
