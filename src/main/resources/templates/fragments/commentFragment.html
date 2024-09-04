@@ -34,7 +34,7 @@
                               th:onclick="'toggleEditForm(' + ${comment.id} + ');'">
                             <button type="button" class="comment-options-btn">수정</button>
                         </form>
-                        <form th:if="${(comment.user != null and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}"
+                        <form th:if="${(comment.user != null and (#authentication.principal != 'anonymousUser' and ((#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username) or #authentication.principal.username == 'admin')))}"
                               th:action="@{'/' + ${categoryTitle} + '/' + ${postCategoryTitle} + '/' + ${post.id} + '/comments/delete/' + ${comment.id}}"
                               method="post"
                               onsubmit="return confirm('이 댓글을 삭제하시겠습니까?');">

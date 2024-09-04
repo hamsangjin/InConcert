@@ -76,7 +76,7 @@
                             수정
                         </button>
                         <form th:action="@{|/${categoryTitle}/${postCategoryTitle}/${post.id}/delete|}" method="post"
-                              th:if="${user?.isPresent()} and ${post?.nickname == user.get().nickname && !post.end}">
+                              th:if="${user?.isPresent()} and (${post?.nickname == user.get().nickname && !post.end} or ${user.get().nickname == 'admin'})">
                             <button type="submit" class="chat-button" id="delete-button"
                                     th:attr="data-has-chat-room=${hasChatRoom}"
                                     onclick="return confirmDelete(this)">
