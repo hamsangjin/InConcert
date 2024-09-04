@@ -47,10 +47,10 @@ public interface ReviewRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'review'" +
-            "AND ((:type = 'titleContent' AND (p.title LIKE :keyword% OR p.content LIKE :keyword%)) " +
-            "OR   (:type = 'title' AND p.title LIKE :keyword%) " +
-            "OR   (:type = 'content' AND p.content LIKE :keyword%) " +
-            "OR   (:type = 'author' AND u.nickname LIKE :keyword%)) " +
+            "AND ((:type = 'titleContent' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)) " +
+            "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
+            "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
+            "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
             "AND p.createdAt BETWEEN :startDate AND :endDate " +
             "ORDER BY p.createdAt DESC")
     Page<PostDTO> findByKeywordAndFilters(@Param("keyword") String keyword,

@@ -64,10 +64,10 @@ public interface MatchRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'match' AND pc.title = :postCategoryTitle " +
-            "AND ((:type = 'titleContent' AND (p.title LIKE :keyword% OR p.content LIKE :keyword%)) " +
-            "OR   (:type = 'title' AND p.title LIKE :keyword%) " +
-            "OR   (:type = 'content' AND p.content LIKE :keyword%) " +
-            "OR   (:type = 'author' AND u.nickname LIKE :keyword%)) " +
+            "AND ((:type = 'titleContent' AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%)) " +
+            "OR   (:type = 'title' AND p.title LIKE %:keyword%) " +
+            "OR   (:type = 'content' AND p.content LIKE %:keyword%) " +
+            "OR   (:type = 'author' AND u.nickname LIKE %:keyword%)) " +
             "AND p.createdAt BETWEEN :startDate AND :endDate " +
             "AND (:gender IS NULL OR u.gender = :gender) " +
             "AND (:mbti IS NULL OR u.mbti = :mbti)" +

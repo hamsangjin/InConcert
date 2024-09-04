@@ -39,7 +39,7 @@
             <div class="post-thumbnail">
                 <img th:src="${post.thumbnailUrl == null ? '/images/logo.png' :  post.thumbnailUrl}" alt="No Posts"/>
             </div>
-            <a class="post-title" th:href="@{'/' + ${categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
+            <a class="post-title" th:href="@{'/' + ${post.categoryTitle} + '/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
                 <span th:switch="${post.postCategoryTitle}">
                     <span th:case="'musical'">[뮤지컬]</span>
                     <span th:case="'concert'">[콘서트]</span>

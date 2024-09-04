@@ -1,6 +1,5 @@
 package com.inconcert.common.service;
 
-import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.post.repository.ReviewRepository;
@@ -8,6 +7,7 @@ import com.inconcert.domain.post.repository.TransferRepository;
 import com.inconcert.common.exception.CategoryNotFoundException;
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.repository.HomeRepository;
+import com.inconcert.domain.post.dto.PostDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
