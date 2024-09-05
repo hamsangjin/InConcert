@@ -1,7 +1,6 @@
 package com.inconcert.domain.user.dto.request;
 
 import com.inconcert.domain.user.entity.Mbti;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,10 +17,6 @@ public class MyPageEditReqDto {
 
     @NotBlank
     private String password;
-
-    @Email
-    @NotBlank
-    private String email;
 
     @NotBlank
     private String phoneNumber;

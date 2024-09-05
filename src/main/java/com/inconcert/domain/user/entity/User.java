@@ -160,7 +160,6 @@ public class User {
     public void updateUser(MyPageEditReqDto reqDto, String password, String profileImageUrl) {
         this.nickname = reqDto.getNickname();
         this.password = password;
-        this.email = reqDto.getEmail();
         this.phoneNumber = reqDto.getPhoneNumber();
         this.mbti = reqDto.getMbti();
         this.intro = reqDto.getIntro();

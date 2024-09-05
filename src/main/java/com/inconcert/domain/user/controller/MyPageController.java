@@ -14,7 +14,6 @@ import com.inconcert.common.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -60,11 +59,7 @@ public class MyPageController {
                              BindingResult bindingResult,
                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            // 닉네임 길이 에러만 처리
-            if (bindingResult.hasFieldErrors("nickname")) {
-                redirectAttributes.addFlashAttribute("errorMessage", "닉네임은 8자 이내로 입력해주세요.");
-                return "redirect:/mypage/editform";
-            }
+            return "redirect:/mypage/editform";
         }
 
         try {
