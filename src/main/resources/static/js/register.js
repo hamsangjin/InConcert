@@ -84,7 +84,9 @@ validateInput(
     document.getElementById('nickname'),
     '/user/nickname-check',
     document.getElementById('nickname-error'),
-    '이미 존재하는 닉네임입니다.'
+    '이미 존재하는 닉네임입니다.',
+    /^.{1,8}$/,
+    '닉네임은 8자 이내로 입력해주세요.'
 );
 
 validateInput(

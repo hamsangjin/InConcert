@@ -35,6 +35,7 @@ public class RegisterReqDto {
     private String name;
 
     @NotBlank
+    @Size(max = 8, message = "닉네임은 8자 이내로 입력해주세요.")
     private String nickname;
 
     @NotBlank

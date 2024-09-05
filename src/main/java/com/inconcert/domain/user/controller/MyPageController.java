@@ -11,13 +11,16 @@ import com.inconcert.domain.user.service.MyPageService;
 import com.inconcert.domain.user.service.UserService;
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.exception.UserNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageController {
     private final UserService userService;
     private final MyPageService myPageService;
@@ -52,20 +56,26 @@ public class MyPageController {
     }
 
     @PostMapping("/edit")
-    public String editMyPage(@ModelAttribute MyPageEditReqDto reqDto,
+    public String editMyPage(@Valid @ModelAttribute MyPageEditReqDto reqDto,
+                             BindingResult bindingResult,
                              RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            // 닉네임 길이 에러만 처리
+            if (bindingResult.hasFieldErrors("nickname")) {
+                redirectAttributes.addFlashAttribute("errorMessage", "닉네임은 8자 이내로 입력해주세요.");
+                return "redirect:/mypage/editform";
+            }
+        }
+
         try {
             myPageService.editUser(reqDto);
-        }
-        catch (DataIntegrityViolationException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "이미 존재하는 닉네임이나 이메일을 입력하였습니다.");
+            redirectAttributes.addFlashAttribute("successMessage", "정보가 성공적으로 수정되었습니다.");
+            return "redirect:/mypage";
+        } catch (Exception e) {
+            log.error("사용자 정보 수정 중 오류 발생: ", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "정보 수정 중 오류가 발생했습니다: " + e.getMessage());
             return "redirect:/mypage/editform";
         }
-        catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "입력한 내용을 다시 확인해주세요.");
-            return "redirect:/mypage/editform";
-        }
-        return "redirect:/mypage";
     }
 
     // 기본 프로필로 변경
