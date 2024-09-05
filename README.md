@@ -1,6 +1,6 @@
 <div align="center">
 
-![이미지 통합](https://github.com/user-attachments/assets/5e311180-7326-4a4d-afcd-364ab83c4c80)
+![기능-소개-이미지](https://github.com/user-attachments/assets/fbc5e129-7433-485d-8bd8-48896e340cdb)
 
 <br>
 <br>
