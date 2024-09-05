@@ -217,8 +217,8 @@ public class PerformanceService {
                 .build();
     }
 
-    // 자정에 한번씩 새로 스크래핑
-    @Scheduled(cron = "0 20 0 * * ?")
+    // 4시에 한번씩 새로 스크래핑
+    @Scheduled(cron = "0 0 4 * * ?")
     public void scheduleCrawling() {
         startCrawlingAsync(true);
     }
