@@ -282,7 +282,7 @@ h3{
 
 .intro-container > p{
     word-wrap: break-word;
-    white-space: normal;
+    white-space: pre-wrap;
     max-width: 100%;
 }
 
