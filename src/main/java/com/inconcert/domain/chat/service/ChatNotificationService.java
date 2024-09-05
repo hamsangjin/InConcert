@@ -29,7 +29,7 @@ public class ChatNotificationService {
     public void sendJoinRequestNotification(User hostUser, ChatRoom chatRoom, User requestingUser) {
         // DB에 저장
         ChatNotification chatNotificationEntity = ChatNotification.builder()
-                .message(requestingUser.getNickname() + "님이 채팅방 입장을 요청하였습니다.")
+                .message(requestingUser.getNickname() + "님이 ["+ chatRoom.getRoomName() + "] 채팅방 입장을 요청하였습니다.")
                 .chatRoom(chatRoom)
                 .user(hostUser)
                 .requestUser(requestingUser)
@@ -40,7 +40,7 @@ public class ChatNotificationService {
         String destination = "/topic/notifications/" + hostUser.getId();
 
         NotificationMessageDTO notification = NotificationMessageDTO.builder()
-                .message(requestingUser.getNickname() + "님이 채팅방 입장을 요청했습니다.")
+                .message(requestingUser.getNickname() + "님이 ["+ chatRoom.getRoomName() + "] 채팅방 입장을 요청하였습니다.")
                 .chatRoomId(chatRoom.getId())
                 .userId(requestingUser.getId())
                 .build();
@@ -55,7 +55,7 @@ public class ChatNotificationService {
         String destination = "/topic/notifications/" + user.getId();
 
         NotificationMessageDTO notification = NotificationMessageDTO.builder()
-                .message("채팅방 입장이 승인되었습니다.")
+                .message("["+ chatRoom.getRoomName() +"] 채팅방 입장이 승인되었습니다.")
                 .chatRoomId(chatRoom.getId())
                 .userId(user.getId())
                 .build();
@@ -71,14 +71,14 @@ public class ChatNotificationService {
         ChatNotification chatNotification = ChatNotification.builder()
                 .user(user)
                 .chatRoom(chatRoom)
-                .message("채팅방 '" + chatRoom.getRoomName() + "'의 입장이 거절되었습니다.")
+                .message("채팅방 [" + chatRoom.getRoomName() + "] 입장이 거절되었습니다.")
                 .build();
         chatNotificationRepository.save(chatNotification);
 
         String destination = "/topic/notifications/" + user.getId();
 
         NotificationMessageDTO notification = NotificationMessageDTO.builder()
-                .message("채팅방 '" + chatRoom.getRoomName() + "'의 입장이 거절되었습니다.")
+                .message("채팅방 [" + chatRoom.getRoomName() + "] 입장이 거절되었습니다.")
                 .chatRoomId(chatRoom.getId())
                 .userId(user.getId())
                 .build();

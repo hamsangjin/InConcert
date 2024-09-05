@@ -15,7 +15,8 @@ import java.util.List;
 public interface ChatNotificationRepository extends JpaRepository<ChatNotification, Long> {
     @Query("SELECT new com.inconcert.domain.chat.dto.NotificationMessageDTO(cn.id, cn.message, cn.chatRoom.id, cn.user.id) " +
             "FROM ChatNotification cn " +
-            "WHERE cn.user.id = :userId")
+            "WHERE cn.user.id = :userId " +
+            "ORDER BY cn.createdAt DESC")
     List<NotificationMessageDTO> findByUserId(@Param("userId") Long userId);
 
     boolean existsByRequestUserAndChatRoom(User RequestUser, ChatRoom chatRoom);

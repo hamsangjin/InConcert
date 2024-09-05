@@ -1,5 +1,6 @@
 package com.inconcert.domain.chat.entity;
 
+import com.inconcert.common.entity.BaseEntity;
 import com.inconcert.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "chat_notifications")
 @Getter
 @NoArgsConstructor
-public class ChatNotification { // 채팅 관련 알림
+public class ChatNotification extends BaseEntity { // 채팅 관련 알림
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
