@@ -598,7 +598,7 @@ header {
 .comment-p {
     margin: 20px 0 20px 5px;
     word-wrap: break-word;
-    white-space: normal;
+    white-space: pre-wrap;
     max-width: 100%;
 }
 
@@ -606,7 +606,7 @@ header {
     color: #00a885;
     font-weight: bold;
     word-wrap: break-word;
-    white-space: normal;
+    white-space: pre-wrap;
     max-width: 100%;
 }
 

@@ -125,6 +125,12 @@ header {
     margin-bottom: 10px;
 }
 
+.request-list > li > span{
+    word-break: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
 .request-list > li > div > button{
     border: none;
     background-color: transparent;

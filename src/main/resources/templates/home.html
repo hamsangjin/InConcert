@@ -26,7 +26,7 @@
     <div id="content">
         <div class="popular-info-container">
             <div>
-                <h1> 실시간 인기 공연</h1>
+                <h1> 오늘의 인기 공연</h1>
             </div>
             <div class="popular-info-img-container">
                 <!-- 인기 공연 이미지 컨테이너 -->
@@ -54,12 +54,12 @@
                 <div class="post-list" th:each="post : ${reviewPosts}">
                     <div class="post-left">
                         <a class="post-title" th:href="@{'/review/' + ${post.postCategoryTitle} + '/' + ${post.id}}">
-                        <span th:switch="${post.postCategoryTitle}">
-                            <span th:case="'musical'">[뮤지컬]</span>
-                            <span th:case="'concert'">[콘서트]</span>
-                            <span th:case="'theater'">[연극]</span>
-                            <span th:case="'etc'">[기타]</span>
-                        </span>
+                            <span th:switch="${post.postCategoryTitle}">
+                                <span th:case="'musical'">[뮤지컬]</span>
+                                <span th:case="'concert'">[콘서트]</span>
+                                <span th:case="'theater'">[연극]</span>
+                                <span th:case="'etc'">[기타]</span>
+                            </span>
                             <span th:text="${post.title}">Post Title</span>
                         </a>
                         <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>

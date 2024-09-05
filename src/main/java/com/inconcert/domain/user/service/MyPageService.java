@@ -9,7 +9,7 @@ import com.inconcert.domain.user.dto.request.MyPageEditReqDto;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
 import com.inconcert.domain.user.dto.response.FeedbackRspDTO;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.domain.user.repository.MyPageRepostory;
+import com.inconcert.domain.user.repository.MyPageRepository;
 import com.inconcert.domain.user.repository.UserRepository;
 import com.inconcert.common.exception.ExceptionMessage;
 import com.inconcert.common.exception.UserNotFoundException;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-    private final MyPageRepostory myPageRepostory;
+    private final MyPageRepository myPageRepository;
     private final UserRepository userRepository;
     private final UserService userService;
     private final ImageService imageService;
@@ -42,21 +42,21 @@ public class MyPageService {
     public Page<PostDTO> getMyPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.getPostDTOsByUserId(userId, pageable);
+        return myPageRepository.getPostDTOsByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getMyCommentPosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.getPostDTOsWithMyComments(userId, pageable);
+        return myPageRepository.getPostDTOsWithMyComments(userId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getMyLikePosts(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return myPageRepostory.getPostDTOsMyLiked(userId, pageable);
+        return myPageRepository.getPostDTOsMyLiked(userId, pageable);
     }
 
     // 유저 정보 수정

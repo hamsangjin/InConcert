@@ -11,7 +11,7 @@ import com.inconcert.domain.post.repository.MatchRepository;
 import com.inconcert.domain.user.dto.response.FeedbackRspDTO;
 import com.inconcert.domain.user.dto.response.MatchRspDTO;
 import com.inconcert.domain.user.entity.User;
-import com.inconcert.domain.user.repository.MyPageRepostory;
+import com.inconcert.domain.user.repository.MyPageRepository;
 import com.inconcert.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MyPageServiceTest {
     @Mock
-    private MyPageRepostory myPageRepostory;
+    private MyPageRepository myPageRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -71,7 +71,7 @@ class MyPageServiceTest {
         List<PostDTO> postDTOList = Arrays.asList(postDTO); //1개의 요소 리스트로 저장
         Page<PostDTO> postPage = new PageImpl<>(postDTOList, pageable, postDTOList.size());
 
-        when(myPageRepostory.getPostDTOsByUserId(userId, pageable)).thenReturn(postPage);
+        when(myPageRepository.getPostDTOsByUserId(userId, pageable)).thenReturn(postPage);
 
         // when
         Page<PostDTO> result = myPageService.getMyPosts(userId, page, size);
@@ -118,7 +118,7 @@ class MyPageServiceTest {
         List<PostDTO> postDTOList = Arrays.asList(postDTO1, postDTO2);
         Page<PostDTO> postPage = new PageImpl<>(postDTOList, pageable, postDTOList.size());
 
-        when(myPageRepostory.getPostDTOsWithMyComments(userId, pageable)).thenReturn(postPage);
+        when(myPageRepository.getPostDTOsWithMyComments(userId, pageable)).thenReturn(postPage);
 
         // when
         Page<PostDTO> result = myPageService.getMyCommentPosts(userId, page, size);
@@ -162,7 +162,7 @@ class MyPageServiceTest {
         List<PostDTO> postDTOList = Arrays.asList(postDTO1, postDTO2);
         Page<PostDTO> postPage = new PageImpl<>(postDTOList, pageable, postDTOList.size());
 
-        when(myPageRepostory.getPostDTOsMyLiked(userId, pageable)).thenReturn(postPage);
+        when(myPageRepository.getPostDTOsMyLiked(userId, pageable)).thenReturn(postPage);
 
         // when
         Page<PostDTO> result = myPageService.getMyLikePosts(userId, page, size);

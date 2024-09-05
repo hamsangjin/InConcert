@@ -43,10 +43,10 @@
                     </div>
                 </div>
                 <p class="comment-p"
-                   th:if="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}"
+                   th:if="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and ((#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username) or #authentication.principal.username == 'admin')))}"
                    th:text="${comment.content}" th:id="'comment-content-' + ${comment.id}"></p>
                 <p class="comment-p secret"
-                   th:unless="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and (#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username)))}">비밀 댓글입니다.</p>
+                   th:unless="${!comment.isSecret or (comment.isSecret and (#authentication.principal != 'anonymousUser' and ((#authentication.principal.username == comment.user.username or #authentication.principal.username == post.user.username) or #authentication.principal.username == 'admin')))}">비밀 댓글입니다.</p>
 
                 <!-- 댓글 수정 폼 -->
                 <div class="comment-edit-form" th:id="'comment-edit-form-' + ${comment.id}" style="display:none;">

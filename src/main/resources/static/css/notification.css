@@ -145,6 +145,12 @@ header {
     flex-grow: 1;
 }
 
+.notification-message {
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+}
+
 .notification-type {
     font-weight: bold;
     color: #0BA885;

@@ -331,7 +331,7 @@ header {
     display: flex;
     align-items: center;
     gap: 5px;
-    max-width: 70%;
+    max-width: 60%;
 }
 
 .post-title{
@@ -339,9 +339,9 @@ header {
     color: black;
     padding: 0;
     max-width: 80%;
-    white-space: nowrap;  /* 텍스트를 한 줄로 표시 */
-    overflow: hidden;  /* 넘치는 텍스트는 숨김 */
-    text-overflow: ellipsis;  /* 넘치는 부분에 생략부호(...) 표시 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .post-left a:hover{

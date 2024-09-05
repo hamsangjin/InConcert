@@ -153,7 +153,17 @@ function sendLeaveMessage(username, nickname, chatRoomId) {
 
 // 채팅방 나가기 버튼을 눌렀을 때 실행되는 함수
 function confirmLeaveChatRoom() {
-    if (confirm("이 채팅방을 나가시겠습니까?")) {
+    const chatRoomTitle = document.getElementById('chatRoomTitle').textContent;
+    console.log(chatRoomTitle);
+
+    let message;
+    if (chatRoomTitle.startsWith("1:1 채팅: ")) {
+        message = "이 채팅방을 나가시겠습니까?";
+    } else {
+        message = "이 채팅방을 나가시겠습니까?\n게시글도 함께 삭제됩니다.";
+    }
+
+    if (confirm(message)) {
         leaveChatRoom();
     }
 }

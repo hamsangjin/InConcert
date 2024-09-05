@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MyPageRepostory extends JpaRepository<Post, Long> {
+public interface MyPageRepository extends JpaRepository<Post, Long> {
 
     // 내가 작성한 게시물들
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +

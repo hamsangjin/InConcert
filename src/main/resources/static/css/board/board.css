@@ -296,14 +296,14 @@ header {
     display: flex;
     align-items: center;
     gap: 5px;
-    max-width: 70%;
+    max-width: 60%;
 }
 
 .post-title{
     text-decoration: none;
     color: black;
     padding: 0;
-    max-width: 75%;
+    max-width: 80%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
