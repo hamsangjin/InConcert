@@ -92,7 +92,12 @@ public class MatchController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", matchService.getPostDtoByPostId(postId));
+        PostDTO postDTO = matchService.getPostDtoByPostId(postId);
+        if(postDTO == null) {
+            return "redirect:/home";
+        } else{
+            model.addAttribute("post", postDTO);
+        }
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "match");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

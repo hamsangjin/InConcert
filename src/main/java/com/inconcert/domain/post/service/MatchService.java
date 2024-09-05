@@ -66,6 +66,10 @@ public class MatchService {
         Post findPost = matchRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
+        if(findPost.isEnd()){
+            return null;
+        }
+
         // viewCount 증가
         findPost.incrementViewCount();
         Post post = matchRepository.save(findPost);

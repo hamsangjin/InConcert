@@ -87,7 +87,12 @@ public class TransferController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", transferService.getPostDtoByPostId(postId));
+        PostDTO postDTO = transferService.getPostDtoByPostId(postId);
+        if(postDTO == null) {
+            return "redirect:/home";
+        } else{
+            model.addAttribute("post", postDTO);
+        }
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "transfer");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

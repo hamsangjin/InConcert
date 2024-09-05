@@ -73,7 +73,12 @@ public class ReviewController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-        model.addAttribute("post", reviewService.getPostDtoByPostId(postId));
+        PostDTO postDTO = reviewService.getPostDtoByPostId(postId);
+        if(postDTO == null) {
+            return "redirect:/home";
+        } else{
+            model.addAttribute("post", postDTO);
+        }
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "review");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

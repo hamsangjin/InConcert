@@ -87,8 +87,12 @@ public class InfoController {
     @GetMapping("/{postCategoryTitle}/{postId}")
     public String getPostDetail(@PathVariable("postCategoryTitle") String postCategoryTitle,
                                 @PathVariable("postId") Long postId, Model model) {
-
-        model.addAttribute("post", infoService.getPostDtoByPostId(postId));
+        PostDTO postDTO = infoService.getPostDtoByPostId(postId);
+        if(postDTO == null) {
+            return "redirect:/home";
+        } else{
+            model.addAttribute("post", postDTO);
+        }
         model.addAttribute("user", userService.getAuthenticatedUser());
         model.addAttribute("categoryTitle", "info");
         model.addAttribute("postCategoryTitle", postCategoryTitle);

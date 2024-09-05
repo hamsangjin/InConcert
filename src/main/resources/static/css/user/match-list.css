@@ -348,7 +348,8 @@ header {
     text-decoration: underline;
 }
 
-.post-title > a > span:nth-child(2){
+.post-title > a > span:nth-child(2),
+.post-title > span:nth-child(2){
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

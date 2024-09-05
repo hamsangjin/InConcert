@@ -55,6 +55,10 @@ public class TransferService {
         Post findPost = transferRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ExceptionMessage.POST_NOT_FOUND.getMessage()));
 
+        if(findPost.isEnd()){
+            return null;
+        }
+
         // viewCount 증가
         findPost.incrementViewCount();
         Post post = transferRepository.save(findPost);

@@ -108,15 +108,13 @@
                         <img th:src="${matchRspDTO.thumbnailUrl == null ? '/images/logo.png' :  matchRspDTO.thumbnailUrl}" alt="No Posts"/>
                     </div>
                     <div class="post-title">
-                        <a th:href="@{'/' + ${matchRspDTO.categoryTitle} + '/' + ${matchRspDTO.postCategoryTitle} + '/' + ${matchRspDTO.postId}}">
                         <span th:switch="${matchRspDTO.postCategoryTitle}">
                             <span th:case="'musical'">[뮤지컬]</span>
                             <span th:case="'concert'">[콘서트]</span>
                             <span th:case="'theater'">[연극]</span>
                             <span th:case="'etc'">[기타]</span>
                         </span>
-                            <span th:text="${matchRspDTO.title}">Post Title</span>
-                        </a>
+                        <span th:text="${matchRspDTO.title}">Post Title</span>
                     </div>
                 </div>
                 <span class="author" th:text="${matchRspDTO.hostNickname}"></span>
