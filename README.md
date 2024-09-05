@@ -2,6 +2,14 @@
 
 ![기능-소개-이미지](https://github.com/user-attachments/assets/fbc5e129-7433-485d-8bd8-48896e340cdb)
 
+<div>
+<h1> 👇 시연 영상 클릭 </h1>
+<a href="https://youtu.be/vhPGxbWJX1k?si=W2VtxjAwpIyH8u3Y">
+  <img src="https://github.com/user-attachments/assets/88fe50cf-1726-43d3-a0f7-93a910da8503">
+</a>
+</div>
+
+
 <br>
 <br>
 <br>
