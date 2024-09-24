@@ -60,7 +60,7 @@ public class HomeService {
         List<PostDTO> popularPosts = new ArrayList<>();
 
         for (String category : categories) {
-            PostDTO popularPost = infoRepository.findFirstPostByPostCategoryTitle(category)
+            PostDTO popularPost = infoRepository.findPopularPostByPostCategoryTitle(category)
                     .orElse(null);
             if (popularPost != null) {
                 popularPosts.add(popularPost);

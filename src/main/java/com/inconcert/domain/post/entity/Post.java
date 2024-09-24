@@ -50,6 +50,8 @@ public class Post extends BaseEntity {
     @Column(name = "is_end")
     private boolean isEnd = false;
 
+    private double popularity;
+
     @ElementCollection
     private List<Long> matchUserIds = new ArrayList<>();
 
@@ -97,5 +99,9 @@ public class Post extends BaseEntity {
 
     public void updateMatchUserIds(List<Long> matchUserIds) {
         this.matchUserIds = matchUserIds;
+    }
+
+    public void updatePopularity(Double popularity) {
+        this.popularity = popularity;
     }
 }
