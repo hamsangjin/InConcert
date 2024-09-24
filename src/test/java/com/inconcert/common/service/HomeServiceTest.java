@@ -232,10 +232,10 @@ class HomeServiceTest {
                 .build();
 
         List<PostDTO> expectedPosts = Arrays.asList(postDTO1, postDTO2, postDTO3, postDTO4);
-        when(infoRepository.findFirstPostByPostCategoryTitle("musical")).thenReturn(Optional.of(postDTO1));
-        when(infoRepository.findFirstPostByPostCategoryTitle("concert")).thenReturn(Optional.of(postDTO2));
-        when(infoRepository.findFirstPostByPostCategoryTitle("theater")).thenReturn(Optional.of(postDTO3));
-        when(infoRepository.findFirstPostByPostCategoryTitle("etc")).thenReturn(Optional.of(postDTO4));
+        when(infoRepository.findPopularPostByPostCategoryTitle("musical")).thenReturn(Optional.of(postDTO1));
+        when(infoRepository.findPopularPostByPostCategoryTitle("concert")).thenReturn(Optional.of(postDTO2));
+        when(infoRepository.findPopularPostByPostCategoryTitle("theater")).thenReturn(Optional.of(postDTO3));
+        when(infoRepository.findPopularPostByPostCategoryTitle("etc")).thenReturn(Optional.of(postDTO4));
 
         // When
         ResponseEntity<List<PostDTO>> response = homeService.getPopularPosts();
@@ -244,6 +244,6 @@ class HomeServiceTest {
         assertThat(response.getBody()).isEqualTo(expectedPosts);
         assertThat(response.getBody().get(0).getPostCategoryTitle()).isEqualTo(postDTO1.getPostCategoryTitle());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(infoRepository, times(4)).findFirstPostByPostCategoryTitle(anyString());
+        verify(infoRepository, times(4)).findPopularPostByPostCategoryTitle(anyString());
     }
 }

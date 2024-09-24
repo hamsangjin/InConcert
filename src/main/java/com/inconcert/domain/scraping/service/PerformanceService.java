@@ -31,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -137,6 +138,8 @@ public class PerformanceService {
         int processedCount = 0;
 
         User adminUser = userService.getUserByUsername("admin");
+
+        Long type1 = 0L, type2 = 0L, type3 = 0L, type4 = 0L;
         for (WebElement element : elements) {
             String poster = element.findElement(By.cssSelector("a span:nth-child(1) img")).getAttribute("src");
             String title = element.findElement(By.cssSelector("a span:nth-child(2)")).getText();
@@ -145,21 +148,27 @@ public class PerformanceService {
 
             if (!title.isEmpty() && !date.isEmpty() && !place.isEmpty()) {
                 try {
-                    if(!performanceRepository.existsByTitle(title)) {
-                        Performance performance = Performance.builder()
-                                .title(title)
-                                .imageUrl(poster)
-                                .date(date)
-                                .place(place)
-                                .type(type)
-                                .build();
+                    Performance performance = Performance.builder()
+                            .title(title)
+                            .imageUrl(poster)
+                            .date(date)
+                            .place(place)
+                            .type(type)
+                            .build();
 
-                        // performance 저장
-                        performanceRepository.save(performance);
-                        log.info(performance.getTitle() + " Performance 저장");
+                    // performance 저장
+                    performanceRepository.save(performance);
+                    log.info(performance.getTitle() + " Performance 저장");
 
+                    if(!infoRepository.existsByTitle(title)) {
                         ScrapedPostDTO scrapedPostDTO = convertToCrawledDTO(performance, Long.parseLong(type));
-                        Post post = createPostFromCrawledDTO(scrapedPostDTO, adminUser);
+
+                        Long typeByScore;
+                        if(type.equals("1"))        typeByScore = type1++;
+                        else if (type.equals("2"))  typeByScore = type3++;
+                        else if (type.equals("3"))  typeByScore = type2++;
+                        else                        typeByScore = type4++;
+                        Post post = createPostFromCrawledDTO(scrapedPostDTO, adminUser, typeByScore);
 
                         // post 저장
                         Post savedPost = infoRepository.save(post);
@@ -198,29 +207,18 @@ public class PerformanceService {
         driver.quit();
     }
 
-    // CrawledPostDTO to Post
-    @Transactional(readOnly = true)
-    public Post createPostFromCrawledDTO(ScrapedPostDTO scrapedPostDTO, User adminUser) {
-        PostCategory postCategory = postCategoryRepository.findByTitleAndCategoryTitleWithCategory(
-                scrapedPostDTO.getPostCategoryTitle(),
-                scrapedPostDTO.getCategoryTitle()
-        ).orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
-
-        return Post.builder()
-                .title(scrapedPostDTO.getTitle())
-                .content(scrapedPostDTO.getContent())
-                .endDate(scrapedPostDTO.getEndDate())
-                .matchCount(scrapedPostDTO.getMatchCount())
-                .thumbnailUrl(scrapedPostDTO.getThumbnailUrl())
-                .postCategory(postCategory)
-                .user(adminUser)
-                .build();
-    }
-
     // 4시에 한번씩 새로 스크래핑
     @Scheduled(cron = "0 0 4 * * ?")
+    @Transactional
     public void scheduleCrawling() {
+        performanceRepository.deleteAll();
         startCrawlingAsync(true);
+    }
+
+    @Scheduled(cron = "0 5 4 * * ?")
+    @Transactional
+    public void scheduleRanking() {
+        updateRank();
     }
 
     // performance to CrawledDTO
@@ -242,6 +240,25 @@ public class PerformanceService {
                 .thumbnailUrl(performance.getImageUrl())
                 .categoryTitle(categoryTitle)
                 .postCategoryTitle(postCategoryTitle)
+                .build();
+    }
+
+    // CrawledPostDTO to Post
+    private Post createPostFromCrawledDTO(ScrapedPostDTO scrapedPostDTO, User adminUser, Long typeByScore) {
+        PostCategory postCategory = postCategoryRepository.findByTitleAndCategoryTitleWithCategory(
+                scrapedPostDTO.getPostCategoryTitle(),
+                scrapedPostDTO.getCategoryTitle()
+        ).orElseThrow(() -> new PostCategoryNotFoundException(ExceptionMessage.POST_CATEGORY_NOT_FOUND.getMessage()));
+
+        return Post.builder()
+                .title(scrapedPostDTO.getTitle())
+                .content(scrapedPostDTO.getContent())
+                .endDate(scrapedPostDTO.getEndDate())
+                .matchCount(scrapedPostDTO.getMatchCount())
+                .thumbnailUrl(scrapedPostDTO.getThumbnailUrl())
+                .postCategory(postCategory)
+                .popularity(popularity(0, 0, 0, typeByScore))
+                .user(adminUser)
                 .build();
     }
 
@@ -283,5 +300,31 @@ public class PerformanceService {
             log.error("Date parsing error: ", e);
         }
         return LocalDate.now();
+    }
+
+    private void updateRank(){
+        Long type1 = 0L, type2 = 0L, type3 = 0L, type4 = 0L;
+        List<Performance> performances = performanceRepository.findAll();
+        log.info(String.valueOf(performances.size()));
+
+        for (Performance performance : performances) {
+            Optional<Post> optionalPost = infoRepository.findByTitle(performance.getTitle());
+
+            if(optionalPost.isPresent()){
+                Post post = optionalPost.get();
+
+                switch (Integer.parseInt(performance.getType())){
+                    case 1 -> post.updatePopularity(popularity(post.getViewCount(), post.getComments().size(), post.getLikes().size(), type1++));
+                    case 2 -> post.updatePopularity(popularity(post.getViewCount(), post.getComments().size(), post.getLikes().size(), type2++));
+                    case 3 -> post.updatePopularity(popularity(post.getViewCount(), post.getComments().size(), post.getLikes().size(), type3++));
+                    case 4 -> post.updatePopularity(popularity(post.getViewCount(), post.getComments().size(), post.getLikes().size(), type4++));
+                }
+                infoRepository.save(post);
+            }
+        }
+    }
+
+    private double popularity(int viewCount, int commentCount, int likeCount, Long performanceId) {
+        return (viewCount*0.01) + (commentCount*0.25) + (likeCount*0.25) - performanceId;
     }
 }

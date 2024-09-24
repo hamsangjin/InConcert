@@ -48,13 +48,15 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "JOIN pc.category c " +
             "JOIN p.user u " +
             "WHERE c.title = 'info' " +
-            "AND p.id = (SELECT MIN(p2.id) " +
-                        "FROM Post p2 " +
-                        "WHERE p2.postCategory = p.postCategory " +
-                        "AND p2.postCategory = pc " +
-                        "AND p2.postCategory.category = c) " +
+            "AND p.createdAt = (SELECT p2.createdAt " +
+                                "FROM Post p2 " +
+                                "WHERE p2.postCategory = p.postCategory " +
+                                "AND p2.postCategory = pc " +
+                                "AND p2.postCategory.category = c " +
+                                "ORDER BY p2.popularity DESC, p2.createdAt ASC " +
+                                "LIMIT 1) " +
             "AND pc.title = :postCategoryTitle")
-    Optional<PostDTO> findFirstPostByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
+    Optional<PostDTO> findPopularPostByPostCategoryTitle(@Param("postCategoryTitle") String postCategoryTitle);
 
     // /info에서 게시물들 카테고리에 맞게 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
@@ -102,4 +104,8 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
                                           @Param("endDate") LocalDateTime endDate,
                                           @Param("type") String type,
                                           Pageable pageable);
+
+    Boolean existsByTitle(String title);
+
+    Optional<Post> findByTitle(String title);
 }
