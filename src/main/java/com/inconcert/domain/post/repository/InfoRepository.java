@@ -27,18 +27,6 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
             "ORDER BY p.createdAt DESC")
     List<PostDTO> findPostsByCategoryTitle(Pageable pageable);
 
-    // info 포스트 상위 8개 불러오기
-    @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
-            "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
-            "FROM Post p " +
-            "JOIN p.postCategory pc " +
-            "JOIN pc.category c " +
-            "JOIN p.user u " +
-            "WHERE c.title = 'info' " +
-            "ORDER BY p.createdAt DESC")
-    List<PostDTO> getTop8LatestInfoPosts(Pageable pageable);
-
     // 실시간 인기 공연 게시글 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
@@ -108,4 +96,5 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     Boolean existsByTitle(String title);
 
     Optional<Post> findByTitle(String title);
+
 }
