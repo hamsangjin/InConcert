@@ -10,12 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,57 +117,6 @@ class HomeServiceTest {
     }
 
     @Test
-    public void 공연소식_최근_8개_게시글_불러오기() {
-        // Given
-        String categoryTitle = "info";
-
-        PostDTO postDTO1 = PostDTO.builder()
-                .id(1L)
-                .title("New Performance Info - 1")
-                .categoryTitle(categoryTitle)
-                .postCategoryTitle("musical")
-                .thumbnailUrl("url_to_thumbnail2.jpg")
-                .nickname("user1")
-                .viewCount(100)
-                .likeCount(10)
-                .commentCount(5)
-                .isNew(true)
-                .createdAt(LocalDateTime.now().minusMonths(1))      // 한 달 전 작성
-                .build();
-
-        PostDTO postDTO2 = PostDTO.builder()
-                .id(2L)
-                .title("New Performance Info - 2")
-                .categoryTitle(categoryTitle)
-                .postCategoryTitle("etc")
-                .thumbnailUrl("url_to_thumbnail1.jpg")
-                .nickname("user2")
-                .viewCount(100)
-                .likeCount(10)
-                .commentCount(5)
-                .isNew(true)
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        List<PostDTO> expectedPosts = List.of(postDTO1, postDTO2).stream()
-                .sorted(Comparator.comparing(PostDTO::getCreatedAt).reversed())
-                .collect(Collectors.toList());
-
-        PageRequest pageable = PageRequest.of(0, 8, Sort.by(Sort.Direction.DESC, "createdAt"));
-        when(infoRepository.getTop8LatestInfoPosts(pageable)).thenReturn(expectedPosts);
-
-        // When
-        ResponseEntity<List<PostDTO>> response = homeService.getTop8LatestInfoPosts();
-
-        // Then
-        assertThat(response.getBody()).isEqualTo(expectedPosts);
-        assertThat(response.getBody().get(0).getTitle()).isEqualTo(postDTO2.getTitle());
-        assertThat(response.getBody().get(1).getContent()).isEqualTo(postDTO1.getContent());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        verify(infoRepository, times(1)).getTop8LatestInfoPosts(any(Pageable.class));
-    }
-
-    @Test
     public void 공연소식_카테고리별_가장_인기있는_게시글_불러오기() {
         // Given
         String categoryTitle = "info";
@@ -238,12 +184,11 @@ class HomeServiceTest {
         when(infoRepository.findPopularPostByPostCategoryTitle("etc")).thenReturn(Optional.of(postDTO4));
 
         // When
-        ResponseEntity<List<PostDTO>> response = homeService.getPopularPosts();
+        List<PostDTO> posts = homeService.getPopularPosts();
 
         // Then
-        assertThat(response.getBody()).isEqualTo(expectedPosts);
-        assertThat(response.getBody().get(0).getPostCategoryTitle()).isEqualTo(postDTO1.getPostCategoryTitle());
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(posts).isEqualTo(expectedPosts);
+        assertThat(posts.get(0).getPostCategoryTitle()).isEqualTo(postDTO1.getPostCategoryTitle());
         verify(infoRepository, times(4)).findPopularPostByPostCategoryTitle(anyString());
     }
 }

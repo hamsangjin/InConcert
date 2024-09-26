@@ -5,7 +5,6 @@ import com.inconcert.domain.category.repository.PostCategoryRepository;
 import com.inconcert.domain.scraping.dto.ScrapedPostDTO;
 import com.inconcert.domain.scraping.entity.Performance;
 import com.inconcert.domain.scraping.repository.PerformanceRepository;
-import com.inconcert.domain.post.dto.PostDTO;
 import com.inconcert.domain.post.entity.Post;
 import com.inconcert.domain.post.repository.InfoRepository;
 import com.inconcert.domain.user.entity.User;
@@ -20,7 +19,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -43,8 +41,6 @@ public class PerformanceService {
     private final PostCategoryRepository postCategoryRepository;
     private final InfoRepository infoRepository;
     private final UserService userService;
-    private final ScrapingSseEmitters scrapingSseEmitters;
-    private static final int BATCH_SIZE = 10;
 
     private volatile boolean isCrawling = false;
     private final Object crawlingLock = new Object();
@@ -54,12 +50,7 @@ public class PerformanceService {
     }
 
     @Async
-    public void startCrawlingAsync(boolean isSchedule) {
-        // 게시물이 이미 있는 경우 크롤링 실행 X
-        if(!isSchedule && !infoRepository.findPostsByCategoryTitle(PageRequest.of(0, 8)).isEmpty()) {
-            return;
-        }
-
+    public void startCrawlingAsync() {
         // type 별로 별도의 스레드에서 스크래핑
         synchronized (crawlingLock) {
             if (isCrawling) {
@@ -67,8 +58,6 @@ public class PerformanceService {
                 return;
             }
             isCrawling = true;
-            // sse에 시작 메시지 전송
-            scrapingSseEmitters.sendStatusUpdate("started", "Crawling process has started");
         }
 
         CompletableFuture.runAsync(() -> {
@@ -80,9 +69,6 @@ public class PerformanceService {
                 }
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
-                // sse 에 완료 메시지 전송
-                scrapingSseEmitters.sendStatusUpdate("completed", "All performances have been successfully crawled.");
-                log.info("Crawling process completed and notification sent");
             } finally {
                 synchronized (crawlingLock) {
                     isCrawling = false;
@@ -134,9 +120,6 @@ public class PerformanceService {
         }
 
         List<WebElement> elements = driver.findElements(By.cssSelector("#list li"));
-        List<PostDTO> batchPostDTOs = new ArrayList<>();
-        int processedCount = 0;
-
         User adminUser = userService.getUserByUsername("admin");
 
         Long type1 = 0L, type2 = 0L, type3 = 0L, type4 = 0L;
@@ -171,23 +154,8 @@ public class PerformanceService {
                         Post post = createPostFromCrawledDTO(scrapedPostDTO, adminUser, typeByScore);
 
                         // post 저장
-                        Post savedPost = infoRepository.save(post);
+                        infoRepository.save(post);
                         log.info("[" + post.getId() + "] " + post.getTitle() + " 게시글 저장");
-
-                        // 실시간 업데이트 전송
-                        PostDTO postDTO = convertToPostDTO(scrapedPostDTO, savedPost);
-                        postDTO.setId(savedPost.getId());   // id가 꼬이게 하지 않기 위함
-
-                        // 배치 처리를 위해 리스트에 추가
-                        batchPostDTOs.add(postDTO);
-                        processedCount++;
-
-                        // 배치 크기에 도달하면 배치 업데이트 수행
-                        if (batchPostDTOs.size() >= BATCH_SIZE) {
-                            scrapingSseEmitters.sendBatchUpdate(batchPostDTOs);
-                            log.info("Sent batch update with {} posts", batchPostDTOs.size());
-                            batchPostDTOs.clear();
-                        }
                     }else{
                         log.error("[" + title + "] 중복된 게시글(제목)입니다");
                     }
@@ -198,27 +166,31 @@ public class PerformanceService {
                 log.warn("Skipping element due to missing required information");
             }
         }
-
-        if (!batchPostDTOs.isEmpty()) {
-            scrapingSseEmitters.sendBatchUpdate(batchPostDTOs);
-            log.info("Sent batch update with {} posts", batchPostDTOs.size());
-            batchPostDTOs.clear();
-        }
         driver.quit();
     }
 
     // 4시에 한번씩 새로 스크래핑
-    @Scheduled(cron = "0 0 4 * * ?")
+    @Scheduled(cron = "0 38 14 * * ?")
     @Transactional
     public void scheduleCrawling() {
         performanceRepository.deleteAll();
-        startCrawlingAsync(true);
+        startCrawlingAsync();
     }
 
     @Scheduled(cron = "0 5 4 * * ?")
     @Transactional
     public void scheduleRanking() {
         updateRank();
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void scheduleDeleteEndPost() {
+        List<Post> posts = infoRepository.findAll();
+
+        for (Post post : posts) {
+            if(post.getEndDate().isBefore(LocalDate.now()))     infoRepository.delete(post);
+        }
     }
 
     // performance to CrawledDTO
@@ -262,22 +234,6 @@ public class PerformanceService {
                 .build();
     }
 
-    // to PostDTO
-    private PostDTO convertToPostDTO(ScrapedPostDTO scrapedPostDTO, Post post) {
-        return PostDTO.builder()
-                .id(post.getId())
-                .title(scrapedPostDTO.getTitle())
-                .content(scrapedPostDTO.getContent())
-                .endDate(scrapedPostDTO.getEndDate())
-                .matchCount(scrapedPostDTO.getMatchCount())
-                .thumbnailUrl(scrapedPostDTO.getThumbnailUrl())
-                .categoryTitle(scrapedPostDTO.getCategoryTitle())
-                .postCategoryTitle(scrapedPostDTO.getPostCategoryTitle())
-                .viewCount(post.getViewCount())
-                .createdAt(post.getCreatedAt())
-                .build();
-    }
-
     private String getPostCategoryTitle(Long type) {
         return switch (type.intValue()) {
             case 1 -> "musical";
@@ -305,7 +261,7 @@ public class PerformanceService {
     private void updateRank(){
         Long type1 = 0L, type2 = 0L, type3 = 0L, type4 = 0L;
         List<Performance> performances = performanceRepository.findAll();
-        log.info(String.valueOf(performances.size()));
+
 
         for (Performance performance : performances) {
             Optional<Post> optionalPost = infoRepository.findByTitle(performance.getTitle());

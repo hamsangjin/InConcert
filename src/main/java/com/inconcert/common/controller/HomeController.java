@@ -27,14 +27,16 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model) {
-        performanceService.startCrawlingAsync(false);
+        List<PostDTO> popularPosts = homeService.getPopularPosts();
 
         // 기존의 게시글 로드
+        List<PostDTO> infoPosts = homeService.getAllPostDTOsByCategoryTitle("info");
         List<PostDTO> reviewPosts = homeService.getAllPostDTOsByCategoryTitle("review");
         List<PostDTO> matchPosts = homeService.getAllPostDTOsByCategoryTitle("match");
         List<PostDTO> transferPosts = homeService.getAllPostDTOsByCategoryTitle("transfer");
 
-
+        model.addAttribute("popularPosts", popularPosts);
+        model.addAttribute("infoPosts", infoPosts);
         model.addAttribute("reviewPosts", reviewPosts);
         model.addAttribute("matchPosts", matchPosts);
         model.addAttribute("transferPosts", transferPosts);
