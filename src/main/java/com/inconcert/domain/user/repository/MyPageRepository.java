@@ -15,7 +15,7 @@ public interface MyPageRepository extends JpaRepository<Post, Long> {
     // 내가 작성한 게시물들
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -27,7 +27,7 @@ public interface MyPageRepository extends JpaRepository<Post, Long> {
     // 내가 작성한 댓글이 있는 게시물들
     @Query("SELECT DISTINCT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.comments cm " +
             "JOIN p.postCategory pc " +
@@ -40,7 +40,7 @@ public interface MyPageRepository extends JpaRepository<Post, Long> {
     // 내가 좋아요를 누른 게시물들
     @Query("SELECT DISTINCT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.likes l " +
             "JOIN p.postCategory pc " +
