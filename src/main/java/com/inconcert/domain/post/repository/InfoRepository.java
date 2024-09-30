@@ -18,7 +18,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // /home에서 공연 소식 게시물 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -30,7 +30,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // 실시간 인기 공연 게시글 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -49,7 +49,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // /info에서 게시물들 카테고리에 맞게 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -61,7 +61,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // /info/categoryTitle에서 게시물들 알맞게 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
@@ -74,7 +74,7 @@ public interface InfoRepository extends JpaRepository<Post, Long> {
     // /info/categoryTitle에서 검색한 경우 검색 결과 불러오기
     @Query("SELECT new com.inconcert.domain.post.dto.PostDTO(p.id, p.title, c.title, pc.title, p.thumbnailUrl, u.nickname, " +
             "p.viewCount, SIZE(p.likes), SIZE(p.comments), " +
-            "CASE WHEN TIMESTAMPDIFF(HOUR, CURRENT_TIMESTAMP, p.createdAt) < 24 THEN true ELSE false END, p.createdAt) " +
+            "CASE WHEN TIMESTAMPDIFF(HOUR, p.createdAt, CURRENT_TIMESTAMP) < 24 THEN true ELSE false END, p.createdAt) " +
             "FROM Post p " +
             "JOIN p.postCategory pc " +
             "JOIN pc.category c " +
