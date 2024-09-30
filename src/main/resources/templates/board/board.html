@@ -52,7 +52,7 @@
                         <span th:text="'[뮤지컬] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${categoryTitle != 'info' && post.isNew}">
+                    <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                         <span th:text="'[콘서트] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${categoryTitle != 'info' && post.isNew}">
+                    <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                         <span th:text="'[연극] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${categoryTitle != 'info' && post.isNew}">
+                    <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <span th:text="'[기타] '+ ${post.title}">Post Title</span>
                     </a>
                     <p class="comment-count">[<span th:text="${post.commentCount}"> </span>]</p>
-                    <div th:if="${categoryTitle != 'info' && post.isNew}">
+                    <div th:if="${post.isNew}">
                         <p class="new"> N </p>
                     </div>
                 </div>

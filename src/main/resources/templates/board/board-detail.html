@@ -129,7 +129,7 @@
                 <span th:text="${post.title}">Post Title</span>
             </a>
             <p class="comment-count" th:text="'[' + ${post.commentCount} + ']'"></p>
-            <div class="new" th:if="${categoryTitle != 'info' && post.isNew}">
+            <div class="new" th:if="${post.isNew}">
                 <p> N </p>
             </div>
         </div>
