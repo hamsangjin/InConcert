@@ -1,0 +1,39 @@
+name: CICD
+run-name: Running
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_S3_BUCKET: inconcert-jar-bucket
+  AWS_CODE_DEPLOY_APPLICATION: inconcert-cicd
+  AWS_CODE_DEPLOY_GROUP: inconcert-deploy-group
+
+jobs:
+  build-with-gradle:
+    runs-on: ubuntu-24.04
+    steps:
+    - name: main 브랜치로 이동
+      uses: actions/checkout@v3
+      with:
+        ref: main
+    - name: JDK 17 설치
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'corretto'
+    - name: gradlew에 실행 권한 부여
+      run: chmod +x ./gradlew
+    - name: 프로젝트 빌드
+      run: ./gradlew clean build -x test
+    - name: AWS credential 설정
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: ${{ env.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
+    - name: S3에 업로드
+      run: aws deploy push --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://$AWS_S3_BUCKET/cicdtest/$GITHUB_SHA.zip --source .
+    - name: EC2에 배포
+      run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --s3-location bucket=$AWS_S3_BUCKET,key=cicdtest/$GITHUB_SHA.zip,bundleType=zip
