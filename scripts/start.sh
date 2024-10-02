@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ~/.bashrc
+
 ROOT_PATH="/home/ubuntu/spring-github-action"
 JAR="$ROOT_PATH/inconcert-0.0.1-SNAPSHOT.jar"
 
