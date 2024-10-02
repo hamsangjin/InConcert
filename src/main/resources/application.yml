@@ -8,6 +8,7 @@ spring:
     password: ${password}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+
   sql:
     init:
       mode: always
@@ -107,3 +108,6 @@ aws:
       secret-key: ${s3SecretKey}
   cloudfront:
     url: ${cloudFrontUrl}
+
+server:
+  port: 80
