@@ -13,7 +13,7 @@ echo "[$NOW] $JAR 복사" >> $START_LOG
 cp $ROOT_PATH/build/libs/inconcert-0.0.1-SNAPSHOT.jar $JAR
 
 echo "[$NOW] > $JAR 실행" >> $START_LOG
-nohup bash -l -c "java -jar $JAR" > $APP_LOG 2> $ERROR_LOG &
+nohup java -jar $JAR > $APP_LOG 2> $ERROR_LOG &
 
 SERVICE_PID=$(pgrep -f $JAR)
 echo "[$NOW] > 서비스 PID: $SERVICE_PID" >> $START_LOG
