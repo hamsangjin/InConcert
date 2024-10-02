@@ -108,6 +108,3 @@ aws:
       secret-key: ${s3SecretKey}
   cloudfront:
     url: ${cloudFrontUrl}
-
-server:
-  port: 80
