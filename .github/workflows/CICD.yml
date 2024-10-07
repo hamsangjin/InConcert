@@ -10,21 +10,6 @@ env:
   AWS_CODE_DEPLOY_APPLICATION: inconcert-cicd
   AWS_CODE_DEPLOY_GROUP: inconcert-deploy-group
 
-#  username: ${{ secrets.USERNAME }}
-#  password: ${{ secrets.PASSWORD }}
-#  gmail: ${{ secrets.GMAIL }}
-#  googlePw: ${{ secrets.GOOGLEPW }}
-#  bucketName: ${{ secrets.BUCKETNAME }}
-#  s3AccessKey: ${{ secrets.S3ACCESSKEY }}
-#  s3SecretKey: ${{ secrets.S3SECRETKEY }}
-#  secretKey: ${{ secrets.SECRETKEY }}
-#  refreshKey: ${{ secrets.REFRESHKEY }}
-#  cloudFrontUrl: ${{ secrets.CLOUDFRONTURL }}
-#  drivePath: ${{ secrets.DRIVEPATH }}
-#  kakaoKey: ${{ secrets.KAKAOKEY }}
-#  naverClientId: ${{ secrets.NAVERCLIENTID }}
-#  naverClientSecret: ${{ secrets.NAMECLIENTSECRET }}
-
 jobs:
   build-with-gradle:
     runs-on: ubuntu-24.04
