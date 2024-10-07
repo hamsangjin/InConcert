@@ -51,6 +51,7 @@ public class PerformanceService {
 
     @Async
     public void startCrawlingAsync() {
+        long startTime = System.currentTimeMillis(); // 시작 시간 기록
         // type 별로 별도의 스레드에서 스크래핑
         synchronized (crawlingLock) {
             if (isCrawling) {
@@ -73,8 +74,12 @@ public class PerformanceService {
                 synchronized (crawlingLock) {
                     isCrawling = false;
                 }
+                long endTime = System.currentTimeMillis(); // 종료 시간 기록
+                long executionTime = endTime - startTime; // 실행 시간 계산
+                log.info("Crawling execution time: {} ms", executionTime); // 실행 시간 출력
             }
         });
+
     }
 
     public WebDriver getChromeDriver() {
@@ -170,7 +175,7 @@ public class PerformanceService {
     }
 
     // 4시에 한번씩 새로 스크래핑
-    @Scheduled(cron = "0 38 14 * * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     @Transactional
     public void scheduleCrawling() {
         performanceRepository.deleteAll();
