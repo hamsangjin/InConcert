@@ -41,6 +41,7 @@ public class PerformanceService {
     private final PostCategoryRepository postCategoryRepository;
     private final InfoRepository infoRepository;
     private final UserService userService;
+    private final ScrapingLoggingService scrapingLoggingService;
 
     private volatile boolean isCrawling = false;
     private final Object crawlingLock = new Object();
@@ -51,7 +52,6 @@ public class PerformanceService {
 
     @Async
     public void startCrawlingAsync() {
-        long startTime = System.currentTimeMillis(); // 시작 시간 기록
         // type 별로 별도의 스레드에서 스크래핑
         synchronized (crawlingLock) {
             if (isCrawling) {
@@ -66,7 +66,9 @@ public class PerformanceService {
                 List<CompletableFuture<Void>> futures = new ArrayList<>();
                 for (int type = 1; type <= 4; type++) {
                     int finalType = type;
-                    futures.add(CompletableFuture.runAsync(() -> crawlPerformances(String.valueOf(finalType))));
+                    futures.add(CompletableFuture.runAsync(() ->
+                            scrapingLoggingService.measureScrapingPerformance(() ->
+                                    crawlPerformances(String.valueOf(finalType)))));
                 }
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
 
@@ -74,12 +76,8 @@ public class PerformanceService {
                 synchronized (crawlingLock) {
                     isCrawling = false;
                 }
-                long endTime = System.currentTimeMillis(); // 종료 시간 기록
-                long executionTime = endTime - startTime; // 실행 시간 계산
-                log.info("Crawling execution time: {} ms", executionTime); // 실행 시간 출력
             }
         });
-
     }
 
     public WebDriver getChromeDriver() {
