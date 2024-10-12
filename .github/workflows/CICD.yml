@@ -3,6 +3,8 @@ run-name: Running
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   AWS_REGION: ap-northeast-2
@@ -26,7 +28,7 @@ jobs:
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./gradlew
     - name: 프로젝트 빌드
-      run: ./gradlew clean build -x test
+      run: ./gradlew clean build
     - name: AWS credential 설정
       uses: aws-actions/configure-aws-credentials@v1
       with:
