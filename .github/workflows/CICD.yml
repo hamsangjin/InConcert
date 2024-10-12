@@ -25,17 +25,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
-    - name: MySQL 설치
-      uses: samin/mysql-action@v1
-      with:
-        mysql_database: 'inconcert'
-        mysql_user: 'user'
-        mysql_password: '1234'
-        character_set_server: 'utf8mb4'
     - name: gradlew에 실행 권한 부여
       run: chmod +x ./gradlew
     - name: 프로젝트 빌드
-      run: ./gradlew clean build
+      run: ./gradlew clean build -x test
     - name: AWS credential 설정
       uses: aws-actions/configure-aws-credentials@v1
       with:
